@@ -85,7 +85,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QGraphicsView" name="graphicsView_Map">
+     <widget class="QGraphicsView" name="graphicsView_Interactive_Map">
       <property name="frameShape">
        <enum>QFrame::Box</enum>
       </property>
