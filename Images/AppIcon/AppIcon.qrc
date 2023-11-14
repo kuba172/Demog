@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="Images/AppIcon">
+    <file>android-chrome-192x192.png</file>
+    <file>android-chrome-512x512.png</file>
+    <file>apple-touch-icon.png</file>
+    <file>favicon.ico</file>
+    <file>favicon-16x16.png</file>
+    <file>favicon-32x32.png</file>
+  </qresource>
+</RCC>
