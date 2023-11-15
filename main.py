@@ -10,7 +10,7 @@ class Main:
     def __init__(self):
         # Window Icon
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("Images/AppIcon/android-chrome-512x512.png"), QtGui.QIcon.Mode.Normal,
+        icon.addPixmap(QtGui.QPixmap("Images/AppIcon/poland-map.png"), QtGui.QIcon.Mode.Normal,
                        QtGui.QIcon.State.Off)
         app.setWindowIcon(icon)
 
