@@ -1,9 +1,12 @@
 import os
-
-from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog
+from PyQt6 import QtGui
+from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtGui import QBrush, QPen, QColor
+from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, QGraphicsPolygonItem
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Settings.settings_general import Ui_Dialog_App_Settings
 from Views.Settings.report_content import Ui_Dialog_Report_Content
+import geopandas as gpd
 
 
 class MainController(QMainWindow, Ui_MainWindow_Main):
@@ -17,7 +20,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.action_Raport_Settings.triggered.connect(self.windowReportContent)
         self.action_Exit.triggered.connect(self.close)
         self.pushButton_Generate_Report.clicked.connect(self.generateReport)
-
+        path = "Models/Maps/powiaty.shp"
+        self.load_shapefile(path)
+        self.showMaximized()
         self.show()
 
     def windowAppSettings(self):
@@ -50,3 +55,21 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         except Exception as e:
             print(e)
+
+    def load_shapefile(self, filepath):
+        gdf = gpd.read_file(filepath)
+
+        self.graphicsScene = QGraphicsScene()
+        self.graphicsView_Interactive_Map.setScene(self.graphicsScene)
+
+        scale_factor = 0.001
+        for index, row in gdf.iterrows():
+            geometry = row['geometry']
+            if geometry.geom_type == 'Polygon':
+                polygon = QGraphicsPolygonItem()
+                points = [QPointF(point[0] * scale_factor, -point[1] * scale_factor) for point in
+                          geometry.exterior.coords]
+                polygon.setPolygon(QtGui.QPolygonF(points))
+                polygon.setBrush(QBrush(Qt.GlobalColor.blue))
+                polygon.setPen(QPen(QColor(0, 0, 0), 1))
+                self.graphicsScene.addItem(polygon)
