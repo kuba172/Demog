@@ -1,9 +1,9 @@
 from PyQt6 import QtGui
 from PyQt6.QtCore import QTranslator
 from PyQt6.QtWidgets import QApplication
-import sys
-
 from Controllers.MainController import MainController
+import qdarktheme
+import sys
 
 
 class Main:
@@ -13,6 +13,9 @@ class Main:
         icon.addPixmap(QtGui.QPixmap("Images/AppIcon/poland-map.png"), QtGui.QIcon.Mode.Normal,
                        QtGui.QIcon.State.Off)
         app.setWindowIcon(icon)
+
+        # Theme
+        qdarktheme.setup_theme("dark")
 
         # Translations
         plQtGuiPath = "Translations/PL/qtbase_pl.qm"
