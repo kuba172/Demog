@@ -21,7 +21,8 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                           QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem)
         self.groupBox_Postal_Code = QtWidgets.QGroupBox(parent=self.centralwidget)
         self.groupBox_Postal_Code.setObjectName("groupBox_Postal_Code")
@@ -35,13 +36,15 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout.addWidget(self.lineEdit_Postal_Code)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.pushButton_Add_Postal_Code = QtWidgets.QPushButton(parent=self.groupBox_Postal_Code)
         self.pushButton_Add_Postal_Code.setMaximumSize(QtCore.QSize(75, 16777215))
         self.pushButton_Add_Postal_Code.setObjectName("pushButton_Add_Postal_Code")
         self.horizontalLayout_2.addWidget(self.pushButton_Add_Postal_Code)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_4.addWidget(self.groupBox_Postal_Code)
@@ -68,7 +71,8 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout_3.addWidget(self.comboBox_Data_To)
         self.horizontalLayout_3.addLayout(self.verticalLayout_3)
         self.horizontalLayout_4.addWidget(self.groupBox_Time_Interval)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_4.addLayout(self.horizontalLayout_4)
         self.graphicsView_Interactive_Map = QtWidgets.QGraphicsView(parent=self.centralwidget)
@@ -77,7 +81,8 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout_4.addWidget(self.graphicsView_Interactive_Map)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout.addItem(spacerItem4)
         self.pushButton_Generate_Report = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton_Generate_Report.setObjectName("pushButton_Generate_Report")
@@ -137,6 +142,7 @@ class Ui_MainWindow_Main(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow_Main = QtWidgets.QMainWindow()
     ui = Ui_MainWindow_Main()
