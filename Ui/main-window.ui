@@ -141,7 +141,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox_Data_To">
+            <widget class="QComboBox" name="comboBox_Date_To">
              <property name="placeholderText">
               <string>do</string>
              </property>
@@ -213,14 +213,16 @@
     <property name="title">
      <string>Plik</string>
     </property>
+    <addaction name="action_Save"/>
+    <addaction name="action_Save_As_New"/>
+    <addaction name="separator"/>
     <addaction name="action_Exit"/>
    </widget>
    <widget class="QMenu" name="menu_Settings">
     <property name="title">
      <string>Ustawienia</string>
     </property>
-    <addaction name="action_App_Settings"/>
-    <addaction name="action_Raport_Settings"/>
+    <addaction name="action_Settings"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -228,7 +230,14 @@
     </property>
     <addaction name="action_About_Program"/>
    </widget>
+   <widget class="QMenu" name="menu_Locations">
+    <property name="title">
+     <string>Lokalizacje</string>
+    </property>
+    <addaction name="action_Selected_Locations"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Locations"/>
    <addaction name="menu_Settings"/>
    <addaction name="menu_Help"/>
   </widget>
@@ -253,6 +262,32 @@
   <action name="action_Raport_Settings">
    <property name="text">
     <string>Raportu</string>
+   </property>
+  </action>
+  <action name="action_Settings">
+   <property name="text">
+    <string>Ustawienia</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="text">
+    <string>Zapisz</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_Save_As_New">
+   <property name="text">
+    <string>Zapisz jako nowy...</string>
+   </property>
+  </action>
+  <action name="action_Selected_Locations">
+   <property name="text">
+    <string>Wybrane lokalizacje</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
  </widget>

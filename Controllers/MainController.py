@@ -4,7 +4,6 @@ from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import QBrush, QPen, QColor
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, QGraphicsPolygonItem
 from Views.Main.main_window import Ui_MainWindow_Main
-import geopandas as gpd
 
 
 class MainController(QMainWindow, Ui_MainWindow_Main):
