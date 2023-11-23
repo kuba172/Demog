@@ -2,6 +2,7 @@ from PyQt6 import QtGui
 from PyQt6.QtCore import QTranslator
 from PyQt6.QtWidgets import QApplication
 from Controllers.MainController import MainController
+from Controllers.SettingsController import SettingsController
 import sys
 
 
@@ -21,8 +22,10 @@ class Main:
 
         # Controllers
         self.mainController = MainController()
+        self.settingsController = SettingsController()
 
         # Connections
+        self.mainController.action_Settings.triggered.connect(self.settingsController.showSettingsWindow)
 
 
 translator = QTranslator()
