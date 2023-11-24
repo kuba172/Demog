@@ -69,19 +69,23 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
     def changeColor(self, field_name, button_name):
         try:
-            color = QColorDialog.getColor().name()
+            button = self.findChild(QPushButton, button_name)
 
-            if color:
-                button = self.findChild(QPushButton, button_name)
-                if button:
-                    button.setStyleSheet(f"background-color: {color};")
+            if button:
+                current_style = button.styleSheet()
+
+                color = QColorDialog.getColor(options=QColorDialog.ColorDialogOption.ShowAlphaChannel)
+
+                if color.isValid():
+                    button.setStyleSheet(f"{current_style}background-color: {color.name()};")
 
                     custom_colors = self.loadCustomColors(SettingsController.CUSTOM_THEM_FILE)
-                    custom_colors[field_name] = color
+                    custom_colors[field_name] = color.name()
 
                     self.saveCustomColors(custom_colors, SettingsController.CUSTOM_THEM_FILE)
                     self.setCustomThem()
-
+                else:
+                    button.setStyleSheet(current_style)
 
         except Exception as e:
             print(f"Error changing color: {e}")
@@ -95,7 +99,10 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 color_elem.text = color_value
 
             tree = ET.ElementTree(root)
-            tree.write(file_path, encoding="utf-8", xml_declaration=True)
+
+            with open(file_path, 'wb') as file:
+                tree.write(file, encoding="utf-8", xml_declaration=True)
+            
         except Exception as e:
             print(f"Error saving custom colors: {e}")
 
