@@ -1,15 +1,20 @@
-from PyQt6.QtWidgets import QMainWindow
+import json
+
+from PyQt6.QtGui import QColor, QPalette
+from PyQt6.QtWidgets import QMainWindow, QColorDialog, QPushButton
 from qt_material import QtStyleTools
-from PyQt6.QtCore import Qt, QDir
+from PyQt6.QtCore import Qt, QDir, QFile
 from Views.Settings.settings_window import Ui_MainWindow_Settings
+from xml.etree import ElementTree as ET
 
 
 class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
+    SETTINGS_FILE = "settings.json"
+    CUSTOM_THEM_FILE = "Themes/my_custom.xml"
 
     def __init__(self, app):
         super().__init__()
         self.app = app
-        self.apply_stylesheet(self.app, 'Themes/dark_blue.xml')
         self.setWindowFlags(
             Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowCloseButtonHint)
 
@@ -17,9 +22,106 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
         self.populateLanguage()
         self.populateThemes()
+        self.loadSettings()
+        self.loadAndApplyCustomStylesheet()
 
         # Connections
         self.comboBox_Theme.currentIndexChanged.connect(self.loadThem)
+        self.comboBox_Theme.currentIndexChanged.connect(self.saveSettings)
+        self.comboBox_Language.currentIndexChanged.connect(self.saveSettings)
+        self.checkBox_Use_Custom_Theme.clicked.connect(self.setCustomThem)
+        self.checkBox_Use_Secondary_Colors.clicked.connect(self.setCustomThem)
+
+        self.pushButton_Primary_Color.clicked.connect(
+            lambda: self.change_color('primaryColor', 'pushButton_Primary_Color'))
+        self.pushButton_Primary_Light_Color.clicked.connect(
+            lambda: self.change_color('primaryLightColor', 'pushButton_Primary_Light_Color'))
+        self.pushButton_Secondary_Color.clicked.connect(
+            lambda: self.change_color('secondaryColor', 'pushButton_Secondary_Color'))
+        self.pushButton_Secondary_Light_Color.clicked.connect(
+            lambda: self.change_color('secondaryLightColor', 'pushButton_Secondary_Light_Color'))
+        self.pushButton_Secondary_Dark_Color.clicked.connect(
+            lambda: self.change_color('secondaryDarkColor', 'pushButton_Secondary_Dark_Color'))
+        self.pushButton_Primary_Text_Color.clicked.connect(
+            lambda: self.change_color('primaryTextColor', 'pushButton_Primary_Text_Color'))
+        self.pushButton_Secondary_Text_Color.clicked.connect(
+            lambda: self.change_color('secondaryTextColor', 'pushButton_Secondary_Text_Color'))
+
+    def change_color(self, field_name, button_name):
+        try:
+            color = QColorDialog.getColor().name()
+
+            if color:
+                button = self.findChild(QPushButton, button_name)
+                if button:
+                    button.setStyleSheet(f"background-color: {color};")
+
+                    custom_colors = self.loadCustomColors(SettingsController.CUSTOM_THEM_FILE)
+                    custom_colors[field_name] = color
+
+                    self.saveCustomColors(custom_colors, SettingsController.CUSTOM_THEM_FILE)
+                    self.setCustomThem()
+
+        except Exception as e:
+            print(f"Error changing color: {e}")
+
+    def saveCustomColors(self, colors, file_path):
+        try:
+            root = ET.Element("resources")
+
+            for color_name, color_value in colors.items():
+                color_elem = ET.SubElement(root, "color", name=color_name)
+                color_elem.text = color_value
+
+            tree = ET.ElementTree(root)
+            tree.write(file_path, encoding="utf-8", xml_declaration=True)
+            print(f"Saved custom colors to {file_path}")
+
+        except Exception as e:
+            print(f"Error saving custom colors: {e}")
+
+    def setCustomThem(self):
+        if self.checkBox_Use_Custom_Theme.isChecked():
+            if self.checkBox_Use_Secondary_Colors.isChecked():
+                self.apply_stylesheet(self.app, SettingsController.CUSTOM_THEM_FILE, invert_secondary=True)
+            else:
+                self.apply_stylesheet(self.app, SettingsController.CUSTOM_THEM_FILE)
+        else:
+            self.loadSettings()
+
+    def loadCustomColors(self, file_path):
+        colors = {}
+        try:
+            tree = ET.parse(file_path)
+            root = tree.getroot()
+            for color_elem in root.findall(".//color"):
+                color_name = color_elem.get("name")
+                color_value = color_elem.text
+                colors[color_name] = color_value
+        except Exception as e:
+            print(f"Error loading custom colors: {e}")
+        return colors
+
+    def applyCustomStylesheet(self, custom_stylesheet):
+        self.pushButton_Primary_Color.setStyleSheet(
+            f"background-color: {custom_stylesheet.get('primaryColor', '#ffffff')};")
+        self.pushButton_Primary_Light_Color.setStyleSheet(
+            f"background-color: {custom_stylesheet.get('primaryLightColor', '#ffffff')};")
+        self.pushButton_Secondary_Color.setStyleSheet(
+            f"background-color: {custom_stylesheet.get('secondaryColor', '#ffffff')};")
+        self.pushButton_Secondary_Light_Color.setStyleSheet(
+            f"background-color: {custom_stylesheet.get('secondaryLightColor', '#ffffff')};")
+        self.pushButton_Secondary_Dark_Color.setStyleSheet(
+            f"background-color: {custom_stylesheet.get('secondaryDarkColor', '#ffffff')};")
+        self.pushButton_Primary_Text_Color.setStyleSheet(
+            f"background-color: {custom_stylesheet.get('primaryTextColor', '#ffffff')};")
+        self.pushButton_Secondary_Text_Color.setStyleSheet(
+            f"background-color: {custom_stylesheet.get('secondaryTextColor', '#ffffff')};")
+
+    def loadAndApplyCustomStylesheet(self):
+        file_path = SettingsController.CUSTOM_THEM_FILE
+        custom_colors = self.loadCustomColors(file_path)
+        self.applyCustomStylesheet(custom_colors)
 
     def showSettingsWindow(self):
         self.show()
@@ -33,6 +135,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
     def populateThemes(self):
         themes_path = "Themes"
         themes = [entry.replace(".xml", "") for entry in QDir(themes_path).entryList(['*.xml'])]
+        themes.remove("my_custom")
 
         self.comboBox_Theme.clear()
         self.comboBox_Theme.addItems(themes)
@@ -44,3 +147,27 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         filename = themes_path + them_name + extension
 
         self.apply_stylesheet(self.app, filename)
+
+    def loadSettings(self):
+        if QFile.exists(SettingsController.SETTINGS_FILE):
+            with open(SettingsController.SETTINGS_FILE, 'r') as file:
+                settings = json.load(file)
+                language_index = settings.get("language_index", 0)
+                theme_index = settings.get("theme_index", 0)
+
+                self.comboBox_Language.setCurrentIndex(language_index)
+                self.comboBox_Theme.setCurrentIndex(theme_index)
+                self.loadThem()
+        else:
+            default_settings = {"language_index": 1, "theme_index": 1}
+            with open(SettingsController.SETTINGS_FILE, 'w') as file:
+                json.dump(default_settings, file, indent=2)
+            self.loadSettings()
+
+    def saveSettings(self):
+        language_index = self.comboBox_Language.currentIndex()
+        theme_index = self.comboBox_Theme.currentIndex()
+        settings = {"language_index": language_index, "theme_index": theme_index}
+
+        with open(SettingsController.SETTINGS_FILE, 'w') as file:
+            json.dump(settings, file, indent=2)
