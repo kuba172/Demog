@@ -22,7 +22,7 @@ class Main:
 
         # Controllers
         self.mainController = MainController()
-        self.settingsController = SettingsController()
+        self.settingsController = SettingsController(app)
 
         # Connections
         self.mainController.action_Settings.triggered.connect(self.settingsController.showSettingsWindow)

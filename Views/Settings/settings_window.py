@@ -13,9 +13,9 @@ class Ui_MainWindow_Settings(object):
     def setupUi(self, MainWindow_Settings):
         MainWindow_Settings.setObjectName("MainWindow_Settings")
         MainWindow_Settings.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
-        MainWindow_Settings.resize(750, 550)
-        MainWindow_Settings.setMinimumSize(QtCore.QSize(750, 550))
-        MainWindow_Settings.setMaximumSize(QtCore.QSize(750, 550))
+        MainWindow_Settings.resize(800, 600)
+        MainWindow_Settings.setMinimumSize(QtCore.QSize(0, 0))
+        MainWindow_Settings.setMaximumSize(QtCore.QSize(800, 600))
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow_Settings)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -35,18 +35,27 @@ class Ui_MainWindow_Settings(object):
         self.stackedWidget_Content.setObjectName("stackedWidget_Content")
         self.General = QtWidgets.QWidget()
         self.General.setObjectName("General")
-        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.General)
+        self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.General)
+        self.verticalLayout_8.setObjectName("verticalLayout_8")
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.scrollArea = QtWidgets.QScrollArea(parent=self.General)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 629, 528))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum,
-                                           QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.horizontalLayout_11.addItem(spacerItem)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.groupBox = QtWidgets.QGroupBox(parent=self.General)
+        self.groupBox = QtWidgets.QGroupBox(parent=self.scrollAreaWidgetContents)
         self.groupBox.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBox)
@@ -55,7 +64,7 @@ class Ui_MainWindow_Settings(object):
         self.comboBox_Language.setObjectName("comboBox_Language")
         self.verticalLayout.addWidget(self.comboBox_Language)
         self.verticalLayout_4.addWidget(self.groupBox)
-        self.groupBox_2 = QtWidgets.QGroupBox(parent=self.General)
+        self.groupBox_2 = QtWidgets.QGroupBox(parent=self.scrollAreaWidgetContents)
         self.groupBox_2.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.groupBox_2.setObjectName("groupBox_2")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.groupBox_2)
@@ -64,7 +73,7 @@ class Ui_MainWindow_Settings(object):
         self.comboBox_Theme.setObjectName("comboBox_Theme")
         self.verticalLayout_2.addWidget(self.comboBox_Theme)
         self.verticalLayout_4.addWidget(self.groupBox_2)
-        self.groupBox_3 = QtWidgets.QGroupBox(parent=self.General)
+        self.groupBox_3 = QtWidgets.QGroupBox(parent=self.scrollAreaWidgetContents)
         self.groupBox_3.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.groupBox_3.setObjectName("groupBox_3")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox_3)
@@ -74,8 +83,7 @@ class Ui_MainWindow_Settings(object):
         self.checkBox_Use_Custom_Theme = QtWidgets.QCheckBox(parent=self.groupBox_3)
         self.checkBox_Use_Custom_Theme.setObjectName("checkBox_Use_Custom_Theme")
         self.horizontalLayout_10.addWidget(self.checkBox_Use_Custom_Theme)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_10.addItem(spacerItem1)
         self.checkBox_Use_Secondary_Colors = QtWidgets.QCheckBox(parent=self.groupBox_3)
         self.checkBox_Use_Secondary_Colors.setEnabled(False)
@@ -154,26 +162,25 @@ class Ui_MainWindow_Settings(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout_9)
         self.verticalLayout_4.addWidget(self.groupBox_3)
         self.verticalLayout_5.addLayout(self.verticalLayout_4)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.verticalLayout_5.addItem(spacerItem2)
         self.horizontalLayout_11.addLayout(self.verticalLayout_5)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum,
-                                            QtWidgets.QSizePolicy.Policy.Expanding)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.horizontalLayout_11.addItem(spacerItem3)
         self.verticalLayout_6.addLayout(self.horizontalLayout_11)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.verticalLayout_7.addWidget(self.scrollArea)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem4)
         self.pushButton_Close_General = QtWidgets.QPushButton(parent=self.General)
         self.pushButton_Close_General.setObjectName("pushButton_Close_General")
         self.horizontalLayout_2.addWidget(self.pushButton_Close_General)
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem5)
-        self.verticalLayout_6.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_7.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_8.addLayout(self.verticalLayout_7)
         self.stackedWidget_Content.addWidget(self.General)
         self.Report = QtWidgets.QWidget()
         self.Report.setObjectName("Report")
@@ -192,25 +199,17 @@ class Ui_MainWindow_Settings(object):
 
         self.retranslateUi(MainWindow_Settings)
         self.stackedWidget_Content.setCurrentIndex(0)
-        self.listWidget_Category_List.currentRowChanged['int'].connect(
-            self.stackedWidget_Content.setCurrentIndex)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.comboBox_Theme.setDisabled)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(
-            self.checkBox_Use_Secondary_Colors.setEnabled)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.pushButton_Primary_Color.setEnabled)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(
-            self.pushButton_Primary_Light_Color.setEnabled)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(
-            self.pushButton_Primary_Text_Color.setEnabled)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(
-            self.pushButton_Secondary_Color.setEnabled)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(
-            self.pushButton_Secondary_Dark_Color.setEnabled)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(
-            self.pushButton_Secondary_Light_Color.setEnabled)  # type: ignore
-        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(
-            self.pushButton_Secondary_Text_Color.setEnabled)  # type: ignore
-        self.pushButton_Close_General.clicked.connect(MainWindow_Settings.close)  # type: ignore
+        self.listWidget_Category_List.currentRowChanged['int'].connect(self.stackedWidget_Content.setCurrentIndex) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.comboBox_Theme.setDisabled) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.checkBox_Use_Secondary_Colors.setEnabled) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.pushButton_Primary_Color.setEnabled) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.pushButton_Primary_Light_Color.setEnabled) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.pushButton_Primary_Text_Color.setEnabled) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.pushButton_Secondary_Color.setEnabled) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.pushButton_Secondary_Dark_Color.setEnabled) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.pushButton_Secondary_Light_Color.setEnabled) # type: ignore
+        self.checkBox_Use_Custom_Theme.toggled['bool'].connect(self.pushButton_Secondary_Text_Color.setEnabled) # type: ignore
+        self.pushButton_Close_General.clicked.connect(MainWindow_Settings.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow_Settings)
 
     def retranslateUi(self, MainWindow_Settings):
@@ -229,21 +228,21 @@ class Ui_MainWindow_Settings(object):
         self.groupBox_2.setTitle(_translate("MainWindow_Settings", "Motyw interfejsu"))
         self.groupBox_3.setTitle(_translate("MainWindow_Settings", "Własny motyw"))
         self.checkBox_Use_Custom_Theme.setText(_translate("MainWindow_Settings", "Własny"))
-        self.checkBox_Use_Secondary_Colors.setText(_translate("MainWindow_Settings", "Użyj kolorów wtórnych"))
-        self.label.setText(_translate("MainWindow_Settings", "Primary Color"))
-        self.pushButton_Primary_Color.setText(_translate("MainWindow_Settings", "niedostępne"))
-        self.label_2.setText(_translate("MainWindow_Settings", "Primary Light Color"))
-        self.pushButton_Primary_Light_Color.setText(_translate("MainWindow_Settings", "niedostępne"))
-        self.label_3.setText(_translate("MainWindow_Settings", "Secondary Color"))
-        self.pushButton_Secondary_Color.setText(_translate("MainWindow_Settings", "niedostępne"))
-        self.label_4.setText(_translate("MainWindow_Settings", "Secondary Light Color"))
-        self.pushButton_Secondary_Light_Color.setText(_translate("MainWindow_Settings", "niedostępne"))
-        self.label_5.setText(_translate("MainWindow_Settings", "Secondary Dark Color"))
-        self.pushButton_Secondary_Dark_Color.setText(_translate("MainWindow_Settings", "niedostępne"))
-        self.label_6.setText(_translate("MainWindow_Settings", "Primary Text Color"))
-        self.pushButton_Primary_Text_Color.setText(_translate("MainWindow_Settings", "niedostępne"))
-        self.label_7.setText(_translate("MainWindow_Settings", "Secondary Text Color"))
-        self.pushButton_Secondary_Text_Color.setText(_translate("MainWindow_Settings", "niedostępne"))
+        self.checkBox_Use_Secondary_Colors.setText(_translate("MainWindow_Settings", "Użyj kolorów dodatkowych"))
+        self.label.setText(_translate("MainWindow_Settings", "Kolor podstawowy"))
+        self.pushButton_Primary_Color.setText(_translate("MainWindow_Settings", "niedostępny"))
+        self.label_2.setText(_translate("MainWindow_Settings", "Podstawowy jasny kolor"))
+        self.pushButton_Primary_Light_Color.setText(_translate("MainWindow_Settings", "niedostępny"))
+        self.label_3.setText(_translate("MainWindow_Settings", "Kolor dodatkowy"))
+        self.pushButton_Secondary_Color.setText(_translate("MainWindow_Settings", "niedostępny"))
+        self.label_4.setText(_translate("MainWindow_Settings", "Dodatkowy jasny kolor"))
+        self.pushButton_Secondary_Light_Color.setText(_translate("MainWindow_Settings", "niedostępny"))
+        self.label_5.setText(_translate("MainWindow_Settings", "Dodatkowy ciemny kolor"))
+        self.pushButton_Secondary_Dark_Color.setText(_translate("MainWindow_Settings", "niedostępny"))
+        self.label_6.setText(_translate("MainWindow_Settings", "Podstawowy kolor tekstu"))
+        self.pushButton_Primary_Text_Color.setText(_translate("MainWindow_Settings", "niedostępny"))
+        self.label_7.setText(_translate("MainWindow_Settings", "Dodatkowy kolor tekstu"))
+        self.pushButton_Secondary_Text_Color.setText(_translate("MainWindow_Settings", "niedostępny"))
         self.pushButton_Close_General.setText(_translate("MainWindow_Settings", "Zamknij"))
         self.label_8.setText(_translate("MainWindow_Settings", "RAPORT"))
         self.label_9.setText(_translate("MainWindow_Settings", "MAPA"))
@@ -251,7 +250,6 @@ class Ui_MainWindow_Settings(object):
 
 if __name__ == "__main__":
     import sys
-
     app = QtWidgets.QApplication(sys.argv)
     MainWindow_Settings = QtWidgets.QMainWindow()
     ui = Ui_MainWindow_Settings()
