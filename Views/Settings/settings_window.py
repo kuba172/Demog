@@ -14,7 +14,7 @@ class Ui_MainWindow_Settings(object):
         MainWindow_Settings.setObjectName("MainWindow_Settings")
         MainWindow_Settings.setWindowModality(QtCore.Qt.WindowModality.ApplicationModal)
         MainWindow_Settings.resize(800, 600)
-        MainWindow_Settings.setMinimumSize(QtCore.QSize(0, 0))
+        MainWindow_Settings.setMinimumSize(QtCore.QSize(800, 600))
         MainWindow_Settings.setMaximumSize(QtCore.QSize(800, 600))
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow_Settings)
         self.centralwidget.setObjectName("centralwidget")
