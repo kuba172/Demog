@@ -3,7 +3,7 @@ import json
 from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import QMainWindow, QColorDialog, QPushButton
 from qt_material import QtStyleTools
-from PyQt6.QtCore import Qt, QDir, QFile
+from PyQt6.QtCore import Qt, QDir, QFile, QTranslator
 from Views.Settings.settings_window import Ui_MainWindow_Settings
 from xml.etree import ElementTree as ET
 
@@ -12,9 +12,10 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
     SETTINGS_FILE = "settings.json"
     CUSTOM_THEM_FILE = "Themes/my_custom.xml"
 
-    def __init__(self, app):
+    def __init__(self, app, translator):
         super().__init__()
         self.app = app
+        self.translator = translator
         self.setWindowFlags(
             Qt.WindowType.CustomizeWindowHint | Qt.WindowType.WindowCloseButtonHint)
 
@@ -24,6 +25,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.populateThemes()
         self.loadSettings()
         self.loadAndApplyCustomStylesheet()
+        self.loadLanguage()
 
         # Connections
         self.comboBox_Theme.currentIndexChanged.connect(self.loadThem)
@@ -31,23 +33,41 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.comboBox_Language.currentIndexChanged.connect(self.saveSettings)
         self.checkBox_Use_Custom_Theme.clicked.connect(self.setCustomThem)
         self.checkBox_Use_Secondary_Colors.clicked.connect(self.setCustomThem)
+        self.comboBox_Language.currentIndexChanged.connect(self.loadLanguage)
 
         self.pushButton_Primary_Color.clicked.connect(
-            lambda: self.change_color('primaryColor', 'pushButton_Primary_Color'))
+            lambda: self.changeColor('primaryColor', 'pushButton_Primary_Color'))
         self.pushButton_Primary_Light_Color.clicked.connect(
-            lambda: self.change_color('primaryLightColor', 'pushButton_Primary_Light_Color'))
+            lambda: self.changeColor('primaryLightColor', 'pushButton_Primary_Light_Color'))
         self.pushButton_Secondary_Color.clicked.connect(
-            lambda: self.change_color('secondaryColor', 'pushButton_Secondary_Color'))
+            lambda: self.changeColor('secondaryColor', 'pushButton_Secondary_Color'))
         self.pushButton_Secondary_Light_Color.clicked.connect(
-            lambda: self.change_color('secondaryLightColor', 'pushButton_Secondary_Light_Color'))
+            lambda: self.changeColor('secondaryLightColor', 'pushButton_Secondary_Light_Color'))
         self.pushButton_Secondary_Dark_Color.clicked.connect(
-            lambda: self.change_color('secondaryDarkColor', 'pushButton_Secondary_Dark_Color'))
+            lambda: self.changeColor('secondaryDarkColor', 'pushButton_Secondary_Dark_Color'))
         self.pushButton_Primary_Text_Color.clicked.connect(
-            lambda: self.change_color('primaryTextColor', 'pushButton_Primary_Text_Color'))
+            lambda: self.changeColor('primaryTextColor', 'pushButton_Primary_Text_Color'))
         self.pushButton_Secondary_Text_Color.clicked.connect(
-            lambda: self.change_color('secondaryTextColor', 'pushButton_Secondary_Text_Color'))
+            lambda: self.changeColor('secondaryTextColor', 'pushButton_Secondary_Text_Color'))
 
-    def change_color(self, field_name, button_name):
+    def loadLanguage(self):
+        language_files = {
+            0: "Translations/PL/qtbase_pl.qm",
+            1: "Translations/EN/qtbase_en.qm",
+        }
+
+        selected_language = self.comboBox_Language.currentIndex()
+
+        selected_language_file = language_files.get(selected_language)
+        if selected_language_file:
+            if self.translator.load(selected_language_file):
+                self.app.installTranslator(self.translator)
+        else:
+            default_language_file = "Translations/EN/qtbase_en.qm"
+            if self.translator.load(default_language_file):
+                self.app.installTranslator(self.translator)
+
+    def changeColor(self, field_name, button_name):
         try:
             color = QColorDialog.getColor().name()
 
@@ -62,6 +82,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                     self.saveCustomColors(custom_colors, SettingsController.CUSTOM_THEM_FILE)
                     self.setCustomThem()
 
+
         except Exception as e:
             print(f"Error changing color: {e}")
 
@@ -75,8 +96,6 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
             tree = ET.ElementTree(root)
             tree.write(file_path, encoding="utf-8", xml_declaration=True)
-            print(f"Saved custom colors to {file_path}")
-
         except Exception as e:
             print(f"Error saving custom colors: {e}")
 
