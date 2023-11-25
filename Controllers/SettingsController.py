@@ -31,9 +31,11 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.comboBox_Theme.currentIndexChanged.connect(self.loadThem)
         self.comboBox_Theme.currentIndexChanged.connect(self.saveSettings)
         self.comboBox_Language.currentIndexChanged.connect(self.saveSettings)
-        self.checkBox_Use_Custom_Theme.clicked.connect(self.setCustomThem)
-        self.checkBox_Use_Secondary_Colors.clicked.connect(self.setCustomThem)
+        self.checkBox_Use_Custom_Theme.clicked.connect(self.loadThem)
+        self.checkBox_Use_Secondary_Colors.clicked.connect(self.loadThem)
         self.comboBox_Language.currentIndexChanged.connect(self.loadLanguage)
+        self.checkBox_Use_Custom_Theme.clicked.connect(self.saveSettings)
+        self.checkBox_Use_Secondary_Colors.clicked.connect(self.saveSettings)
 
         self.pushButton_Primary_Color.clicked.connect(
             lambda: self.changeColor('primaryColor', 'pushButton_Primary_Color'))
@@ -83,7 +85,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                     custom_colors[field_name] = color.name()
 
                     self.saveCustomColors(custom_colors, SettingsController.CUSTOM_THEM_FILE)
-                    self.setCustomThem()
+                    self.loadThem()
                 else:
                     button.setStyleSheet(current_style)
 
@@ -102,18 +104,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
             with open(file_path, 'wb') as file:
                 tree.write(file, encoding="utf-8", xml_declaration=True)
-            
+
         except Exception as e:
             print(f"Error saving custom colors: {e}")
-
-    def setCustomThem(self):
-        if self.checkBox_Use_Custom_Theme.isChecked():
-            if self.checkBox_Use_Secondary_Colors.isChecked():
-                self.apply_stylesheet(self.app, SettingsController.CUSTOM_THEM_FILE, invert_secondary=True)
-            else:
-                self.apply_stylesheet(self.app, SettingsController.CUSTOM_THEM_FILE)
-        else:
-            self.loadSettings()
 
     def loadCustomColors(self, file_path):
         colors = {}
@@ -167,12 +160,18 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.comboBox_Theme.addItems(themes)
 
     def loadThem(self):
-        themes_path = "Themes/"
-        extension = ".xml"
-        them_name = self.comboBox_Theme.currentText()
-        filename = themes_path + them_name + extension
+        if self.checkBox_Use_Custom_Theme.isChecked():
+            if self.checkBox_Use_Secondary_Colors.isChecked():
+                self.apply_stylesheet(self.app, SettingsController.CUSTOM_THEM_FILE, invert_secondary=True)
+            else:
+                self.apply_stylesheet(self.app, SettingsController.CUSTOM_THEM_FILE)
+        else:
+            themes_path = "Themes/"
+            extension = ".xml"
+            them_name = self.comboBox_Theme.currentText()
+            filename = themes_path + them_name + extension
 
-        self.apply_stylesheet(self.app, filename)
+            self.apply_stylesheet(self.app, filename)
 
     def loadSettings(self):
         if QFile.exists(SettingsController.SETTINGS_FILE):
@@ -180,9 +179,14 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 settings = json.load(file)
                 language_index = settings.get("language_index", 0)
                 theme_index = settings.get("theme_index", 0)
+                custom_theme_enabled = settings.get("custom_theme_enabled", False)
+                secondary_colors_enabled = settings.get("secondary_colors_enabled", False)
 
+                self.checkBox_Use_Custom_Theme.setChecked(custom_theme_enabled)
+                self.checkBox_Use_Secondary_Colors.setChecked(secondary_colors_enabled)
                 self.comboBox_Language.setCurrentIndex(language_index)
                 self.comboBox_Theme.setCurrentIndex(theme_index)
+
                 self.loadThem()
         else:
             default_settings = {"language_index": 1, "theme_index": 1}
@@ -193,7 +197,15 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
     def saveSettings(self):
         language_index = self.comboBox_Language.currentIndex()
         theme_index = self.comboBox_Theme.currentIndex()
-        settings = {"language_index": language_index, "theme_index": theme_index}
+        custom_theme_enabled = self.checkBox_Use_Custom_Theme.isChecked()
+        secondary_colors_enabled = self.checkBox_Use_Secondary_Colors.isChecked()
+
+        settings = {
+            "language_index": language_index,
+            "theme_index": theme_index,
+            "custom_theme_enabled": custom_theme_enabled,
+            "secondary_colors_enabled": secondary_colors_enabled
+        }
 
         with open(SettingsController.SETTINGS_FILE, 'w') as file:
             json.dump(settings, file, indent=2)
