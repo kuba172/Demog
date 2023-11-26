@@ -1,6 +1,6 @@
 import os
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtCore import Qt, QPointF, QDate
 from PyQt6.QtGui import QBrush, QPen, QColor
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, QGraphicsPolygonItem
 from Views.Main.main_window import Ui_MainWindow_Main
@@ -12,10 +12,16 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         super().__init__()
         self.setupUi(self)
 
+        self.showMaximized()
+
+        self.populateDateFrom()
+        self.populateDateTo()
+
         # Connections
         self.action_Exit.triggered.connect(self.close)
         self.pushButton_Generate_Report.clicked.connect(self.generateReport)
-        self.showMaximized()
+        self.action_Generate_Report.triggered.connect(self.generateReport)
+
         self.show()
 
     def generateReport(self):
@@ -36,3 +42,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         except Exception as e:
             print(e)
+
+    def populateDateFrom(self):
+        self.comboBox_Date_From.clear()
+        current_year = QDate.currentDate().year()
+        for year in range(current_year, current_year + 6):
+            self.comboBox_Date_From.addItem(str(year))
+
+    def populateDateTo(self):
+        self.comboBox_Date_To.clear()
+        current_year = QDate.currentDate().year()
+        for year in range(current_year + 1, current_year + 12):
+            self.comboBox_Date_To.addItem(str(year))
