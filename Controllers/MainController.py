@@ -4,6 +4,7 @@ from PyQt6.QtCore import Qt, QPointF, QDate
 from PyQt6.QtGui import QBrush, QPen, QColor
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, QGraphicsPolygonItem
 from Views.Main.main_window import Ui_MainWindow_Main
+from Views.Main.about_app import Ui_Dialog_About_App
 
 
 class MainController(QMainWindow, Ui_MainWindow_Main):
@@ -21,7 +22,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.action_Exit.triggered.connect(self.close)
         self.pushButton_Generate_Report.clicked.connect(self.generateReport)
         self.action_Generate_Report.triggered.connect(self.generateReport)
-
+        self.action_About_Program.triggered.connect(self.createAboutApp)
         self.show()
 
     def generateReport(self):
@@ -54,3 +55,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         current_year = QDate.currentDate().year()
         for year in range(current_year + 1, current_year + 12):
             self.comboBox_Date_To.addItem(str(year))
+
+    def createAboutApp(self):
+        self.window_about_papp = QDialog()
+        self.window_about_papp_ui = Ui_Dialog_About_App()
+        self.window_about_papp_ui.setupUi(self.window_about_papp)
+        self.window_about_papp.show()
