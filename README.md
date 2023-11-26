@@ -1,7 +1,7 @@
 # demog
 Projekt studencki z przedmiotu "Systemy informatyczne"
 
-# Bibloteki 
+# Biblioteki 
 
 - PyQt6
 - pyqt6-tools (opcjonalnie do projektowania ui w qtdesigner itp.)
