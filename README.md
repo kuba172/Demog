@@ -6,3 +6,10 @@ Projekt studencki z przedmiotu "Systemy informatyczne"
 - PyQt6
 - pyqt6-tools (opcjonalnie do projektowania ui w qtdesigner itp.)
 - qt-material
+
+* raport:
+
+- pandas
+- matplotlib
+- reportlab
+- tkinter
