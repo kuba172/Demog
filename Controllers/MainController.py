@@ -86,11 +86,20 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             df = pd.read_csv('Resources/locations-suggestion.tsv', delimiter='\t')
             if item in df['KOD POCZTOWY'].values:
                 powiat_value = df.loc[df['KOD POCZTOWY'] == item, 'POWIAT'].iloc[0]
-                self.window_locations_list_ui.listWidget_Locatons_List.addItem(powiat_value)
+                if powiat_value not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
+                                        for i in range(self.window_locations_list_ui.listWidget_Locatons_List.count())]:
+                    self.window_locations_list_ui.listWidget_Locatons_List.addItem(powiat_value)
+                else:
+                    self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
             elif item in df['POWIAT'].values:
-                self.window_locations_list_ui.listWidget_Locatons_List.addItem(item)
+                if item not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
+                                for i in range(self.window_locations_list_ui.listWidget_Locatons_List.count())]:
+                    self.window_locations_list_ui.listWidget_Locatons_List.addItem(item)
+                else:
+                    self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
             else:
-                self.label_Location_Error_Message.setText("Nieprawidłowa wartość")
+                if self.lineEdit_Location.text() != "":
+                    self.label_Location_Error_Message.setText("Nieprawidłowa lokalizacja")
 
             self.lineEdit_Location.clear()
 
@@ -109,6 +118,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 suggestions.update(map(str, unique_values))
 
             completer = QCompleter(list(suggestions))
+            completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+            completer.setFilterMode(Qt.MatchFlag.MatchContains)
+
             self.lineEdit_Location.setCompleter(completer)
 
         except Exception as e:
