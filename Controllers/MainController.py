@@ -75,6 +75,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.window_locations_list_ui = Ui_Dialog_Location_List()
         self.window_locations_list_ui.setupUi(self.window_locations_list)
 
+        self.window_locations_list_ui.pushButton_Delete.clicked.connect(self.handleDeleteButtonClick)
+        self.window_locations_list_ui.pushButton_Cancel.clicked.connect(self.window_locations_list.close)
+        self.window_locations_list_ui.listWidget_Locatons_List.itemClicked.connect(self.test)
+
     def showLocationsList(self):
         self.window_locations_list.show()
 
@@ -125,3 +129,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         except Exception as e:
             print(e)
+
+    def handleDeleteButtonClick(self):
+        selected_items = self.window_locations_list_ui.listWidget_Locatons_List.selectedItems()
+        if selected_items:
+            item = selected_items[0]
+            self.window_locations_list_ui.listWidget_Locatons_List.takeItem(
+                self.window_locations_list_ui.listWidget_Locatons_List.row(item))
+            self.window_locations_list_ui.pushButton_Delete.setEnabled(False)
+
+    def test(self):
+        self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
