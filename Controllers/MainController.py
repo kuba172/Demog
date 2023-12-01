@@ -4,7 +4,10 @@ import pandas as pd
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, QPointF, QDate
 from PyQt6.QtGui import QBrush, QPen, QColor
-from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, QGraphicsPolygonItem, QCompleter
+from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, QGraphicsPolygonItem, QCompleter, \
+    QMessageBox
+from reportlab.pdfgen import canvas
+
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
 from Views.Main.locations_list import Ui_Dialog_Location_List
@@ -46,7 +49,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             filePath = str(filePath[0])
 
             if filePath.endswith(".pdf"):
-                # TODO add function to handle generate contents of report
+                self.generatePdf(filePath)
                 print(filePath)
 
         except Exception as e:
@@ -140,3 +143,98 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
     def handleSelectionChange(self):
         self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
+
+    def generatePdf(self, filePath):
+        try:
+            if filePath:
+                pdf_canvas = canvas.Canvas(filePath)
+
+                self.addTitlePage(pdf_canvas)
+                self.addTableOfContents(pdf_canvas)
+                self.addSummary(pdf_canvas)
+                self.addIntroduction(pdf_canvas)
+                self.addMethodology(pdf_canvas)
+                self.addLocationDescription(pdf_canvas)
+                self.addAnnualAnalysis(pdf_canvas)
+                self.addResultsAndConclusions(pdf_canvas)
+                self.addRecommendations(pdf_canvas)
+                self.addClientSpecificContent(pdf_canvas)
+                self.addSummaryReport(pdf_canvas)
+                self.addReferences(pdf_canvas)
+                self.addAttachments(pdf_canvas)
+
+                pdf_canvas.save()
+                self.statusConfirmation(filePath)
+
+        except Exception as e:
+            print(e)
+
+    def addTitlePage(self, pdf_canvas):
+        pdf_canvas.drawString(100, 750, "Raport z badania atrakcyjności biznesowej")
+        pdf_canvas.drawString(100, 730, f"Kompleksowa analiza []")
+
+    def addTableOfContents(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Spis treści")
+
+    def addSummary(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Streszczenie")
+
+    def addIntroduction(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Wprowadzenie")
+
+    def addMethodology(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Metodologia")
+
+    def addLocationDescription(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Opis wybranej lokalizacji")
+
+    def addAnnualAnalysis(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Analiza roczna")
+
+    def addResultsAndConclusions(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Wyniki i wnioski")
+
+    def addRecommendations(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Zalecenia")
+
+    def addClientSpecificContent(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Dodatkowa treść specyficzna dla klienta")
+
+    def addSummaryReport(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Podsumowanie")
+
+    def addReferences(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Referencje")
+
+    def addAttachments(self, pdf_canvas):
+        pdf_canvas.showPage()
+        pdf_canvas.drawString(100, 750, "Załączniki")
+
+    def statusConfirmation(cls, fileName):
+        try:
+            fileName = os.path.basename(fileName)
+            message = "Raport '{}' został pomyślnie wygenerowany.".format(fileName)
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Question)
+            msg.setText(message)
+            msg.setWindowTitle('Dex')
+
+            msg.setStandardButtons(QMessageBox.StandardButton.Close)
+            msg.button(QMessageBox.StandardButton.Close).setText('Zamknij')
+
+            reply = msg.exec()
+
+            return reply == QMessageBox.StandardButton.Close
+        except Exception as e:
+            print(e)
