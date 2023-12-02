@@ -221,14 +221,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         pdf_canvas.showPage()
         pdf_canvas.drawString(100, 750, "Załączniki")
 
-    def statusConfirmation(cls, fileName):
+    def statusConfirmation(self, fileName):
         try:
             fileName = os.path.basename(fileName)
             message = "Raport '{}' został pomyślnie wygenerowany.".format(fileName)
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Question)
             msg.setText(message)
-            msg.setWindowTitle('Dex')
+            msg.setWindowTitle('DemoG')
 
             msg.setStandardButtons(QMessageBox.StandardButton.Close)
             msg.button(QMessageBox.StandardButton.Close).setText('Zamknij')
