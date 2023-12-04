@@ -12,6 +12,9 @@ from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
 from Views.Main.locations_list import Ui_Dialog_Location_List
 
+import datetime
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
 
 class MainController(QMainWindow, Ui_MainWindow_Main):
 
@@ -170,8 +173,33 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             print(e)
 
     def addTitlePage(self, pdf_canvas):
-        pdf_canvas.drawString(100, 750, "Raport z badania atrakcyjności biznesowej")
-        pdf_canvas.drawString(100, 730, f"Kompleksowa analiza []")
+
+        # Set page size and margins
+        page_width, page_height = letter
+        margin = inch
+        image_width = 2*inch  # Adjust as needed
+        image_height = 1*inch  # Adjust as needed
+
+        # Centered logo
+        logo_path = os.path.join('images', 'AppIcon', 'poland-map.png') # placeholder logo
+        image_x = (page_width - image_width) / 2
+        image_y = 600  # Adjust the Y-coordinate as needed
+        pdf_canvas.drawImage(logo_path, image_x, image_y, width=image_width, height=image_height)
+
+        # Report Title
+        pdf_canvas.setFont("Helvetica-Bold", 18)
+        title_x = page_width / 2
+        title_y = 500  # Adjust as needed
+        pdf_canvas.drawCentredString(title_x, title_y, "Raport z badania atrakcyjności biznesowej")
+        pdf_canvas.setFont("Helvetica", 12)
+        pdf_canvas.drawString(title_x, title_y, f"Kompleksowa analiza []")
+
+        # Date of Report Generation
+        pdf_canvas.setFont("Helvetica", 12)
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        date_x = page_width / 2
+        date_y = title_y - 30  # Adjust as needed
+        pdf_canvas.drawCentredString(date_x, date_y, f"Data generacji raportu: {current_date}")
 
     def addTableOfContents(self, pdf_canvas):
         pdf_canvas.showPage()
