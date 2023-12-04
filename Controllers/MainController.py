@@ -41,22 +41,25 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
     def generateReport(self):
         try:
-            fileFilter = ('Plik PDF (*.pdf)')
+            fileFilter = 'Plik PDF (*.pdf)'
 
-            filePath = QFileDialog.getSaveFileName(
+            filePath, _ = QFileDialog.getSaveFileName(
                 caption="Eksportuj plik",
                 directory=os.path.expanduser("~/Desktop/raport.pdf"),
                 filter=fileFilter,
                 initialFilter='Plik PDF (*.pdf)')
 
-            filePath = str(filePath[0])
-
-            if filePath.endswith(".pdf"):
-                self.generatePdf(filePath)
-                print(filePath)
+            if filePath and filePath.endswith(".pdf"):
+                success = self.generatePdf(filePath)
+                self.statusConfirmation(filePath, success=success)
+                return success
+            else:
+                return False
 
         except Exception as e:
-            print(e)
+            print("Error occurred:", e)
+            self.statusConfirmation(filePath, success=False)
+            raise  # Re-raise the exception to signal failure
 
     def populateDateFrom(self):
         self.comboBox_Date_From.clear()
@@ -167,10 +170,12 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 self.addAttachments(pdf_canvas)
 
                 pdf_canvas.save()
-                self.statusConfirmation(filePath)
+                return True  # Indicates success
 
         except Exception as e:
             print(e)
+            return False  # Indicates failure
+
 
     def addTitlePage(self, pdf_canvas):
 
@@ -249,20 +254,26 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         pdf_canvas.showPage()
         pdf_canvas.drawString(100, 750, "Załączniki")
 
-    def statusConfirmation(self, fileName):
+    def statusConfirmation(self, fileName, success = True):
         try:
             fileName = os.path.basename(fileName)
-            message = "Raport '{}' został pomyślnie wygenerowany.".format(fileName)
             msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Question)
-            msg.setText(message)
             msg.setWindowTitle('DemoG')
 
+            if success:
+                message = f"Raport '{fileName}' został pomyślnie wygenerowany."
+                msg.setIcon(QMessageBox.Icon.Information)
+            else:
+                message = f"Błąd podczas generowania raportu '{fileName}'."
+                msg.setIcon(QMessageBox.Icon.Warning)
+
+            msg.setText(message)
             msg.setStandardButtons(QMessageBox.StandardButton.Close)
             msg.button(QMessageBox.StandardButton.Close).setText('Zamknij')
 
             reply = msg.exec()
-
             return reply == QMessageBox.StandardButton.Close
+
         except Exception as e:
             print(e)
+
