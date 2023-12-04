@@ -16,6 +16,11 @@ import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
+pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
+
 class MainController(QMainWindow, Ui_MainWindow_Main):
 
     def __init__(self):
@@ -192,19 +197,19 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         pdf_canvas.drawImage(logo_path, image_x, image_y, width=image_width, height=image_height)
 
         # Report Title
-        pdf_canvas.setFont("Helvetica-Bold", 18)
+        pdf_canvas.setFont("DejaVuSans-Bold", 18)
         title_x = page_width / 2
         title_y = 500  # Adjust as needed
         pdf_canvas.drawCentredString(title_x, title_y, "Raport z badania atrakcyjności biznesowej")
-        pdf_canvas.setFont("Helvetica", 12)
-        pdf_canvas.drawString(title_x, title_y, f"Kompleksowa analiza []")
+        pdf_canvas.setFont("DejaVuSans", 12)
+        pdf_canvas.drawCentredString(title_x, title_y - 30, f"Kompleksowa analiza []")
 
         # Date of Report Generation
-        pdf_canvas.setFont("Helvetica", 12)
+        pdf_canvas.setFont("DejaVuSans", 12)
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         date_x = page_width / 2
-        date_y = title_y - 30  # Adjust as needed
-        pdf_canvas.drawCentredString(date_x, date_y, f"Data generacji raportu: {current_date}")
+        date_y = title_y - 60  # Adjust as needed
+        pdf_canvas.drawCentredString(date_x, date_y, f"Data wygenerowania raportu: {current_date}")
 
     def addTableOfContents(self, pdf_canvas):
         pdf_canvas.showPage()
