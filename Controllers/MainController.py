@@ -41,7 +41,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.action_About_Program.triggered.connect(self.createAboutApp)
         self.pushButton_Add_Location.clicked.connect(self.addToLocationsList)
         self.lineEdit_Location.returnPressed.connect(self.addToLocationsList)
-
+        self.comboBox_Date_From.currentIndexChanged.connect(self.selectedYear)
         self.show()
 
     def generateReport(self):
@@ -72,10 +72,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         for year in range(current_year, current_year + 6):
             self.comboBox_Date_From.addItem(str(year))
 
-    def populateDateTo(self):
+    def selectedYear(self):
+        selected_year = self.comboBox_Date_From.currentText()
+        self.populateDateTo(selected_year)
+
+    def populateDateTo(self, selected_year = None):
         self.comboBox_Date_To.clear()
-        current_year = QDate.currentDate().year()
-        for year in range(current_year + 1, current_year + 12):
+        if selected_year is None:
+            current_year = QDate.currentDate().year()
+        else:
+            current_year = int(selected_year)
+        for year in range(current_year, current_year + 6):
             self.comboBox_Date_To.addItem(str(year))
 
     def createAboutApp(self):
