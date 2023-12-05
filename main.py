@@ -20,6 +20,7 @@ class Main:
 
         # Connections
         self.mainController.action_Settings.triggered.connect(self.settingsController.showSettingsWindow)
+        self.mainController.action_Location_List.triggered.connect(self.mainController.showLocationsList)
 
 
 translator = QTranslator()

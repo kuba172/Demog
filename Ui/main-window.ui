@@ -23,7 +23,7 @@
    <string>DemoG</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
@@ -42,59 +42,79 @@
       <item>
        <widget class="QGroupBox" name="groupBox_Postal_Code">
         <property name="title">
-         <string>Kod pocztowy:</string>
+         <string>Lokalizacja:</string>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLineEdit" name="lineEdit_Postal_Code">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLineEdit" name="lineEdit_Location">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="frame">
+                <bool>true</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+               <property name="placeholderText">
+                <string>00-000, powiat</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>13</width>
+                 <height>13</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_Add_Location">
+               <property name="maximumSize">
+                <size>
+                 <width>75</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Dodaj</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_Location_Error_Message">
+             <property name="styleSheet">
+              <string notr="true">QLabel{
+color: red;
+font-weight: bold;
+}</string>
+             </property>
              <property name="text">
               <string/>
              </property>
-             <property name="frame">
-              <bool>true</bool>
-             </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
-             </property>
-             <property name="readOnly">
-              <bool>false</bool>
-             </property>
-             <property name="placeholderText">
-              <string>00-000</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Minimum</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>10</width>
-               <height>5</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_Add_Postal_Code">
-             <property name="maximumSize">
-              <size>
-               <width>75</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Dodaj</string>
              </property>
             </widget>
            </item>
@@ -110,64 +130,85 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QLabel" name="label">
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Od:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboBox_Date_From">
+                 <property name="minimumSize">
+                  <size>
+                   <width>75</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="placeholderText">
+                  <string>od</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>10</width>
+                 <height>5</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Do:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboBox_Date_To">
+                 <property name="minimumSize">
+                  <size>
+                   <width>75</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="placeholderText">
+                  <string>do</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_Date_From_To_Error_Message">
+             <property name="styleSheet">
+              <string notr="true">QLabel{
+color: red;
+font-weight: bold;
+}</string>
+             </property>
              <property name="text">
-              <string>Od:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox_Date_From">
-             <property name="minimumSize">
-              <size>
-               <width>75</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="placeholderText">
-              <string>od</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>10</width>
-             <height>5</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Do:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox_Date_To">
-             <property name="minimumSize">
-              <size>
-               <width>75</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="placeholderText">
-              <string>do</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -237,6 +278,7 @@
     <property name="title">
      <string>Plik</string>
     </property>
+    <addaction name="action_Open"/>
     <addaction name="action_Save"/>
     <addaction name="action_Save_As_New"/>
     <addaction name="separator"/>
@@ -260,7 +302,7 @@
     <property name="title">
      <string>Lokalizacje</string>
     </property>
-    <addaction name="action_Selected_Locations"/>
+    <addaction name="action_Location_List"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Locations"/>
@@ -308,7 +350,7 @@
     <string>Zapisz jako nowy...</string>
    </property>
   </action>
-  <action name="action_Selected_Locations">
+  <action name="action_Location_List">
    <property name="text">
     <string>Wybrane lokalizacje</string>
    </property>
@@ -322,6 +364,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="action_Open">
+   <property name="text">
+    <string>Otwórz</string>
    </property>
   </action>
  </widget>
