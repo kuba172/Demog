@@ -49,7 +49,7 @@ def generate_predictions(model, years, data_frames):
     return all_predictions
 
 # Ścieżka do folderu zawierającego pliki .csv
-folder_path = r'C:\Users\kubar\Desktop\SYSTEMY INFORMATYCZNE - MODEL\\' #Ścieżke zmienić w zależności od tego gdzie są dane
+folder_path = r'../Data/Test_data/'  #Ścieżke zmienić w zależności od tego gdzie są dane
 
 # Wczytanie danych z wszystkich plików
 years = range(2002, 2021)
