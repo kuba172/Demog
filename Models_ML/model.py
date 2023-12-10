@@ -3,6 +3,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 import os
+from Models.data_storage_model import DataStorageModel
+
 
 # Funkcja do wczytywania danych z pliku .csv z imputacją brakujących wartości
 def load_data(file_path):
@@ -17,6 +19,7 @@ def load_data(file_path):
 
     return df.astype(int)
 
+
 # Funkcja do budowania modelu
 def build_model(data):
     X = data[['wiek']]
@@ -24,6 +27,7 @@ def build_model(data):
     model = RandomForestRegressor(n_estimators=100, random_state=42, warm_start=True)
     model.fit(X, y)
     return model
+
 
 # Funkcja do generowania predykcji dla zadanego roku
 def generate_predictions(model, years, data_frames):
@@ -48,40 +52,56 @@ def generate_predictions(model, years, data_frames):
 
     return all_predictions
 
-# Ścieżka do folderu zawierającego pliki .csv
-folder_path = r'../Data/Test_data/'  #Ścieżke zmienić w zależności od tego gdzie są dane
 
-# Wczytanie danych z wszystkich plików
-years = range(2002, 2021)
-data_frames = []
+def model(district_name="test", user_year=2030):
+    # Ścieżka do folderu zawierającego pliki .csv
+    folder_path = r'../Data/Test_data/'  # Ścieżke zmienić w zależności od tego gdzie są dane
 
-for year in years:
-    file_path = folder_path + f'{year}.csv'
-    data_frames.append(load_data(file_path))
+    # Wczytanie danych z wszystkich plików
+    years = range(2002, 2021)
+    data_frames = []
 
-# Połączenie danych z różnych lat w jedną ramkę danych
-all_data = pd.concat(data_frames)
+    for year in years:
+        file_path = folder_path + f'{year}.csv'
+        data_frames.append(load_data(file_path))
 
-# Budowa modelu na podstawie zebranych danych
-model = build_model(all_data)
+    # Połączenie danych z różnych lat w jedną ramkę danych
+    all_data = pd.concat(data_frames)
 
-# Generowanie predykcji dla lat 2021-2060
-prediction_years = range(2021, 2061)
-all_predictions = generate_predictions(model, prediction_years, data_frames)
+    # Budowa modelu na podstawie zebranych danych
+    model = build_model(all_data)
 
-# Wprowadzenie roku predykcji przez użytkownika
-try:
-    user_year = int(input("Podaj rok, dla którego chcesz otrzymać plik CSV: "))
-except ValueError:
-    print("Podano nieprawidłowy rok. Upewnij się, że podajesz liczbę.")
-    exit()
+    # Generowanie predykcji dla lat 2021-2060
+    prediction_years = range(2021, 2061)
+    all_predictions = generate_predictions(model, prediction_years, data_frames)
 
-# Pobranie wcześniej przygotowanej predykcji dla użytkownika
-user_data = all_predictions[prediction_years.index(user_year)]
+    # Pobranie wcześniej przygotowanej predykcji dla użytkownika
+    user_data = all_predictions[prediction_years.index(user_year)]
 
-# Dodanie kolumny z wiekiem
-user_data.insert(0, 'wiek', range(0, 71))
+    # Dodanie kolumny z wiekiem
+    user_data.insert(0, 'wiek', range(0, 71))
 
-# Zapisanie wyników do pliku .csv
-user_output_file_path = os.path.join(folder_path, f'predicted_{user_year}_user.csv')
-user_data.to_csv(user_output_file_path, index=False, header=False)
+    # Zapisanie wyników do Data Storage
+    key = f'{district_name}_{user_year}'
+    DataStorageModel.add(key, user_data)
+
+    return key
+
+
+def start(district_name, year_from, year_to):
+    """
+    Run a model to predict data for a selected district
+    """
+    for year in range(year_from, year_to + 1):
+        model(district_name, year)
+
+
+def start_demo(district_name, year_from, year_to):
+    """
+    !!! Only for test !!!
+    """
+    for year in range(year_from, year_to + 1):
+        print(f'Data for: {district_name} - {year} From: {year_from} To: {year_to}')
+        key = model(district_name, year)
+        print(DataStorageModel.get_all_keys())
+        print(DataStorageModel.get(key).head(5))
