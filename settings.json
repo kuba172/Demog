@@ -2,5 +2,20 @@
   "language_index": 0,
   "theme_index": 5,
   "custom_theme_enabled": false,
-  "secondary_colors_enabled": false
+  "secondary_colors_enabled": false,
+  "report_in_many_files": false,
+  "selected_model_index": 0,
+  "selected_model_name": "Random Forest Regressor",
+  "table_of_contents": true,
+  "summary": true,
+  "introduction": true,
+  "methodology": true,
+  "description_of_the_location": true,
+  "annual_analysis": true,
+  "results_and_conclusions": true,
+  "recommendations": true,
+  "additional_customer_specific_content": true,
+  "report_summary": true,
+  "references": true,
+  "attachments": true
 }

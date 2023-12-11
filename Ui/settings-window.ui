@@ -77,8 +77,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>629</width>
-               <height>528</height>
+               <width>337</width>
+               <height>460</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -956,6 +956,22 @@
     <hint type="destinationlabel">
      <x>374</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_Close_Report</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow_Settings</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>465</x>
+     <y>568</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>

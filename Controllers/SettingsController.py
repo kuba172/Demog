@@ -36,6 +36,21 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.comboBox_Language.currentIndexChanged.connect(self.loadLanguage)
         self.checkBox_Use_Custom_Theme.clicked.connect(self.saveSettings)
         self.checkBox_Use_Secondary_Colors.clicked.connect(self.saveSettings)
+        self.radioButton_In_One_File.clicked.connect(self.saveSettings)
+        self.radioButton_In_Separate_Files.clicked.connect(self.saveSettings)
+        self.comboBox_Model_Prediction.currentIndexChanged.connect(self.saveSettings)
+        self.checkBox_1_Table_Of_Contents.clicked.connect(self.saveSettings)
+        self.checkBox_2_Summary.clicked.connect(self.saveSettings)
+        self.checkBox_3_Introduction.clicked.connect(self.saveSettings)
+        self.checkBox_4_Methodology.clicked.connect(self.saveSettings)
+        self.checkBox_5_Description_Of_The_Location.clicked.connect(self.saveSettings)
+        self.checkBox_6_Annual_Analysis.clicked.connect(self.saveSettings)
+        self.checkBox_7_Results_And_Conclusions.clicked.connect(self.saveSettings)
+        self.checkBox_8_Recommendations.clicked.connect(self.saveSettings)
+        self.checkBox_9_Additional_Customer_Specific_Content.clicked.connect(self.saveSettings)
+        self.checkBox_10_Report_Summary.clicked.connect(self.saveSettings)
+        self.checkBox_11_References.clicked.connect(self.saveSettings)
+        self.checkBox_12_Attachments.clicked.connect(self.saveSettings)
 
         self.pushButton_Primary_Color.clicked.connect(
             lambda: self.changeColor('primaryColor', 'pushButton_Primary_Color'))
@@ -181,11 +196,43 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 theme_index = settings.get("theme_index", 0)
                 custom_theme_enabled = settings.get("custom_theme_enabled", False)
                 secondary_colors_enabled = settings.get("secondary_colors_enabled", False)
+                report_in_many_files = settings.get("report_in_many_files", False)
+
+                table_of_contents = settings.get("table_of_contents", True)
+                summary = settings.get("summary", True)
+                introduction = settings.get("introduction", True)
+                methodology = settings.get("methodology", True)
+                description_of_the_location = settings.get("description_of_the_location", True)
+                annual_analysis = settings.get("annual_analysis", True)
+                results_and_conclusions = settings.get("results_and_conclusions", True)
+                recommendations = settings.get("recommendations", True)
+                additional_customer_specific_content = settings.get("additional_customer_specific_content", True)
+                report_summary = settings.get("report_summary", True)
+                references = settings.get("references", True)
+                attachments = settings.get("attachments", True)
 
                 self.checkBox_Use_Custom_Theme.setChecked(custom_theme_enabled)
                 self.checkBox_Use_Secondary_Colors.setChecked(secondary_colors_enabled)
                 self.comboBox_Language.setCurrentIndex(language_index)
                 self.comboBox_Theme.setCurrentIndex(theme_index)
+
+                if report_in_many_files:
+                    self.radioButton_In_Separate_Files.setChecked(True)
+                else:
+                    self.radioButton_In_One_File.setChecked(True)
+
+                self.checkBox_1_Table_Of_Contents.setChecked(table_of_contents)
+                self.checkBox_2_Summary.setChecked(summary)
+                self.checkBox_3_Introduction.setChecked(introduction)
+                self.checkBox_4_Methodology.setChecked(methodology)
+                self.checkBox_5_Description_Of_The_Location.setChecked(description_of_the_location)
+                self.checkBox_6_Annual_Analysis.setChecked(annual_analysis)
+                self.checkBox_7_Results_And_Conclusions.setChecked(results_and_conclusions)
+                self.checkBox_8_Recommendations.setChecked(recommendations)
+                self.checkBox_9_Additional_Customer_Specific_Content.setChecked(additional_customer_specific_content)
+                self.checkBox_10_Report_Summary.setChecked(report_summary)
+                self.checkBox_11_References.setChecked(references)
+                self.checkBox_12_Attachments.setChecked(attachments)
 
                 self.loadThem()
         else:
@@ -199,12 +246,52 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         theme_index = self.comboBox_Theme.currentIndex()
         custom_theme_enabled = self.checkBox_Use_Custom_Theme.isChecked()
         secondary_colors_enabled = self.checkBox_Use_Secondary_Colors.isChecked()
+        report_in_many_files = False
+
+        # files
+        if self.radioButton_In_One_File.isChecked():
+            report_in_many_files = False
+        elif self.radioButton_In_Separate_Files.isChecked():
+            report_in_many_files = True
+
+        # model
+        selected_model_index = self.comboBox_Model_Prediction.currentIndex()
+        selected_model_name = self.comboBox_Model_Prediction.currentText()
+
+        # report
+        table_of_contents = self.checkBox_1_Table_Of_Contents.isChecked()
+        summary = self.checkBox_2_Summary.isChecked()
+        introduction = self.checkBox_3_Introduction.isChecked()
+        methodology = self.checkBox_4_Methodology.isChecked()
+        description_of_the_location = self.checkBox_5_Description_Of_The_Location.isChecked()
+        annual_analysis = self.checkBox_6_Annual_Analysis.isChecked()
+        results_and_conclusions = self.checkBox_7_Results_And_Conclusions.isChecked()
+        recommendations = self.checkBox_8_Recommendations.isChecked()
+        additional_customer_specific_content = self.checkBox_9_Additional_Customer_Specific_Content.isChecked()
+        report_summary = self.checkBox_10_Report_Summary.isChecked()
+        references = self.checkBox_11_References.isChecked()
+        attachments = self.checkBox_12_Attachments.isChecked()
 
         settings = {
             "language_index": language_index,
             "theme_index": theme_index,
             "custom_theme_enabled": custom_theme_enabled,
-            "secondary_colors_enabled": secondary_colors_enabled
+            "secondary_colors_enabled": secondary_colors_enabled,
+            "report_in_many_files": report_in_many_files,
+            "selected_model_index": selected_model_index,
+            "selected_model_name": selected_model_name,
+            "table_of_contents": table_of_contents,
+            "summary": summary,
+            "introduction": introduction,
+            "methodology": methodology,
+            "description_of_the_location": description_of_the_location,
+            "annual_analysis": annual_analysis,
+            "results_and_conclusions": results_and_conclusions,
+            "recommendations": recommendations,
+            "additional_customer_specific_content": additional_customer_specific_content,
+            "report_summary": report_summary,
+            "references": references,
+            "attachments": attachments
         }
 
         with open(SettingsController.SETTINGS_FILE, 'w') as file:
