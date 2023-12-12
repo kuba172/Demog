@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, Q
     QMessageBox
 from reportlab.pdfgen import canvas
 
+import Models.data_storage_model
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
 from Views.Main.locations_list import Ui_Dialog_Location_List
@@ -19,6 +20,11 @@ from reportlab.lib.units import inch
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+
+from Models.data_storage_model import DataStorageModel
+
+from plotnine import ggplot, aes, geom_bar, labs, geom_line
+
 
 pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
 pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
@@ -387,6 +393,11 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def addAttachments(self, pdf_canvas):
         pdf_canvas.showPage()
         pdf_canvas.drawString(100, 750, "Załączniki")
+
+    def addPlot(self, dane,  key):
+        dane = Models.data_storage_model.DataStorageModel.get(key)
+        ggplot(dane)
+
 
     def statusConfirmation(self, fileName, success=True):
         try:
