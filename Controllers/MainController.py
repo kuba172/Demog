@@ -256,6 +256,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
 
     def generatePdf(self, filePath):
+        self.section_pages = {}
         try:
             if filePath:
                 pdf_canvas = canvas.Canvas(filePath)
@@ -296,6 +297,19 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         except Exception as e:
             print(e)
             return False  # Indicates failure
+
+    def start_new_page(self, pdf_canvas):
+        pdf_canvas.showPage()
+        self.current_page = pdf_canvas.getPageNumber()
+        self.addPageNumber(pdf_canvas)
+
+    def addPageNumber(self, pdf_canvas):
+        page_num_text = f"Strona {self.current_page}"
+        pdf_canvas.setFont("DejaVuSans", 9)
+        pdf_canvas.drawString(inch, 0.75 * inch, page_num_text)
+
+    def getCurrentPage(self):
+        return self.current_page
 
     def addTitlePage(self, pdf_canvas):
 
@@ -340,59 +354,143 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         combo2_value = self.comboBox_Date_To.currentText()
         values_x = page_width / 2
         values_y = elements_y - 20  # Adjust as needed
-        pdf_canvas.drawCentredString(values_x, values_y, f"Dane od daty {combo1_value}")
-        pdf_canvas.drawCentredString(values_x, values_y - 20, f"Dane do daty: {combo2_value}")
+        pdf_canvas.drawCentredString(values_x, values_y, f"Dane od roku {combo1_value}")
+        pdf_canvas.drawCentredString(values_x, values_y - 20, f"Dane do roku: {combo2_value}")
 
         modelName = self.getModelName()
         pdf_canvas.drawCentredString(values_x, values_y - 40, f"Wybrany model: {modelName}")
 
     def addTableOfContents(self, pdf_canvas):
-        pdf_canvas.showPage()
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Spis treści'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the summary section ...
         pdf_canvas.drawString(100, 750, "Spis treści")
 
+        # Update the end page for the section
+        self.section_pages['Spis treści']['end'] = self.getCurrentPage()
+
     def addSummary(self, pdf_canvas):
-        pdf_canvas.showPage()
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Streszczenie'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the summary section ...
         pdf_canvas.drawString(100, 750, "Streszczenie")
 
+        # Update the end page for the section
+        self.section_pages['Streszczenie']['end'] = self.getCurrentPage()
+
     def addIntroduction(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Wprowadzenie")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Wprowadzenie'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the introduction section ...
+
+        # Update the end page for the section
+        self.section_pages['Wprowadzenie']['end'] = self.getCurrentPage()
+
 
     def addMethodology(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Metodologia")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Metodologia'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the methodology section ...
+
+        # Update the end page for the section
+        self.section_pages['Metodologia']['end'] = self.getCurrentPage()
+
 
     def addLocationDescription(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Opis wybranej lokalizacji")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Opis wybranej lokalizacji'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the location description section ...
+
+        # Update the end page for the section
+        self.section_pages['Opis wybranej lokalizacji']['end'] = self.getCurrentPage()
+
 
     def addAnnualAnalysis(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Analiza roczna")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Analiza roczna'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the annual analysis section ...
+
+        # Update the end page for the section
+        self.section_pages['Analiza roczna']['end'] = self.getCurrentPage()
+
 
     def addResultsAndConclusions(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Wyniki i wnioski")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Wyniki i wnioski'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the results and conclusions section ...
+
+        # Update the end page for the section
+        self.section_pages['Wyniki i wnioski']['end'] = self.getCurrentPage()
+
 
     def addRecommendations(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Zalecenia")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Zalecenia'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the recommendations section ...
+
+        # Update the end page for the section
+        self.section_pages['Zalecenia']['end'] = self.getCurrentPage()
+
 
     def addClientSpecificContent(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Dodatkowa treść specyficzna dla klienta")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Dodatkowa treść specyficzna dla klienta'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the client-specific content section ...
+
+        # Update the end page for the section
+        self.section_pages['Dodatkowa treść specyficzna dla klienta']['end'] = self.getCurrentPage()
+
 
     def addSummaryReport(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Podsumowanie")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Podsumowanie'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the summary report section ...
+
+        # Update the end page for the section
+        self.section_pages['Podsumowanie']['end'] = self.getCurrentPage()
+
 
     def addReferences(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Referencje")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Referencje'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the references section ...
+
+        # Update the end page for the section
+        self.section_pages['Referencje']['end'] = self.getCurrentPage()
+
 
     def addAttachments(self, pdf_canvas):
-        pdf_canvas.showPage()
-        pdf_canvas.drawString(100, 750, "Załączniki")
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Załączniki'] = {'start': start_page, 'end': start_page}
+
+        # ... Add content for the attachments section ...
+
+        # Update the end page for the section
+        self.section_pages['Załączniki']['end'] = self.getCurrentPage()
+
 
     def addPlot(self, dane,  key):
         dane = Models.data_storage_model.DataStorageModel.get(key)
