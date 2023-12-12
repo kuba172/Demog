@@ -253,20 +253,36 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         try:
             if filePath:
                 pdf_canvas = canvas.Canvas(filePath)
+                if QFile.exists(MainController.SETTINGS_FILE):
+                    with open(MainController.SETTINGS_FILE, 'r') as file:
+                        settings_data = json.load(file)
 
                 self.addTitlePage(pdf_canvas)
-                self.addTableOfContents(pdf_canvas)
-                self.addSummary(pdf_canvas)
-                self.addIntroduction(pdf_canvas)
-                self.addMethodology(pdf_canvas)
-                self.addLocationDescription(pdf_canvas)
-                self.addAnnualAnalysis(pdf_canvas)
-                self.addResultsAndConclusions(pdf_canvas)
-                self.addRecommendations(pdf_canvas)
-                self.addClientSpecificContent(pdf_canvas)
-                self.addSummaryReport(pdf_canvas)
-                self.addReferences(pdf_canvas)
-                self.addAttachments(pdf_canvas)
+
+                if settings_data.get("table_of_contents", True):
+                    self.addTableOfContents(pdf_canvas)
+                if settings_data.get("summary", True):
+                    self.addSummary(pdf_canvas)
+                if settings_data.get("introduction", True):
+                    self.addIntroduction(pdf_canvas)
+                if settings_data.get("methodology", True):
+                    self.addMethodology(pdf_canvas)
+                if settings_data.get("description_of_the_location", True):
+                    self.addLocationDescription(pdf_canvas)
+                if settings_data.get("annual_analysis", True):
+                    self.addAnnualAnalysis(pdf_canvas)
+                if settings_data.get("results_and_conclusions", True):
+                    self.addResultsAndConclusions(pdf_canvas)
+                if settings_data.get("recommendations", True):
+                    self.addRecommendations(pdf_canvas)
+                if settings_data.get("additional_customer_specific_content", True):
+                    self.addClientSpecificContent(pdf_canvas)
+                if settings_data.get("report_summary", True):
+                    self.addSummaryReport(pdf_canvas)
+                if settings_data.get("references", True):
+                    self.addReferences(pdf_canvas)
+                if settings_data.get("attachments", True):
+                    self.addAttachments(pdf_canvas)
 
                 pdf_canvas.save()
                 return True  # Indicates success
