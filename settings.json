@@ -13,9 +13,9 @@
   "description_of_the_location": true,
   "annual_analysis": true,
   "results_and_conclusions": true,
-  "recommendations": true,
-  "additional_customer_specific_content": true,
-  "report_summary": true,
-  "references": true,
-  "attachments": true
+  "recommendations": false,
+  "additional_customer_specific_content": false,
+  "report_summary": false,
+  "references": false,
+  "attachments": false
 }
