@@ -6,6 +6,8 @@ from qt_material import QtStyleTools
 from PyQt6.QtCore import Qt, QDir, QFile, QTranslator
 from Views.Settings.settings_window import Ui_MainWindow_Settings
 from xml.etree import ElementTree as ET
+import Models_ML.model
+from Models.data_storage_model import DataStorageModel
 
 
 class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
@@ -51,6 +53,11 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.checkBox_10_Report_Summary.clicked.connect(self.saveSettings)
         self.checkBox_11_References.clicked.connect(self.saveSettings)
         self.checkBox_12_Attachments.clicked.connect(self.saveSettings)
+
+        # Demo
+        self.pushButton_demo.clicked.connect(self.demo)
+        self.pushButton_print.clicked.connect(self.printExampleDf)
+        self.pushButton_keys.clicked.connect(self.printKeys)
 
         self.pushButton_Primary_Color.clicked.connect(
             lambda: self.changeColor('primaryColor', 'pushButton_Primary_Color'))
@@ -296,3 +303,15 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
         with open(SettingsController.SETTINGS_FILE, 'w') as file:
             json.dump(settings, file, indent=2)
+
+    def demo(self):
+        Models_ML.model.start_demo("test", 2030, 2035)
+
+    def printKeys(self):
+        print(DataStorageModel.get_all_keys())
+
+    def printExampleDf(self):
+        keys = DataStorageModel.get_all_keys()
+
+        for key in keys:
+            print(DataStorageModel.get(key))

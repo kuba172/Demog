@@ -55,7 +55,7 @@ def generate_predictions(model, years, data_frames):
 
 def model(district_name="test", user_year=2030):
     # Ścieżka do folderu zawierającego pliki .csv
-    folder_path = r'../Data/Test_data/'  # Ścieżke zmienić w zależności od tego gdzie są dane
+    folder_path = r'Data/Test_data/'  # Ścieżke zmienić w zależności od tego gdzie są dane
 
     # Wczytanie danych z wszystkich plików
     years = range(2002, 2021)
