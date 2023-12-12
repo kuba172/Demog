@@ -1,8 +1,9 @@
+import json
 import os
 
 import pandas as pd
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QPointF, QDate
+from PyQt6.QtCore import Qt, QPointF, QDate, QFile
 from PyQt6.QtGui import QBrush, QPen, QColor
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, QGraphicsPolygonItem, QCompleter, \
     QMessageBox
@@ -18,10 +19,13 @@ from reportlab.lib.units import inch
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+
 pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
 pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
 
+
 class MainController(QMainWindow, Ui_MainWindow_Main):
+    SETTINGS_FILE = "settings.json"
 
     def __init__(self):
         super().__init__()
@@ -44,7 +48,29 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.comboBox_Date_From.currentIndexChanged.connect(self.selectedYear)
         self.show()
 
-    def generateReport(self):
+    def resultInManyFiles(self):
+        if QFile.exists(MainController.SETTINGS_FILE):
+            with open(MainController.SETTINGS_FILE, 'r') as file:
+                settings_data = json.load(file)
+
+        if 'report_in_many_files' in settings_data:
+            report_in_many_files_value = settings_data['report_in_many_files']
+            return report_in_many_files_value
+        else:
+            return False
+
+    def getModelName(self):
+        if QFile.exists(MainController.SETTINGS_FILE):
+            with open(MainController.SETTINGS_FILE, 'r') as file:
+                settings_data = json.load(file)
+
+        if 'selected_model_name' in settings_data:
+            report_in_many_files_value = settings_data['selected_model_name']
+            return report_in_many_files_value
+        else:
+            return False
+
+    def getFileNamePath(self):
         try:
             fileFilter = 'Plik PDF (*.pdf)'
 
@@ -54,17 +80,78 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 filter=fileFilter,
                 initialFilter='Plik PDF (*.pdf)')
 
-            if filePath and filePath.endswith(".pdf"):
-                success = self.generatePdf(filePath)
-                self.statusConfirmation(filePath, success=success)
-                return success
+            return filePath
+        except Exception as e:
+            print(e)
+
+    def getDirectoryPath(self):
+        try:
+            folderPath = QFileDialog.getExistingDirectory(
+                caption="Wybierz folder",
+                directory=os.path.expanduser("~/Desktop"),
+            )
+            return folderPath
+        except Exception as e:
+            print(e)
+
+    def checkDate(self):
+        dateFrom = self.comboBox_Date_From.currentText()
+        dataTo = self.comboBox_Date_To.currentText()
+
+        if dateFrom and dataTo:
+            return True
+        else:
+            return False
+
+    def checkDistrict(self):
+        if self.window_locations_list_ui.listWidget_Locatons_List.count() > 0:
+            return True
+        else:
+            return False
+
+    def generateReport(self):
+        try:
+            filePath = None
+            directoryPath = None
+
+            resultCheckDistrict = self.checkDistrict()
+            resultCheckDate = self.checkDate()
+
+            if resultCheckDistrict and resultCheckDate:
+                print("All is good")
+
+                if self.resultInManyFiles():
+                    directoryPath = self.getDirectoryPath()
+                    print("dir" + directoryPath)
+                else:
+                    filePath = self.getFileNamePath()
+                    print("file" + filePath)
+
+                if filePath and filePath.endswith(".pdf"):
+                    success = self.generatePdf(filePath)
+                    self.statusConfirmation(filePath, success=success)
+                    return success
+                elif directoryPath:
+                    # todo each report in a different file
+                    # success = self.generatePdf(filePath)
+                    # self.statusConfirmation(filePath, success=success)
+                    # return success
+                    print("Not available yet")
+                else:
+                    return False
+
+            elif resultCheckDistrict == False and resultCheckDate == False:
+                print("The list of district is empty and dates not selected")
+            elif resultCheckDistrict == False:
+                print("The list of district is empty")
+            elif resultCheckDate == False:
+                print("Dates not selected")
             else:
-                return False
+                print("Something goes wrong")
 
         except Exception as e:
             print("Error occurred:", e)
             self.statusConfirmation(filePath, success=False)
-            raise  # Re-raise the exception to signal failure
 
     def populateDateFrom(self):
         self.comboBox_Date_From.clear()
@@ -76,7 +163,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         selected_year = self.comboBox_Date_From.currentText()
         self.populateDateTo(selected_year)
 
-    def populateDateTo(self, selected_year = None):
+    def populateDateTo(self, selected_year=None):
         self.comboBox_Date_To.clear()
         if selected_year is None:
             current_year = QDate.currentDate().year()
@@ -188,17 +275,16 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             print(e)
             return False  # Indicates failure
 
-
     def addTitlePage(self, pdf_canvas):
 
         # Set page size and margins
         page_width, page_height = letter
         margin = inch
-        image_width = 2*inch  # Adjust as needed
-        image_height = 1*inch  # Adjust as needed
+        image_width = 2 * inch  # Adjust as needed
+        image_height = 1 * inch  # Adjust as needed
 
         # Centered logo
-        logo_path = os.path.join('images', 'AppIcon', 'poland-map.png') # placeholder logo
+        logo_path = os.path.join('images', 'AppIcon', 'poland-map.png')  # placeholder logo
         image_x = (page_width - image_width) / 2
         image_y = 600  # Adjust the Y-coordinate as needed
         pdf_canvas.drawImage(logo_path, image_x, image_y, width=image_width, height=image_height)
@@ -217,6 +303,26 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         date_x = page_width / 2
         date_y = title_y - 60  # Adjust as needed
         pdf_canvas.drawCentredString(date_x, date_y, f"Data wygenerowania raportu: {current_date}")
+
+        # Selected Districts
+        pdf_canvas.setFont("DejaVuSans", 12)
+        list_widget_items = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
+                             range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
+        elements_x = page_width / 2
+        elements_y = date_y - 30  # Adjust as needed
+        pdf_canvas.drawCentredString(elements_x, elements_y, f"Wybrane powiaty: {', '.join(list_widget_items)}")
+
+        # Selected dates
+        pdf_canvas.setFont("DejaVuSans", 12)
+        combo1_value = self.comboBox_Date_From.currentText()
+        combo2_value = self.comboBox_Date_To.currentText()
+        values_x = page_width / 2
+        values_y = elements_y - 20  # Adjust as needed
+        pdf_canvas.drawCentredString(values_x, values_y, f"Dane od daty {combo1_value}")
+        pdf_canvas.drawCentredString(values_x, values_y - 20, f"Dane do daty: {combo2_value}")
+
+        modelName = self.getModelName()
+        pdf_canvas.drawCentredString(values_x, values_y - 40, f"Wybrany model: {modelName}")
 
     def addTableOfContents(self, pdf_canvas):
         pdf_canvas.showPage()
@@ -266,7 +372,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         pdf_canvas.showPage()
         pdf_canvas.drawString(100, 750, "Załączniki")
 
-    def statusConfirmation(self, fileName, success = True):
+    def statusConfirmation(self, fileName, success=True):
         try:
             fileName = os.path.basename(fileName)
             msg = QMessageBox()
@@ -288,4 +394,3 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         except Exception as e:
             print(e)
-
