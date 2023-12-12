@@ -300,7 +300,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         image_height = 1 * inch  # Adjust as needed
 
         # Centered logo
-        logo_path = os.path.join('images', 'AppIcon', 'poland-map.png')  # placeholder logo
+        logo_path = os.path.join('images', 'AppIcon', 'icon-map-800-800.png')  # placeholder logo
         image_x = (page_width - image_width) / 2
         image_y = 600  # Adjust the Y-coordinate as needed
         pdf_canvas.drawImage(logo_path, image_x, image_y, width=image_width, height=image_height)
