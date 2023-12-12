@@ -355,19 +355,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         pdf_canvas.drawCentredString(values_x, values_y - 40, f"Wybrany model: {modelName}")
 
     def addTableOfContents(self, pdf_canvas):
-        pdf_canvas.showPage()
-        current_page = pdf_canvas.getPageNumber()
-        self.section_pages['Spis treści'] = current_page  # Update page number for ToC
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Spis treści'] = {'start': start_page, 'end': start_page}
 
+        # ... Add content for the summary section ...
         pdf_canvas.drawString(100, 750, "Spis treści")
-        toc_start_y = 730  # Adjust as needed
-        y_step = 20  # Space between ToC items
 
-        for section, page in self.section_pages.items():
-            toc_start_y -= y_step
-            pdf_canvas.drawString(120, toc_start_y, f"{section}: strona {page}")
-
-
+        # Update the end page for the section
+        self.section_pages['Spis treści']['end'] = self.getCurrentPage()
 
     def addSummary(self, pdf_canvas):
         self.start_new_page(pdf_canvas)
