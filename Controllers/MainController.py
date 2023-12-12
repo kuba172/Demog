@@ -348,23 +348,25 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         combo2_value = self.comboBox_Date_To.currentText()
         values_x = page_width / 2
         values_y = elements_y - 20  # Adjust as needed
-        pdf_canvas.drawCentredString(values_x, values_y, f"Dane od daty {combo1_value}")
-        pdf_canvas.drawCentredString(values_x, values_y - 20, f"Dane do daty: {combo2_value}")
+        pdf_canvas.drawCentredString(values_x, values_y, f"Dane od roku {combo1_value}")
+        pdf_canvas.drawCentredString(values_x, values_y - 20, f"Dane do roku: {combo2_value}")
 
         modelName = self.getModelName()
         pdf_canvas.drawCentredString(values_x, values_y - 40, f"Wybrany model: {modelName}")
 
     def addTableOfContents(self, pdf_canvas):
-        self.start_new_page(pdf_canvas)
-        self.section_pages['Spis treści'] = {'start': self.getCurrentPage(), 'end': self.getCurrentPage()}
+        pdf_canvas.showPage()
+        current_page = pdf_canvas.getPageNumber()
+        self.section_pages['Spis treści'] = current_page  # Update page number for ToC
 
         pdf_canvas.drawString(100, 750, "Spis treści")
-        toc_start_y = 730
-        y_step = 20
+        toc_start_y = 730  # Adjust as needed
+        y_step = 20  # Space between ToC items
 
-        for section, pages in self.section_pages.items():
+        for section, page in self.section_pages.items():
             toc_start_y -= y_step
-            pdf_canvas.drawString(120, toc_start_y, f"{section}: strony {pages['start']} - {pages['end']}")
+            pdf_canvas.drawString(120, toc_start_y, f"{section}: strona {page}")
+
 
 
     def addSummary(self, pdf_canvas):
