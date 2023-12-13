@@ -1,30 +1,23 @@
-import json
-import os
-
-import pandas as pd
-from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QPointF, QDate, QFile
-from PyQt6.QtGui import QBrush, QPen, QColor
-from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QGraphicsScene, QGraphicsPolygonItem, QCompleter, \
-    QMessageBox
-from reportlab.pdfgen import canvas
-
-import Models.data_storage_model
+from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox
+from PyQt6.QtCore import Qt, QDate, QFile
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
 from Views.Main.locations_list import Ui_Dialog_Location_List
-
-import datetime
+from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
-
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-import Models_ML.model
 from Models.data_storage_model import DataStorageModel
-
 from plotnine import ggplot, aes, geom_bar, labs, geom_line
+import Models.data_storage_model
+import Models_ML.model
+import pandas as pd
+import datetime
+import json
+import os
 
+# Fonts
 pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
 pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
 
@@ -54,7 +47,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.pushButton_Add_Location.clicked.connect(self.addToLocationsList)
         self.lineEdit_Location.returnPressed.connect(self.addToLocationsList)
         self.comboBox_Date_From.currentIndexChanged.connect(self.selectedYear)
-        self.action_Open.triggered.connect(self.runModel)
 
         self.show()
 
@@ -147,10 +139,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
                 if self.resultInManyFiles():
                     directoryPath = self.getDirectoryPath()
-                    print("dir " + directoryPath)
                 else:
                     filePath = self.getFileNamePath()
-                    print("file " + filePath)
 
                 self.runModel()
                 districktKeys = DataStorageModel.get_all_keys()

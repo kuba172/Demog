@@ -1,13 +1,11 @@
-import json
-
-from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import QMainWindow, QColorDialog, QPushButton
+from PyQt6.QtCore import Qt, QDir, QFile
 from qt_material import QtStyleTools
-from PyQt6.QtCore import Qt, QDir, QFile, QTranslator
-from Views.Settings.settings_window import Ui_MainWindow_Settings
 from xml.etree import ElementTree as ET
-import Models_ML.model
+from Views.Settings.settings_window import Ui_MainWindow_Settings
 from Models.data_storage_model import DataStorageModel
+import Models_ML.model
+import json
 
 
 class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):

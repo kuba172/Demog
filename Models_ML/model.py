@@ -1,9 +1,9 @@
-import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.experimental import enable_iterative_imputer
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.impute import IterativeImputer
-import os
 from Models.data_storage_model import DataStorageModel
+import pandas as pd
+import os
 
 
 # Funkcja do wczytywania danych z pliku .csv z imputacją brakujących wartości
@@ -94,16 +94,3 @@ def start(district_name, year_from, year_to):
     """
     for year in range(year_from, year_to + 1):
         model(district_name, year)
-
-
-def start_demo(district_name, year_from, year_to):
-    """
-    !!! Only for test !!!
-    """
-    for year in range(year_from, year_to + 1):
-        print(f'Data for: {district_name} - {year} From: {year_from} To: {year_to}')
-        key = model(district_name, year)
-        print(DataStorageModel.get_all_keys())
-        print(DataStorageModel.get(key).head(5))
-
-# start_demo("Miasto Jelenia Góra na prawach powiatu", 2030, 2030)
