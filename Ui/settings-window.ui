@@ -61,7 +61,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget_Content">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="General">
        <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -77,26 +77,13 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>337</width>
-               <height>460</height>
+               <width>629</width>
+               <height>528</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_11">
-                <item>
-                 <spacer name="verticalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
                 <item>
                  <layout class="QVBoxLayout" name="verticalLayout_5">
                   <item>
@@ -340,19 +327,6 @@
                    </spacer>
                   </item>
                  </layout>
-                </item>
-                <item>
-                 <spacer name="verticalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
                 </item>
                </layout>
               </item>
@@ -635,144 +609,60 @@
        </layout>
       </widget>
       <widget class="QWidget" name="Map">
-       <layout class="QVBoxLayout" name="verticalLayout_10">
+       <layout class="QVBoxLayout" name="verticalLayout_9">
         <item>
-         <widget class="QGroupBox" name="groupBox_4">
-          <property name="title">
-           <string>Test DataFrame</string>
+         <widget class="QScrollArea" name="scrollArea_3">
+          <property name="widgetResizable">
+           <bool>true</bool>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_9">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <item>
-              <spacer name="horizontalSpacer_7">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_keys">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Print keys</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_8">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_12">
-             <item>
-              <spacer name="horizontalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_print">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Print data</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_6">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_15">
-             <item>
-              <spacer name="horizontalSpacer_11">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_demo">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Start demo</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_12">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
+          <widget class="QWidget" name="scrollAreaWidgetContents_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>631</width>
+             <height>530</height>
+            </rect>
+           </property>
+          </widget>
          </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <item>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_Close_map">
+            <property name="text">
+             <string>Zamknij</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -783,54 +673,6 @@
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>listWidget_Category_List</sender>
-   <signal>currentRowChanged(int)</signal>
-   <receiver>stackedWidget_Content</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>71</x>
-     <y>199</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>365</x>
-     <y>199</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_Use_Custom_Theme</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>comboBox_Theme</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>219</x>
-     <y>185</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>440</x>
-     <y>121</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_Use_Custom_Theme</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>checkBox_Use_Secondary_Colors</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>219</x>
-     <y>185</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>619</x>
-     <y>185</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>checkBox_Use_Custom_Theme</sender>
    <signal>toggled(bool)</signal>
@@ -850,7 +692,7 @@
   <connection>
    <sender>checkBox_Use_Custom_Theme</sender>
    <signal>toggled(bool)</signal>
-   <receiver>pushButton_Primary_Light_Color</receiver>
+   <receiver>pushButton_Secondary_Text_Color</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -859,7 +701,23 @@
     </hint>
     <hint type="destinationlabel">
      <x>567</x>
-     <y>247</y>
+     <y>407</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget_Category_List</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>stackedWidget_Content</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>199</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>365</x>
+     <y>199</y>
     </hint>
    </hints>
   </connection>
@@ -882,6 +740,22 @@
   <connection>
    <sender>checkBox_Use_Custom_Theme</sender>
    <signal>toggled(bool)</signal>
+   <receiver>pushButton_Secondary_Dark_Color</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>219</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>567</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_Use_Custom_Theme</sender>
+   <signal>toggled(bool)</signal>
    <receiver>pushButton_Secondary_Color</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -896,9 +770,41 @@
    </hints>
   </connection>
   <connection>
+   <sender>pushButton_Close_General</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow_Settings</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>440</x>
+     <y>518</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>checkBox_Use_Custom_Theme</sender>
    <signal>toggled(bool)</signal>
-   <receiver>pushButton_Secondary_Dark_Color</receiver>
+   <receiver>comboBox_Theme</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>219</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>440</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_Use_Custom_Theme</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButton_Primary_Light_Color</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -907,7 +813,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>567</x>
-     <y>343</y>
+     <y>247</y>
     </hint>
    </hints>
   </connection>
@@ -930,7 +836,7 @@
   <connection>
    <sender>checkBox_Use_Custom_Theme</sender>
    <signal>toggled(bool)</signal>
-   <receiver>pushButton_Secondary_Text_Color</receiver>
+   <receiver>checkBox_Use_Secondary_Colors</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -938,24 +844,8 @@
      <y>185</y>
     </hint>
     <hint type="destinationlabel">
-     <x>567</x>
-     <y>407</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_Close_General</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow_Settings</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>440</x>
-     <y>518</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>374</x>
-     <y>274</y>
+     <x>619</x>
+     <y>185</y>
     </hint>
    </hints>
   </connection>
@@ -968,6 +858,22 @@
     <hint type="sourcelabel">
      <x>465</x>
      <y>568</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_Close_map</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow_Settings</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>374</x>
+     <y>541</y>
     </hint>
     <hint type="destinationlabel">
      <x>399</x>

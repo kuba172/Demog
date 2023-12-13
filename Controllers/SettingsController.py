@@ -52,11 +52,6 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.checkBox_11_References.clicked.connect(self.saveSettings)
         self.checkBox_12_Attachments.clicked.connect(self.saveSettings)
 
-        # Demo
-        self.pushButton_demo.clicked.connect(self.demo)
-        self.pushButton_print.clicked.connect(self.printExampleDf)
-        self.pushButton_keys.clicked.connect(self.printKeys)
-
         self.pushButton_Primary_Color.clicked.connect(
             lambda: self.changeColor('primaryColor', 'pushButton_Primary_Color'))
         self.pushButton_Primary_Light_Color.clicked.connect(
@@ -301,15 +296,3 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
         with open(SettingsController.SETTINGS_FILE, 'w') as file:
             json.dump(settings, file, indent=2)
-
-    def demo(self):
-        Models_ML.model.start_demo("test", 2030, 2035)
-
-    def printKeys(self):
-        print(DataStorageModel.get_all_keys())
-
-    def printExampleDf(self):
-        keys = DataStorageModel.get_all_keys()
-
-        for key in keys:
-            print(DataStorageModel.get(key))
