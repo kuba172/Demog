@@ -3,7 +3,7 @@
   "theme_index": 5,
   "custom_theme_enabled": false,
   "secondary_colors_enabled": false,
-  "report_in_many_files": false,
+  "report_in_many_files": true,
   "selected_model_index": 0,
   "selected_model_name": "Random Forest Regressor",
   "table_of_contents": true,

@@ -141,6 +141,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             resultCheckDistrict = self.checkDistrict()
             resultCheckDate = self.checkDate()
             districktKeys = None
+            extensionPDF = ".pdf"
 
             if resultCheckDistrict and resultCheckDate:
 
@@ -158,19 +159,20 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
                     for key in districktKeys:
                         if key == districktKeys[len(districktKeys) - 1]:
-                            success = self.generatePdf(filePath, key, save=True)
+                            success = self.generatePdf(filePath, key, resultInOneFile=True, save=True)
 
-                        success = self.generatePdf(filePath, key, save=False)
+                        success = self.generatePdf(filePath, key, resultInOneFile=True, save=False)
 
                     self.statusConfirmation(filePath, success=success)
                     self.updateReportField()
                     return success
                 elif directoryPath:
-                    # todo each report in a different file
-                    # success = self.generatePdf(filePath)
-                    # self.statusConfirmation(filePath, success=success)
-                    # return success
-                    print("Not available yet")
+                    for key in districktKeys:
+                        filePath = f"{directoryPath}/{key}{extensionPDF}"
+                        success = self.generatePdf(filePath, key, resultInOneFile=False, save=True)
+
+                    self.statusConfirmation(filePath, success=success)
+                    self.updateReportField()
                 else:
                     return False
 
@@ -283,13 +285,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def handleSelectionChange(self):
         self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
 
-    def generatePdf(self, filePath, districtKey, save):
+    def generatePdf(self, filePath, districtKey, resultInOneFile, save):
         self.section_pages = {}
         try:
             if filePath:
-                if self.pageCreated == False:
+                if resultInOneFile == True and self.pageCreated == False:
                     self.pdf_canvas = canvas.Canvas(filePath)
                     self.pageCreated = True
+                elif resultInOneFile == False:
+                    self.pdf_canvas = canvas.Canvas(filePath)
 
                 if QFile.exists(MainController.SETTINGS_FILE):
                     with open(MainController.SETTINGS_FILE, 'r') as file:
