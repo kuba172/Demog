@@ -20,11 +20,10 @@ from reportlab.lib.units import inch
 
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
+import Models_ML.model
 from Models.data_storage_model import DataStorageModel
 
 from plotnine import ggplot, aes, geom_bar, labs, geom_line
-
 
 pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
 pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
@@ -36,6 +35,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+        # Report variable
+        self.pageCreated = False
 
         self.showMaximized()
 
@@ -52,6 +54,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.pushButton_Add_Location.clicked.connect(self.addToLocationsList)
         self.lineEdit_Location.returnPressed.connect(self.addToLocationsList)
         self.comboBox_Date_From.currentIndexChanged.connect(self.selectedYear)
+        self.action_Open.triggered.connect(self.runModel)
+
         self.show()
 
     def resultInManyFiles(self):
@@ -115,6 +119,20 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         else:
             return False
 
+    def runModel(self):
+        districtList = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
+                        range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
+
+        dateFrom = self.comboBox_Date_From.currentText()
+        dateTo = self.comboBox_Date_To.currentText()
+
+        for district in districtList:
+            Models_ML.model.start(str(district), int(dateFrom), int(dateTo))
+
+    def updateReportField(self):
+        self.section_pages = {}
+        self.pageCreated = False
+
     def generateReport(self):
         try:
             filePath = None
@@ -122,20 +140,30 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             resultCheckDistrict = self.checkDistrict()
             resultCheckDate = self.checkDate()
+            districktKeys = None
 
             if resultCheckDistrict and resultCheckDate:
-                print("All is good")
 
                 if self.resultInManyFiles():
                     directoryPath = self.getDirectoryPath()
-                    print("dir" + directoryPath)
+                    print("dir " + directoryPath)
                 else:
                     filePath = self.getFileNamePath()
-                    print("file" + filePath)
+                    print("file " + filePath)
+
+                self.runModel()
+                districktKeys = DataStorageModel.get_all_keys()
 
                 if filePath and filePath.endswith(".pdf"):
-                    success = self.generatePdf(filePath)
+
+                    for key in districktKeys:
+                        if key == districktKeys[len(districktKeys) - 1]:
+                            success = self.generatePdf(filePath, key, save=True)
+
+                        success = self.generatePdf(filePath, key, save=False)
+
                     self.statusConfirmation(filePath, success=success)
+                    self.updateReportField()
                     return success
                 elif directoryPath:
                     # todo each report in a different file
@@ -255,43 +283,48 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def handleSelectionChange(self):
         self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
 
-    def generatePdf(self, filePath):
+    def generatePdf(self, filePath, districtKey, save):
         self.section_pages = {}
         try:
             if filePath:
-                pdf_canvas = canvas.Canvas(filePath)
+                if self.pageCreated == False:
+                    self.pdf_canvas = canvas.Canvas(filePath)
+                    self.pageCreated = True
+
                 if QFile.exists(MainController.SETTINGS_FILE):
                     with open(MainController.SETTINGS_FILE, 'r') as file:
                         settings_data = json.load(file)
 
-                self.addTitlePage(pdf_canvas)
+                self.addTitlePage(self.pdf_canvas, districtKey)
 
                 if settings_data.get("table_of_contents", True):
-                    self.addTableOfContents(pdf_canvas)
+                    self.addTableOfContents(self.pdf_canvas, districtKey)
                 if settings_data.get("summary", True):
-                    self.addSummary(pdf_canvas)
+                    self.addSummary(self.pdf_canvas, districtKey)
                 if settings_data.get("introduction", True):
-                    self.addIntroduction(pdf_canvas)
+                    self.addIntroduction(self.pdf_canvas, districtKey)
                 if settings_data.get("methodology", True):
-                    self.addMethodology(pdf_canvas)
+                    self.addMethodology(self.pdf_canvas, districtKey)
                 if settings_data.get("description_of_the_location", True):
-                    self.addLocationDescription(pdf_canvas)
+                    self.addLocationDescription(self.pdf_canvas, districtKey)
                 if settings_data.get("annual_analysis", True):
-                    self.addAnnualAnalysis(pdf_canvas)
+                    self.addAnnualAnalysis(self.pdf_canvas, districtKey)
                 if settings_data.get("results_and_conclusions", True):
-                    self.addResultsAndConclusions(pdf_canvas)
+                    self.addResultsAndConclusions(self.pdf_canvas, districtKey)
                 if settings_data.get("recommendations", True):
-                    self.addRecommendations(pdf_canvas)
+                    self.addRecommendations(self.pdf_canvas, districtKey)
                 if settings_data.get("additional_customer_specific_content", True):
-                    self.addClientSpecificContent(pdf_canvas)
+                    self.addClientSpecificContent(self.pdf_canvas, districtKey)
                 if settings_data.get("report_summary", True):
-                    self.addSummaryReport(pdf_canvas)
+                    self.addSummaryReport(self.pdf_canvas, districtKey)
                 if settings_data.get("references", True):
-                    self.addReferences(pdf_canvas)
+                    self.addReferences(self.pdf_canvas, districtKey)
                 if settings_data.get("attachments", True):
-                    self.addAttachments(pdf_canvas)
+                    self.addAttachments(self.pdf_canvas, districtKey)
 
-                pdf_canvas.save()
+                if save == True:
+                    self.pdf_canvas.save()
+                    DataStorageModel.clear()
                 return True  # Indicates success
 
         except Exception as e:
@@ -311,7 +344,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def getCurrentPage(self):
         return self.current_page
 
-    def addTitlePage(self, pdf_canvas):
+    def addTitlePage(self, pdf_canvas, districtKey):
 
         # Set page size and margins
         page_width, page_height = letter
@@ -359,8 +392,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         modelName = self.getModelName()
         pdf_canvas.drawCentredString(values_x, values_y - 40, f"Wybrany model: {modelName}")
+        pdf_canvas.drawCentredString(values_x, values_y - 60, f"Aktulany  powiat: {districtKey}")
 
-    def addTableOfContents(self, pdf_canvas):
+    def addTableOfContents(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Spis treści'] = {'start': start_page, 'end': start_page}
@@ -371,7 +405,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Spis treści']['end'] = self.getCurrentPage()
 
-    def addSummary(self, pdf_canvas):
+    def addSummary(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Streszczenie'] = {'start': start_page, 'end': start_page}
@@ -382,7 +416,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Streszczenie']['end'] = self.getCurrentPage()
 
-    def addIntroduction(self, pdf_canvas):
+    def addIntroduction(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Wprowadzenie'] = {'start': start_page, 'end': start_page}
@@ -392,8 +426,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Wprowadzenie']['end'] = self.getCurrentPage()
 
-
-    def addMethodology(self, pdf_canvas):
+    def addMethodology(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Metodologia'] = {'start': start_page, 'end': start_page}
@@ -403,8 +436,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Metodologia']['end'] = self.getCurrentPage()
 
-
-    def addLocationDescription(self, pdf_canvas):
+    def addLocationDescription(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Opis wybranej lokalizacji'] = {'start': start_page, 'end': start_page}
@@ -414,8 +446,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Opis wybranej lokalizacji']['end'] = self.getCurrentPage()
 
-
-    def addAnnualAnalysis(self, pdf_canvas):
+    def addAnnualAnalysis(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Analiza roczna'] = {'start': start_page, 'end': start_page}
@@ -425,8 +456,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Analiza roczna']['end'] = self.getCurrentPage()
 
-
-    def addResultsAndConclusions(self, pdf_canvas):
+    def addResultsAndConclusions(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Wyniki i wnioski'] = {'start': start_page, 'end': start_page}
@@ -436,8 +466,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Wyniki i wnioski']['end'] = self.getCurrentPage()
 
-
-    def addRecommendations(self, pdf_canvas):
+    def addRecommendations(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Zalecenia'] = {'start': start_page, 'end': start_page}
@@ -447,8 +476,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Zalecenia']['end'] = self.getCurrentPage()
 
-
-    def addClientSpecificContent(self, pdf_canvas):
+    def addClientSpecificContent(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Dodatkowa treść specyficzna dla klienta'] = {'start': start_page, 'end': start_page}
@@ -458,8 +486,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Dodatkowa treść specyficzna dla klienta']['end'] = self.getCurrentPage()
 
-
-    def addSummaryReport(self, pdf_canvas):
+    def addSummaryReport(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Podsumowanie'] = {'start': start_page, 'end': start_page}
@@ -469,8 +496,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Podsumowanie']['end'] = self.getCurrentPage()
 
-
-    def addReferences(self, pdf_canvas):
+    def addReferences(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Referencje'] = {'start': start_page, 'end': start_page}
@@ -480,8 +506,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Referencje']['end'] = self.getCurrentPage()
 
-
-    def addAttachments(self, pdf_canvas):
+    def addAttachments(self, pdf_canvas, districtKey):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Załączniki'] = {'start': start_page, 'end': start_page}
@@ -491,11 +516,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Update the end page for the section
         self.section_pages['Załączniki']['end'] = self.getCurrentPage()
 
-
-    def addPlot(self, dane,  key):
+    def addPlot(self, dane, key):
         dane = Models.data_storage_model.DataStorageModel.get(key)
         ggplot(dane)
-
 
     def statusConfirmation(self, fileName, success=True):
         try:

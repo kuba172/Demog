@@ -12,7 +12,7 @@ Projekt studencki z przedmiotu "Systemy informatyczne"
 - pandas
 - matplotlib
 - reportlab
-- tkinter
+- plotnine
 
 ### Model:
 - scikit-learn

@@ -8,7 +8,7 @@ from Models.data_storage_model import DataStorageModel
 
 # Funkcja do wczytywania danych z pliku .csv z imputacją brakujących wartości
 def load_data(file_path):
-    df = pd.read_csv(file_path, header=None)
+    df = pd.read_csv(file_path, header=None, usecols=range(10))
     df.replace('-', 0, inplace=True)  # Zamiana '-' na 0
     df.columns = ['wiek', 'ludzie', 'mezczyzni', 'kobiety', 'miasto_ludzie', 'miasto_mezczyzni', 'miasto_kobiety',
                   'wies_ludzie', 'wies_mezczyzni', 'wies_kobiety']
@@ -53,12 +53,12 @@ def generate_predictions(model, years, data_frames):
     return all_predictions
 
 
-def model(district_name="test", user_year=2030):
+def model(district_name, user_year):
     # Ścieżka do folderu zawierającego pliki .csv
-    folder_path = r'Data/Test_data/'  # Ścieżke zmienić w zależności od tego gdzie są dane
+    folder_path = f"Data/train_data/{district_name}/"  # Ścieżke zmienić w zależności od tego gdzie są dane
 
     # Wczytanie danych z wszystkich plików
-    years = range(2002, 2021)
+    years = range(2002, 2020)
     data_frames = []
 
     for year in years:
@@ -105,3 +105,5 @@ def start_demo(district_name, year_from, year_to):
         key = model(district_name, year)
         print(DataStorageModel.get_all_keys())
         print(DataStorageModel.get(key).head(5))
+
+# start_demo("Miasto Jelenia Góra na prawach powiatu", 2030, 2030)
