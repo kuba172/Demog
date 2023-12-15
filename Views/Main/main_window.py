@@ -21,7 +21,8 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                           QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem)
         self.groupBox_Postal_Code = QtWidgets.QGroupBox(parent=self.centralwidget)
         self.groupBox_Postal_Code.setObjectName("groupBox_Postal_Code")
@@ -39,7 +40,8 @@ class Ui_MainWindow_Main(object):
         self.lineEdit_Location.setClearButtonEnabled(True)
         self.lineEdit_Location.setObjectName("lineEdit_Location")
         self.horizontalLayout_2.addWidget(self.lineEdit_Location)
-        spacerItem1 = QtWidgets.QSpacerItem(13, 13, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(13, 13, QtWidgets.QSizePolicy.Policy.Minimum,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.pushButton_Add_Location = QtWidgets.QPushButton(parent=self.groupBox_Postal_Code)
         self.pushButton_Add_Location.setMaximumSize(QtCore.QSize(75, 16777215))
@@ -48,9 +50,9 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.label_Location_Error_Message = QtWidgets.QLabel(parent=self.groupBox_Postal_Code)
         self.label_Location_Error_Message.setStyleSheet("QLabel{\n"
-"color: red;\n"
-"font-weight: bold;\n"
-"}")
+                                                        "color: red;\n"
+                                                        "font-weight: bold;\n"
+                                                        "}")
         self.label_Location_Error_Message.setText("")
         self.label_Location_Error_Message.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_Location_Error_Message.setObjectName("label_Location_Error_Message")
@@ -75,7 +77,8 @@ class Ui_MainWindow_Main(object):
         self.comboBox_Date_From.setObjectName("comboBox_Date_From")
         self.horizontalLayout_5.addWidget(self.comboBox_Date_From)
         self.horizontalLayout_8.addLayout(self.horizontalLayout_5)
-        spacerItem2 = QtWidgets.QSpacerItem(10, 5, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(10, 5, QtWidgets.QSizePolicy.Policy.Minimum,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem2)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
@@ -90,15 +93,16 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_8)
         self.label_Date_From_To_Error_Message = QtWidgets.QLabel(parent=self.groupBox_Time_Interval)
         self.label_Date_From_To_Error_Message.setStyleSheet("QLabel{\n"
-"color: red;\n"
-"font-weight: bold;\n"
-"}")
+                                                            "color: red;\n"
+                                                            "font-weight: bold;\n"
+                                                            "}")
         self.label_Date_From_To_Error_Message.setText("")
         self.label_Date_From_To_Error_Message.setObjectName("label_Date_From_To_Error_Message")
         self.verticalLayout_2.addWidget(self.label_Date_From_To_Error_Message)
         self.horizontalLayout_3.addLayout(self.verticalLayout_2)
         self.horizontalLayout_4.addWidget(self.groupBox_Time_Interval)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
         self.graphicsView_Interactive_Map = QtWidgets.QGraphicsView(parent=self.centralwidget)
@@ -107,7 +111,8 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout_3.addWidget(self.graphicsView_Interactive_Map)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout.addItem(spacerItem4)
         self.pushButton_Generate_Report = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton_Generate_Report.setObjectName("pushButton_Generate_Report")
@@ -126,6 +131,9 @@ class Ui_MainWindow_Main(object):
         self.menu_Locations = QtWidgets.QMenu(parent=self.menubar)
         self.menu_Locations.setObjectName("menu_Locations")
         MainWindow_Main.setMenuBar(self.menubar)
+        self.statusBar = QtWidgets.QStatusBar(parent=MainWindow_Main)
+        self.statusBar.setObjectName("statusBar")
+        MainWindow_Main.setStatusBar(self.statusBar)
         self.action_About_Program = QtGui.QAction(parent=MainWindow_Main)
         self.action_About_Program.setObjectName("action_About_Program")
         self.action_Exit = QtGui.QAction(parent=MainWindow_Main)
@@ -183,21 +191,25 @@ class Ui_MainWindow_Main(object):
         self.action_About_Program.setText(_translate("MainWindow_Main", "O programie..."))
         self.action_About_Program.setShortcut(_translate("MainWindow_Main", "F1"))
         self.action_Exit.setText(_translate("MainWindow_Main", "Wyjście"))
+        self.action_Exit.setShortcut(_translate("MainWindow_Main", "Ctrl+Shift+F4"))
         self.action_App_Settings.setText(_translate("MainWindow_Main", "Aplikacji"))
         self.action_Raport_Settings.setText(_translate("MainWindow_Main", "Raportu"))
         self.action_Settings.setText(_translate("MainWindow_Main", "Ustawienia"))
         self.action_Save.setText(_translate("MainWindow_Main", "Zapisz"))
         self.action_Save.setShortcut(_translate("MainWindow_Main", "Ctrl+S"))
         self.action_Save_As_New.setText(_translate("MainWindow_Main", "Zapisz jako nowy..."))
+        self.action_Save_As_New.setShortcut(_translate("MainWindow_Main", "Ctrl+Shift+S"))
         self.action_Location_List.setText(_translate("MainWindow_Main", "Wybrane lokalizacje"))
         self.action_Location_List.setShortcut(_translate("MainWindow_Main", "Ctrl+L"))
         self.action_Generate_Report.setText(_translate("MainWindow_Main", "Generuj raport"))
         self.action_Generate_Report.setShortcut(_translate("MainWindow_Main", "Ctrl+G"))
         self.action_Open.setText(_translate("MainWindow_Main", "Otwórz"))
+        self.action_Open.setShortcut(_translate("MainWindow_Main", "Ctrl+O"))
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow_Main = QtWidgets.QMainWindow()
     ui = Ui_MainWindow_Main()

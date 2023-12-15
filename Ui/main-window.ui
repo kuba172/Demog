@@ -309,6 +309,7 @@ font-weight: bold;
    <addaction name="menu_Settings"/>
    <addaction name="menu_Help"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="action_About_Program">
    <property name="text">
     <string>O programie...</string>
@@ -320,6 +321,9 @@ font-weight: bold;
   <action name="action_Exit">
    <property name="text">
     <string>Wyjście</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F4</string>
    </property>
   </action>
   <action name="action_App_Settings">
@@ -349,6 +353,9 @@ font-weight: bold;
    <property name="text">
     <string>Zapisz jako nowy...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
   </action>
   <action name="action_Location_List">
    <property name="text">
@@ -369,6 +376,9 @@ font-weight: bold;
   <action name="action_Open">
    <property name="text">
     <string>Otwórz</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
  </widget>
