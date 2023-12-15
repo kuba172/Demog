@@ -32,6 +32,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Report variable
         self.pageCreated = False
 
+        self.pathCurrentFile = None
+
         self.showMaximized()
 
         self.populateDateFrom()
@@ -47,8 +49,102 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.pushButton_Add_Location.clicked.connect(self.addToLocationsList)
         self.lineEdit_Location.returnPressed.connect(self.addToLocationsList)
         self.comboBox_Date_From.currentIndexChanged.connect(self.selectedYear)
+        self.action_Save.triggered.connect(self.saveAction)
+        self.action_Save_As_New.triggered.connect(self.saveProjectNew)
+        self.action_Open.triggered.connect(self.openProjectFile)
 
         self.show()
+
+    def openProjectFile(self):
+        try:
+            fileFilter = 'Plik DemoG (*.demog)'
+            fileName = QFileDialog.getOpenFileName(
+                caption="Wczytaj projekt",
+                directory=os.path.expanduser("~/Desktop/"),
+                filter=fileFilter,
+                initialFilter="Plik DemoG (*.demog)"
+            )
+
+            if fileName[0]:
+
+                with open(fileName[0], "r") as file:
+                    data = json.load(file)
+
+                dateFrom = data.get("dateFrom", "")
+                dateTo = data.get("dateTo", "")
+
+                if dateFrom in [self.comboBox_Date_From.itemText(i) for i in range(self.comboBox_Date_From.count())]:
+                    index = self.comboBox_Date_From.findText(dateFrom)
+                    self.comboBox_Date_From.setCurrentIndex(index)
+
+                if dateTo in [self.comboBox_Date_To.itemText(i) for i in range(self.comboBox_Date_To.count())]:
+                    index = self.comboBox_Date_To.findText(dateTo)
+                    self.comboBox_Date_To.setCurrentIndex(index)
+
+                districtsList = data.get("districtsList", [])
+
+                self.window_locations_list_ui.listWidget_Locatons_List.clear()
+                self.window_locations_list_ui.listWidget_Locatons_List.addItems(districtsList)
+
+                self.setSavedFilePath(fileName[0])
+
+        except Exception as e:
+            print(e)
+
+    def setSavedFilePath(self, filePath):
+        newWindowTitle = f"{filePath} - DemoG"
+        self.setWindowTitle(newWindowTitle)
+        self.pathCurrentFile = filePath
+
+    def saveAction(self):
+        try:
+            path = self.pathCurrentFile
+            if path:
+                self.save(self.pathCurrentFile)
+            else:
+                self.saveProjectNew()
+        except Exception as e:
+            print(e)
+
+    def saveProjectNew(self):
+        try:
+            fileFilter = 'Plik DemoG (*.demog);;Wszystkie pliki (*.*)'
+
+            fileName = QFileDialog.getSaveFileName(
+                caption="Zapisz nowy projekt",
+                directory=os.path.expanduser("~/Desktop/" + "nowy.demog"),
+                filter=fileFilter,
+                initialFilter="Plik DemoG (*.demog)"
+            )
+
+            if fileName[0] and fileName[0].endswith(".demog"):
+                self.save(fileName[0])
+                print(fileName[0])
+            elif fileName[0]:
+                print("Not supported extension")
+
+        except Exception as e:
+            print(e)
+
+    def save(self, filePath):
+        dateFrom = self.comboBox_Date_From.currentText()
+        dateTo = self.comboBox_Date_To.currentText()
+        districtsList = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
+                         range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
+        dataDump = {}
+
+        dataDump["dateFrom"] = dateFrom
+        dataDump["dateTo"] = dateTo
+        dataDump["districtsList"] = districtsList
+
+        if filePath:
+            with open(filePath, "w") as file:
+                json.dump(dataDump, file)
+
+            self.setSavedFilePath(filePath)
+
+        print(dateFrom, dateTo, districtsList)
+        print(dataDump)
 
     def resultInManyFiles(self):
         if QFile.exists(MainController.SETTINGS_FILE):
