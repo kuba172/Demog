@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox
+from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel
 from PyQt6.QtCore import Qt, QDate, QFile
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
@@ -40,6 +40,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.populateDateTo()
         self.createLocationsList()
         self.addQCompleterAll()
+        self.addLabelToStatusBar()
 
         # Connections
         self.action_Exit.triggered.connect(self.close)
@@ -52,8 +53,39 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.action_Save.triggered.connect(self.saveAction)
         self.action_Save_As_New.triggered.connect(self.saveProjectNew)
         self.action_Open.triggered.connect(self.openProjectFile)
+        self.comboBox_Date_From.currentIndexChanged.connect(self.updateStatusBar)
+        self.comboBox_Date_To.currentIndexChanged.connect(self.updateStatusBar)
 
         self.show()
+
+    def addLabelToStatusBar(self):
+        # localization count
+        self.localizationCount = QLabel("   Brak wybranych lokalizacji")
+        self.statusBar.setStyleSheet("QStatusBar::item { border: none; }")
+        self.statusBar.addWidget(self.localizationCount)
+
+        # report generation time
+        self.reportGenerationTime = QLabel("Brak szacunkowego czasu wygenerowania raportu   ")
+        self.statusBar.addPermanentWidget(self.reportGenerationTime)
+
+    def updateStatusBar(self):
+        newValue = self.window_locations_list_ui.listWidget_Locatons_List.count()
+        dateFrom = int(self.comboBox_Date_From.currentText()) if self.comboBox_Date_From.currentText().isdigit() else 0
+        dateTo = int(self.comboBox_Date_To.currentText()) if self.comboBox_Date_To.currentText().isdigit() else 0
+
+        yearDifference = dateTo - dateFrom + 1
+        estimatedTime = 10
+
+        if dateFrom and dateTo and newValue > 0:
+            result = newValue * yearDifference * estimatedTime
+            self.reportGenerationTime.setText(f"Szacunkowy czas generowania raportu: {result} sekund    ")
+        else:
+            self.reportGenerationTime.setText("Brak szacunkowego czasu wygenerowania raportu   ")
+
+        if newValue > 0:
+            self.localizationCount.setText(f"   Liczba wybranych lokalizacji: {newValue}")
+        else:
+            self.localizationCount.setText(f"   Brak wybranych lokalizacji")
 
     def openProjectFile(self):
         try:
@@ -336,6 +368,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                     self.label_Location_Error_Message.setText("Nieprawidłowa lokalizacja")
 
             self.lineEdit_Location.clear()
+            self.updateStatusBar()
 
         except Exception as e:
             print(e)
@@ -367,6 +400,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             self.window_locations_list_ui.listWidget_Locatons_List.takeItem(
                 self.window_locations_list_ui.listWidget_Locatons_List.row(item))
             self.window_locations_list_ui.pushButton_Delete.setEnabled(False)
+            self.updateStatusBar()
 
     def handleSelectionChange(self):
         self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
