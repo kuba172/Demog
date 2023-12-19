@@ -646,23 +646,25 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
     def statusConfirmation(self, fileName, success=True):
         try:
-            fileName = os.path.basename(fileName)
-            msg = QMessageBox()
-            msg.setWindowTitle('DemoG')
+            if fileName:
+                fileName = os.path.basename(fileName)
+                msg = QMessageBox()
+                msg.setWindowTitle('DemoG')
 
-            if success:
-                message = f"Raport '{fileName}' został pomyślnie wygenerowany."
-                msg.setIcon(QMessageBox.Icon.Information)
-            else:
-                message = f"Błąd podczas generowania raportu '{fileName}'."
-                msg.setIcon(QMessageBox.Icon.Warning)
+                if success:
+                    message = f"Raport '{fileName}' został pomyślnie wygenerowany."
+                    msg.setIcon(QMessageBox.Icon.Information)
+                else:
+                    message = f"Błąd podczas generowania raportu '{fileName}'."
+                    msg.setIcon(QMessageBox.Icon.Warning)
 
-            msg.setText(message)
-            msg.setStandardButtons(QMessageBox.StandardButton.Close)
-            msg.button(QMessageBox.StandardButton.Close).setText('Zamknij')
+                msg.setText(message)
+                msg.setStandardButtons(QMessageBox.StandardButton.Close)
+                msg.button(QMessageBox.StandardButton.Close).setText('Zamknij')
 
-            reply = msg.exec()
-            return reply == QMessageBox.StandardButton.Close
+                reply = msg.exec()
+                return reply == QMessageBox.StandardButton.Close
+
 
         except Exception as e:
             print(e)
