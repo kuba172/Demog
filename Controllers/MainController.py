@@ -295,13 +295,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                     return False
 
             elif resultCheckDistrict == False and resultCheckDate == False:
-                print("The list of district is empty and dates not selected")
+                self.errorStatus("Wybierz lokalizację oraz przedział czasowy")
             elif resultCheckDistrict == False:
-                print("The list of district is empty")
+                self.errorStatus("Wybierz lokalizację")
             elif resultCheckDate == False:
-                print("Dates not selected")
+                self.errorStatus("Wybierz przedział czasowy")
             else:
-                print("Something goes wrong")
+                self.errorStatus("Coś poszło nie tak", critical=True)
+
+            return False
 
         except Exception as e:
             print("Error occurred:", e)
@@ -664,6 +666,32 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
                 reply = msg.exec()
                 return reply == QMessageBox.StandardButton.Close
+            else:
+                self.errorStatus("Nie wybrano miejsca zapisu raportu")
+
+
+        except Exception as e:
+            print(e)
+
+    def errorStatus(self, text="", critical=False):
+        try:
+
+            msg = QMessageBox()
+            msg.setWindowTitle('DemoG')
+
+            if critical:
+                message = f"{text}"
+                msg.setIcon(QMessageBox.Icon.Critical)
+            else:
+                message = f"{text}"
+                msg.setIcon(QMessageBox.Icon.Warning)
+
+            msg.setText(message)
+            msg.setStandardButtons(QMessageBox.StandardButton.Close)
+            msg.button(QMessageBox.StandardButton.Close).setText('Zamknij')
+
+            reply = msg.exec()
+            return reply == QMessageBox.StandardButton.Close
 
 
         except Exception as e:
