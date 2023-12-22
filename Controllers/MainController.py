@@ -351,7 +351,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             item = self.lineEdit_Location.text().strip()
             self.label_Location_Error_Message.clear()
 
-            df = pd.read_csv('Resources/locations-suggestion.tsv', delimiter='\t')
+            df = pd.read_csv('Resources/locations-suggestion.csv', delimiter=';')
             if item in df['KOD POCZTOWY'].values:
                 powiat_value = df.loc[df['KOD POCZTOWY'] == item, 'POWIAT'].iloc[0]
                 if powiat_value not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
@@ -377,7 +377,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
     def addQCompleterAll(self):
         try:
-            df = pd.read_csv("Resources/locations-suggestion.tsv", delimiter='\t')
+            df = pd.read_csv("Resources/locations-suggestion.csv", delimiter=';')
 
             columns_to_suggest = ['KOD POCZTOWY', 'POWIAT']
 

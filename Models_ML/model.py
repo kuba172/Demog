@@ -54,8 +54,13 @@ def generate_predictions(model, years, data_frames):
 
 
 def model(district_name, user_year):
+    districtAndVoivodeship = str(district_name).split(", Woj. ")
+
+    district = districtAndVoivodeship[0]
+    voivodeship = districtAndVoivodeship[1]
+
     # Ścieżka do folderu zawierającego pliki .csv
-    folder_path = f"Data/train_data/{district_name}/"  # Ścieżke zmienić w zależności od tego gdzie są dane
+    folder_path = f"Data/train_data/{voivodeship}/{district}/"  # Ścieżke zmienić w zależności od tego gdzie są dane
 
     # Wczytanie danych z wszystkich plików
     years = range(2002, 2020)
@@ -82,7 +87,7 @@ def model(district_name, user_year):
     user_data.insert(0, 'wiek', range(0, 71))
 
     # Zapisanie wyników do Data Storage
-    key = f'{district_name}_{user_year}'
+    key = f'{district_name}, rok {user_year}'
     DataStorageModel.add(key, user_data)
 
     return key
