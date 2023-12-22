@@ -236,7 +236,28 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
                 self.loadThem()
         else:
-            default_settings = {"language_index": 1, "theme_index": 1}
+            default_settings = {
+                "language_index": 0,
+                "theme_index": 5,
+                "custom_theme_enabled": False,
+                "secondary_colors_enabled": False,
+                "report_in_many_files": False,
+                "selected_model_index": 0,
+                "selected_model_name": "Random Forest Regressor",
+                "table_of_contents": True,
+                "summary": True,
+                "introduction": True,
+                "methodology": True,
+                "description_of_the_location": True,
+                "annual_analysis": True,
+                "results_and_conclusions": True,
+                "recommendations": True,
+                "additional_customer_specific_content": True,
+                "report_summary": True,
+                "references": True,
+                "attachments": True
+            }
+
             with open(SettingsController.SETTINGS_FILE, 'w') as file:
                 json.dump(default_settings, file, indent=2)
             self.loadSettings()
