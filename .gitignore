@@ -167,6 +167,3 @@ cython_debug/
 /.idea/vcs.xml
 
 settings.json
-demog.iml
-misc.xml
-vcs.xml
