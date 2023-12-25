@@ -50,9 +50,10 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.label_Location_Error_Message = QtWidgets.QLabel(parent=self.groupBox_Postal_Code)
         self.label_Location_Error_Message.setStyleSheet("QLabel{\n"
-                                                        "color: red;\n"
-                                                        "font-weight: bold;\n"
-                                                        "}")
+                                                        "                                                            color: red;\n"
+                                                        "                                                            font-weight: bold;\n"
+                                                        "                                                            }\n"
+                                                        "                                                        ")
         self.label_Location_Error_Message.setText("")
         self.label_Location_Error_Message.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_Location_Error_Message.setObjectName("label_Location_Error_Message")
@@ -93,9 +94,10 @@ class Ui_MainWindow_Main(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_8)
         self.label_Date_From_To_Error_Message = QtWidgets.QLabel(parent=self.groupBox_Time_Interval)
         self.label_Date_From_To_Error_Message.setStyleSheet("QLabel{\n"
-                                                            "color: red;\n"
-                                                            "font-weight: bold;\n"
-                                                            "}")
+                                                            "                                                            color: red;\n"
+                                                            "                                                            font-weight: bold;\n"
+                                                            "                                                            }\n"
+                                                            "                                                        ")
         self.label_Date_From_To_Error_Message.setText("")
         self.label_Date_From_To_Error_Message.setObjectName("label_Date_From_To_Error_Message")
         self.verticalLayout_2.addWidget(self.label_Date_From_To_Error_Message)
@@ -105,10 +107,28 @@ class Ui_MainWindow_Main(object):
                                             QtWidgets.QSizePolicy.Policy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
-        self.graphicsView_Interactive_Map = QtWidgets.QGraphicsView(parent=self.centralwidget)
-        self.graphicsView_Interactive_Map.setFrameShape(QtWidgets.QFrame.Shape.Box)
-        self.graphicsView_Interactive_Map.setObjectName("graphicsView_Interactive_Map")
-        self.verticalLayout_3.addWidget(self.graphicsView_Interactive_Map)
+        self.frame = QtWidgets.QFrame(parent=self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
+                                           QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy)
+        self.frame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
+        self.frame.setObjectName("frame")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.frame)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.widget_Map = QtWidgets.QWidget(parent=self.frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
+                                           QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.widget_Map.sizePolicy().hasHeightForWidth())
+        self.widget_Map.setSizePolicy(sizePolicy)
+        self.widget_Map.setObjectName("widget_Map")
+        self.verticalLayout_4.addWidget(self.widget_Map)
+        self.verticalLayout_3.addWidget(self.frame)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
@@ -183,7 +203,7 @@ class Ui_MainWindow_Main(object):
         self.comboBox_Date_From.setPlaceholderText(_translate("MainWindow_Main", "od"))
         self.label_2.setText(_translate("MainWindow_Main", "Do:"))
         self.comboBox_Date_To.setPlaceholderText(_translate("MainWindow_Main", "do"))
-        self.pushButton_Generate_Report.setText(_translate("MainWindow_Main", " Generuj raport "))
+        self.pushButton_Generate_Report.setText(_translate("MainWindow_Main", "Generuj raport"))
         self.menu_File.setTitle(_translate("MainWindow_Main", "Plik"))
         self.menu_Settings.setTitle(_translate("MainWindow_Main", "Ustawienia"))
         self.menu_Help.setTitle(_translate("MainWindow_Main", "Pomoc"))
