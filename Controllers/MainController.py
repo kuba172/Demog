@@ -64,16 +64,35 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.show()
 
     def loadFoliumMap(self):
-        m = folium.Map(location=[52.08896304129102, 19.024515292696194], zoom_start=7)
+        m = folium.Map(location=[52.08896304129102, 19.024515292696194],
+                       zoom_start=7,
+                       control_scale=True,
+                       max_bounds=True,
+                       tiles=None)
 
         gdf = gpd.read_file("./Maps/poland_map_low_quality.geojson")
-        folium.GeoJson(gdf).add_to(m)
+
+        tooltip = folium.GeoJsonTooltip(
+            fields=["name", "voivodeship"],
+            aliases=["Nazwa: ", "Województwo: "],
+        )
+
+        g = folium.GeoJson(gdf, tooltip=tooltip, control=False)
+
+        g.add_to(m)
+
+        # Layer context
+        folium.TileLayer("OpenStreetMap", show=False, name="OpenStreetMap", overlay=True).add_to(m)
+        folium.LayerControl().add_to(m)
 
         data = io.BytesIO()
         m.save(data, close_file=False)
 
         webView = QtWebEngineWidgets.QWebEngineView()
         webView.setHtml(data.getvalue().decode())
+
+        # block context menu
+        # webView.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
 
         self.widget_Map.setLayout(QtWidgets.QVBoxLayout())
         self.widget_Map.layout().addWidget(webView)
