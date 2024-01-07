@@ -73,6 +73,12 @@ def geojsonToQtPolygon(geojson):
             points = [QPointF(float(x), float(y)) for x, y in map(getCartesian, coordinates)]
             all_points.extend(points)
             polygons.append((QPolygonF(points), feature['properties']))
+        elif feature['geometry']['type'] == 'MultiPolygon':
+            for polygon in feature['geometry']['coordinates']:
+                coordinates = polygon[0]
+                points = [QPointF(float(x), float(y)) for x, y in map(getCartesian, coordinates)]
+                all_points.extend(points)
+                polygons.append((QPolygonF(points), feature['properties']))
     return polygons, all_points
 
 
