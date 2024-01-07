@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QGraphicsScene, QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, \
-    QGraphicsPathItem, QGraphicsItem
+    QGraphicsPathItem, QGraphicsItem, QToolTip
 from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor
 from PyQt6.QtCore import QPointF, Qt
 import sys
@@ -14,6 +14,7 @@ class PolygonItem(QGraphicsPathItem):
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
         self.properties = properties
         self.setBrush(QBrush(QColor(255, 255, 255)))
+        self.setAcceptHoverEvents(True)
 
     def mousePressEvent(self, event):
         if self.brush().color() == QColor(255, 255, 255):
@@ -21,6 +22,13 @@ class PolygonItem(QGraphicsPathItem):
         else:
             self.setBrush(QBrush(QColor(255, 255, 255)))
         print(self.properties)
+
+    def hoverEnterEvent(self, event):
+        tooltip_text = "<br>".join(f"<b>{k}</b>: {v}" for k, v in self.properties.items())
+        QToolTip.showText(event.screenPos(), tooltip_text)
+
+    def hoverLeaveEvent(self, event):
+        QToolTip.hideText()
 
 
 class View(QGraphicsView):
