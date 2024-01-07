@@ -76,15 +76,23 @@ def getCartesian(coord):
     return x, y
 
 
+def changeColorByName(name, color, items_dict):
+    item = items_dict.get(name)
+    if item is not None:
+        item.setBrush(QBrush(QColor(color)))
+
+
 def drawPolygons(polygons, center, initial_scale=100, initial_rotation=0, initial_mirror=False):
     app = QApplication(sys.argv)
 
     scene = QGraphicsScene()
+    items_dict = {}
     for polygon, properties in polygons:
         path = QPainterPath()
         path.addPolygon(polygon.translated(-center))
         item = PolygonItem(path, properties)
         scene.addItem(item)
+        items_dict[properties.get('name')] = item
 
     view = View(scene, initial_scale, initial_rotation, initial_mirror)
 
@@ -112,6 +120,8 @@ def drawPolygons(polygons, center, initial_scale=100, initial_rotation=0, initia
     widget = QWidget()
     widget.setLayout(layout)
     widget.show()
+
+    changeColorByName("Powiat chodzieski", QColor(255, 0, 0), items_dict)
 
     sys.exit(app.exec())
 
