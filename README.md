@@ -21,15 +21,4 @@ Projekt studencki z przedmiotu "Systemy informatyczne"
 
 - scikit-learn
 
-### Mapa:
-
-- PyQt6-WebEngine
-- folium
-- geopandas
-
-### Informacje pomocnicze
-
-###### W przypadku błędu "DLL load failed while importing QtWebEngineWidgets" należy przeinstalować PyQt6. Błąd występuje jeżli mamy pobrany pakiet "pyqt6-tools"
-
-pip install --force-reinstall pyqt6
 

@@ -1,412 +1,450 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>MainWindow_Main</class>
-    <widget class="QMainWindow" name="MainWindow_Main">
-        <property name="windowModality">
-            <enum>Qt::ApplicationModal</enum>
+ <class>MainWindow_Main</class>
+ <widget class="QMainWindow" name="MainWindow_Main">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>DemoG</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>800</width>
-                <height>600</height>
-            </rect>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
         </property>
-        <property name="minimumSize">
-            <size>
-                <width>800</width>
-                <height>600</height>
-            </size>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_Postal_Code">
+        <property name="title">
+         <string>Lokalizacja:</string>
         </property>
-        <property name="windowTitle">
-            <string>DemoG</string>
-        </property>
-        <widget class="QWidget" name="centralwidget">
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-                <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_4">
-                        <item>
-                            <spacer name="horizontalSpacer_2">
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                    <size>
-                                        <width>40</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </item>
-                        <item>
-                            <widget class="QGroupBox" name="groupBox_Postal_Code">
-                                <property name="title">
-                                    <string>Lokalizacja:</string>
-                                </property>
-                                <layout class="QHBoxLayout" name="horizontalLayout_7">
-                                    <item>
-                                        <layout class="QVBoxLayout" name="verticalLayout">
-                                            <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                                                    <item>
-                                                        <widget class="QLineEdit" name="lineEdit_Location">
-                                                            <property name="text">
-                                                                <string/>
-                                                            </property>
-                                                            <property name="frame">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                            <property name="alignment">
-                                                                <set>Qt::AlignCenter</set>
-                                                            </property>
-                                                            <property name="readOnly">
-                                                                <bool>false</bool>
-                                                            </property>
-                                                            <property name="placeholderText">
-                                                                <string>00-000, powiat</string>
-                                                            </property>
-                                                            <property name="clearButtonEnabled">
-                                                                <bool>true</bool>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                    <item>
-                                                        <spacer name="verticalSpacer">
-                                                            <property name="orientation">
-                                                                <enum>Qt::Vertical</enum>
-                                                            </property>
-                                                            <property name="sizeType">
-                                                                <enum>QSizePolicy::Minimum</enum>
-                                                            </property>
-                                                            <property name="sizeHint" stdset="0">
-                                                                <size>
-                                                                    <width>13</width>
-                                                                    <height>13</height>
-                                                                </size>
-                                                            </property>
-                                                        </spacer>
-                                                    </item>
-                                                    <item>
-                                                        <widget class="QPushButton" name="pushButton_Add_Location">
-                                                            <property name="maximumSize">
-                                                                <size>
-                                                                    <width>75</width>
-                                                                    <height>16777215</height>
-                                                                </size>
-                                                            </property>
-                                                            <property name="text">
-                                                                <string>Dodaj</string>
-                                                            </property>
-                                                        </widget>
-                                                    </item>
-                                                </layout>
-                                            </item>
-                                            <item>
-                                                <widget class="QLabel" name="label_Location_Error_Message">
-                                                    <property name="styleSheet">
-                                                        <string notr="true">QLabel{
-                                                            color: red;
-                                                            font-weight: bold;
-                                                            }
-                                                        </string>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string/>
-                                                    </property>
-                                                    <property name="alignment">
-                                                        <set>Qt::AlignCenter</set>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </item>
-                                </layout>
-                            </widget>
-                        </item>
-                        <item>
-                            <widget class="QGroupBox" name="groupBox_Time_Interval">
-                                <property name="title">
-                                    <string>Przedział czasowy:</string>
-                                </property>
-                                <layout class="QHBoxLayout" name="horizontalLayout_3">
-                                    <item>
-                                        <layout class="QVBoxLayout" name="verticalLayout_2">
-                                            <item>
-                                                <layout class="QHBoxLayout" name="horizontalLayout_8">
-                                                    <item>
-                                                        <layout class="QHBoxLayout" name="horizontalLayout_5">
-                                                            <item>
-                                                                <widget class="QLabel" name="label">
-                                                                    <property name="text">
-                                                                        <string>Od:</string>
-                                                                    </property>
-                                                                </widget>
-                                                            </item>
-                                                            <item>
-                                                                <widget class="QComboBox" name="comboBox_Date_From">
-                                                                    <property name="minimumSize">
-                                                                        <size>
-                                                                            <width>75</width>
-                                                                            <height>0</height>
-                                                                        </size>
-                                                                    </property>
-                                                                    <property name="placeholderText">
-                                                                        <string>od</string>
-                                                                    </property>
-                                                                </widget>
-                                                            </item>
-                                                        </layout>
-                                                    </item>
-                                                    <item>
-                                                        <spacer name="verticalSpacer_2">
-                                                            <property name="orientation">
-                                                                <enum>Qt::Vertical</enum>
-                                                            </property>
-                                                            <property name="sizeType">
-                                                                <enum>QSizePolicy::Minimum</enum>
-                                                            </property>
-                                                            <property name="sizeHint" stdset="0">
-                                                                <size>
-                                                                    <width>10</width>
-                                                                    <height>5</height>
-                                                                </size>
-                                                            </property>
-                                                        </spacer>
-                                                    </item>
-                                                    <item>
-                                                        <layout class="QHBoxLayout" name="horizontalLayout_6">
-                                                            <item>
-                                                                <widget class="QLabel" name="label_2">
-                                                                    <property name="text">
-                                                                        <string>Do:</string>
-                                                                    </property>
-                                                                </widget>
-                                                            </item>
-                                                            <item>
-                                                                <widget class="QComboBox" name="comboBox_Date_To">
-                                                                    <property name="minimumSize">
-                                                                        <size>
-                                                                            <width>75</width>
-                                                                            <height>0</height>
-                                                                        </size>
-                                                                    </property>
-                                                                    <property name="placeholderText">
-                                                                        <string>do</string>
-                                                                    </property>
-                                                                </widget>
-                                                            </item>
-                                                        </layout>
-                                                    </item>
-                                                </layout>
-                                            </item>
-                                            <item>
-                                                <widget class="QLabel" name="label_Date_From_To_Error_Message">
-                                                    <property name="styleSheet">
-                                                        <string notr="true">QLabel{
-                                                            color: red;
-                                                            font-weight: bold;
-                                                            }
-                                                        </string>
-                                                    </property>
-                                                    <property name="text">
-                                                        <string/>
-                                                    </property>
-                                                </widget>
-                                            </item>
-                                        </layout>
-                                    </item>
-                                </layout>
-                            </widget>
-                        </item>
-                        <item>
-                            <spacer name="horizontalSpacer_3">
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                    <size>
-                                        <width>40</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </item>
-                    </layout>
-                </item>
-                <item>
-                    <widget class="QFrame" name="frame">
-                        <property name="sizePolicy">
-                            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                            </sizepolicy>
-                        </property>
-                        <property name="frameShape">
-                            <enum>QFrame::StyledPanel</enum>
-                        </property>
-                        <property name="frameShadow">
-                            <enum>QFrame::Raised</enum>
-                        </property>
-                        <layout class="QVBoxLayout" name="verticalLayout_4">
-                            <item>
-                                <widget class="QWidget" name="widget_Map" native="true">
-                                    <property name="sizePolicy">
-                                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                                            <horstretch>0</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                </widget>
-                            </item>
-                        </layout>
-                    </widget>
-                </item>
-                <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout">
-                        <item>
-                            <spacer name="horizontalSpacer">
-                                <property name="orientation">
-                                    <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                    <size>
-                                        <width>40</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                        </item>
-                        <item>
-                            <widget class="QPushButton" name="pushButton_Generate_Report">
-                                <property name="text">
-                                    <string>Generuj raport</string>
-                                </property>
-                            </widget>
-                        </item>
-                    </layout>
-                </item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLineEdit" name="lineEdit_Location">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="frame">
+                <bool>true</bool>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+               <property name="placeholderText">
+                <string>00-000, powiat</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>13</width>
+                 <height>13</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_Add_Location">
+               <property name="maximumSize">
+                <size>
+                 <width>75</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Dodaj</string>
+               </property>
+              </widget>
+             </item>
             </layout>
-        </widget>
-        <widget class="QMenuBar" name="menubar">
-            <property name="geometry">
-                <rect>
-                    <x>0</x>
-                    <y>0</y>
-                    <width>800</width>
-                    <height>22</height>
-                </rect>
-            </property>
-            <widget class="QMenu" name="menu_File">
-                <property name="title">
-                    <string>Plik</string>
-                </property>
-                <addaction name="action_Open"/>
-                <addaction name="action_Save"/>
-                <addaction name="action_Save_As_New"/>
-                <addaction name="separator"/>
-                <addaction name="action_Generate_Report"/>
-                <addaction name="separator"/>
-                <addaction name="action_Exit"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_Location_Error_Message">
+             <property name="styleSheet">
+              <string notr="true">QLabel{
+                                                            color: red;
+                                                            font-weight: bold;
+                                                            }
+                                                        </string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
             </widget>
-            <widget class="QMenu" name="menu_Settings">
-                <property name="title">
-                    <string>Ustawienia</string>
-                </property>
-                <addaction name="action_Settings"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_Time_Interval">
+        <property name="title">
+         <string>Przedział czasowy:</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>Od:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboBox_Date_From">
+                 <property name="minimumSize">
+                  <size>
+                   <width>75</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="placeholderText">
+                  <string>od</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>10</width>
+                 <height>5</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Do:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboBox_Date_To">
+                 <property name="minimumSize">
+                  <size>
+                   <width>75</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="placeholderText">
+                  <string>do</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_Date_From_To_Error_Message">
+             <property name="styleSheet">
+              <string notr="true">QLabel{
+                                                            color: red;
+                                                            font-weight: bold;
+                                                            }
+                                                        </string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
             </widget>
-            <widget class="QMenu" name="menu_Help">
-                <property name="title">
-                    <string>Pomoc</string>
-                </property>
-                <addaction name="action_About_Program"/>
-            </widget>
-            <widget class="QMenu" name="menu_Locations">
-                <property name="title">
-                    <string>Lokalizacje</string>
-                </property>
-                <addaction name="action_Location_List"/>
-            </widget>
-            <addaction name="menu_File"/>
-            <addaction name="menu_Locations"/>
-            <addaction name="menu_Settings"/>
-            <addaction name="menu_Help"/>
-        </widget>
-        <widget class="QStatusBar" name="statusBar"/>
-        <action name="action_About_Program">
-            <property name="text">
-                <string>O programie...</string>
-            </property>
-            <property name="shortcut">
-                <string>F1</string>
-            </property>
-        </action>
-        <action name="action_Exit">
-            <property name="text">
-                <string>Wyjście</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+Shift+F4</string>
-            </property>
-        </action>
-        <action name="action_App_Settings">
-            <property name="text">
-                <string>Aplikacji</string>
-            </property>
-        </action>
-        <action name="action_Raport_Settings">
-            <property name="text">
-                <string>Raportu</string>
-            </property>
-        </action>
-        <action name="action_Settings">
-            <property name="text">
-                <string>Ustawienia</string>
-            </property>
-        </action>
-        <action name="action_Save">
-            <property name="text">
-                <string>Zapisz</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+S</string>
-            </property>
-        </action>
-        <action name="action_Save_As_New">
-            <property name="text">
-                <string>Zapisz jako nowy...</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+Shift+S</string>
-            </property>
-        </action>
-        <action name="action_Location_List">
-            <property name="text">
-                <string>Wybrane lokalizacje</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+L</string>
-            </property>
-        </action>
-        <action name="action_Generate_Report">
-            <property name="text">
-                <string>Generuj raport</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+G</string>
-            </property>
-        </action>
-        <action name="action_Open">
-            <property name="text">
-                <string>Otwórz</string>
-            </property>
-            <property name="shortcut">
-                <string>Ctrl+O</string>
-            </property>
-        </action>
-    </widget>
-    <resources>
-        <include location="../Images/AppIcon/AppIcon.qrc"/>
-    </resources>
-    <connections/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGraphicsView" name="graphicsView_Map"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>-</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="horizontalSlider_Map_Size">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>300</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Generate_Report">
+        <property name="text">
+         <string>Generuj raport</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>Plik</string>
+    </property>
+    <addaction name="action_Open"/>
+    <addaction name="action_Save"/>
+    <addaction name="action_Save_As_New"/>
+    <addaction name="separator"/>
+    <addaction name="action_Generate_Report"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Settings">
+    <property name="title">
+     <string>Ustawienia</string>
+    </property>
+    <addaction name="action_Settings"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>Pomoc</string>
+    </property>
+    <addaction name="action_About_Program"/>
+   </widget>
+   <widget class="QMenu" name="menu_Locations">
+    <property name="title">
+     <string>Lokalizacje</string>
+    </property>
+    <addaction name="action_Location_List"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Locations"/>
+   <addaction name="menu_Settings"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="action_About_Program">
+   <property name="text">
+    <string>O programie...</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>Wyjście</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F4</string>
+   </property>
+  </action>
+  <action name="action_App_Settings">
+   <property name="text">
+    <string>Aplikacji</string>
+   </property>
+  </action>
+  <action name="action_Raport_Settings">
+   <property name="text">
+    <string>Raportu</string>
+   </property>
+  </action>
+  <action name="action_Settings">
+   <property name="text">
+    <string>Ustawienia</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="text">
+    <string>Zapisz</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_Save_As_New">
+   <property name="text">
+    <string>Zapisz jako nowy...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="action_Location_List">
+   <property name="text">
+    <string>Wybrane lokalizacje</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="action_Generate_Report">
+   <property name="text">
+    <string>Generuj raport</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="action_Open">
+   <property name="text">
+    <string>Otwórz</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../Images/AppIcon/AppIcon.qrc"/>
+ </resources>
+ <connections/>
 </ui>

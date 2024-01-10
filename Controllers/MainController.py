@@ -1,5 +1,4 @@
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel
-from PyQt6 import QtWidgets, QtWebEngineWidgets
 from PyQt6.QtCore import Qt, QDate, QFile
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
@@ -12,12 +11,10 @@ from reportlab.pdfbase.ttfonts import TTFont
 from Models.data_storage_model import DataStorageModel
 from plotnine import ggplot, aes, geom_bar, labs, geom_line
 import Models.data_storage_model
-import geopandas as gpd
 import Models_ML.model
 import pandas as pd
 import datetime
 import json
-import folium
 import os
 import io
 
@@ -45,7 +42,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.createLocationsList()
         self.addQCompleterAll()
         self.addLabelToStatusBar()
-        self.loadFoliumMap()
 
         # Connections
         self.action_Exit.triggered.connect(self.close)
@@ -62,40 +58,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.comboBox_Date_To.currentIndexChanged.connect(self.updateStatusBar)
 
         self.show()
-
-    def loadFoliumMap(self):
-        m = folium.Map(location=[52.08896304129102, 19.024515292696194],
-                       zoom_start=7,
-                       control_scale=True,
-                       max_bounds=True,
-                       tiles=None)
-
-        gdf = gpd.read_file("./Maps/poland_map_low_quality.geojson")
-
-        tooltip = folium.GeoJsonTooltip(
-            fields=["name", "voivodeship"],
-            aliases=["Nazwa: ", "Województwo: "],
-        )
-
-        g = folium.GeoJson(gdf, tooltip=tooltip, control=False)
-
-        g.add_to(m)
-
-        # Layer context
-        folium.TileLayer("OpenStreetMap", show=False, name="OpenStreetMap", overlay=True).add_to(m)
-        folium.LayerControl().add_to(m)
-
-        data = io.BytesIO()
-        m.save(data, close_file=False)
-
-        webView = QtWebEngineWidgets.QWebEngineView()
-        webView.setHtml(data.getvalue().decode())
-
-        # block context menu
-        # webView.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-
-        self.widget_Map.setLayout(QtWidgets.QVBoxLayout())
-        self.widget_Map.layout().addWidget(webView)
 
     def addLabelToStatusBar(self):
         # localization count
