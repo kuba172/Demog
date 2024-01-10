@@ -717,6 +717,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def draw_map_in_graphics_view(self):
         self.items_dict = {}
 
+        def updateLocationsList(item):
+            list_widget = self.window_locations_list_ui.listWidget_Locatons_List
+            items = [list_widget.item(i).text() for i in range(list_widget.count())]
+
+            if item in items:
+                item_to_remove = list_widget.findItems(item, Qt.MatchFlag.MatchExactly)[0]
+                row = list_widget.row(item_to_remove)
+                list_widget.takeItem(row)
+            else:
+                list_widget.addItem(item)
+
         def geojsonToQtPolygon(geojson):
             polygons = []
             all_points = []
@@ -753,10 +764,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             if item.brush().color() == QColor(255, 255, 255):
                 item.setBrush(QBrush(QColor(255, 0, 0)))
                 changeColorByName(name, QColor(255, 0, 0), self.items_dict)
+                updateLocationsList(name)
 
             else:
                 item.setBrush(QBrush(QColor(255, 255, 255)))
                 changeColorByName(name, QColor(255, 255, 255), self.items_dict)
+                updateLocationsList(name)
+
+            self.updateStatusBar()
             print(item.properties)
 
         def hoverEnterEvent(item, event):
