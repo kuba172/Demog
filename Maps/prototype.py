@@ -17,6 +17,7 @@ class PolygonItem(QGraphicsPathItem):
         self.setAcceptHoverEvents(True)
 
     def mousePressEvent(self, event):
+        name = self.properties["name"]
         if self.brush().color() == QColor(255, 255, 255):
             self.setBrush(QBrush(QColor(255, 0, 0)))
         else:
@@ -91,9 +92,11 @@ def getCartesian(coord):
 
 
 def changeColorByName(name, color, items_dict):
-    item = items_dict.get(name)
-    if item is not None:
-        item.setBrush(QBrush(QColor(color)))
+    for key in items_dict:
+        if key.startswith(name):
+            item = items_dict.get(key)
+            if item is not None:
+                item.setBrush(QBrush(QColor(color)))
 
 
 def drawPolygons(polygons, center, initial_scale=100, initial_rotation=0, initial_mirror=False):
@@ -101,12 +104,19 @@ def drawPolygons(polygons, center, initial_scale=100, initial_rotation=0, initia
 
     scene = QGraphicsScene()
     items_dict = {}
+    name_counts = {}
     for polygon, properties in polygons:
         path = QPainterPath()
         path.addPolygon(polygon.translated(-center))
         item = PolygonItem(path, properties)
         scene.addItem(item)
-        items_dict[properties.get('name')] = item
+        name = properties.get('name')
+        if name in name_counts:
+            name_counts[name] += 1
+            name += f"_{name_counts[name]}"
+        else:
+            name_counts[name] = 0
+        items_dict[name] = item
 
     view = View(scene, initial_scale, initial_rotation, initial_mirror)
 
@@ -135,7 +145,7 @@ def drawPolygons(polygons, center, initial_scale=100, initial_rotation=0, initia
     widget.setLayout(layout)
     widget.show()
 
-    changeColorByName("Powiat chodzieski", QColor(255, 0, 0), items_dict)
+    changeColorByName("Powiat krakowski", QColor(255, 0, 0), items_dict)
 
     sys.exit(app.exec())
 
