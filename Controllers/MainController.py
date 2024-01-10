@@ -1,5 +1,7 @@
-from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel
-from PyQt6.QtCore import Qt, QDate, QFile
+from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel, QGraphicsScene, \
+    QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, QGraphicsPathItem, QGraphicsItem, QToolTip
+from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor
+from PyQt6.QtCore import Qt, QDate, QFile, QPointF
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
 from Views.Main.locations_list import Ui_Dialog_Location_List
@@ -13,8 +15,10 @@ from plotnine import ggplot, aes, geom_bar, labs, geom_line
 import Models.data_storage_model
 import Models_ML.model
 import pandas as pd
+import numpy as np
 import datetime
 import json
+import sys
 import os
 import io
 
@@ -57,7 +61,19 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.comboBox_Date_From.currentIndexChanged.connect(self.updateStatusBar)
         self.comboBox_Date_To.currentIndexChanged.connect(self.updateStatusBar)
 
+        self.horizontalSlider_Map_Size.setRange(50, 250)
+        self.horizontalSlider_Map_Size.setValue(100)
+        self.horizontalSlider_Map_Size.valueChanged.connect(self.zoomMap)
+
+        self.draw_map_in_graphics_view()
+
         self.show()
+
+    def zoomMap(self, value):
+        self.graphicsView_Map.resetTransform()
+        self.graphicsView_Map.scale(value / 100, value / 100)
+        self.graphicsView_Map.scale(1, -1)
+        self.graphicsView_Map.rotate(250)
 
     def addLabelToStatusBar(self):
         # localization count
@@ -697,3 +713,92 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         except Exception as e:
             print(e)
+
+    def draw_map_in_graphics_view(self):
+        self.items_dict = {}
+
+        def geojsonToQtPolygon(geojson):
+            polygons = []
+            all_points = []
+            for feature in geojson['features']:
+                if feature['geometry']['type'] == 'Polygon':
+                    coordinates = feature['geometry']['coordinates'][0]
+                    points = [QPointF(float(x), float(y)) for x, y in map(getCartesian, coordinates)]
+                    all_points.extend(points)
+                    polygons.append((QPolygonF(points), feature['properties']))
+                elif feature['geometry']['type'] == 'MultiPolygon':
+                    for polygon in feature['geometry']['coordinates']:
+                        coordinates = polygon[0]
+                        points = [QPointF(float(x), float(y)) for x, y in map(getCartesian, coordinates)]
+                        all_points.extend(points)
+                        polygons.append((QPolygonF(points), feature['properties']))
+            return polygons, all_points
+
+        def getCartesian(coord):
+            lon, lat = np.deg2rad(coord)
+            R = 7000  # radius of the earth
+            x = R * np.cos(lat) * np.cos(lon)
+            y = R * np.cos(lat) * np.sin(lon)
+            return x, y
+
+        def changeColorByName(name, color, items_dict):
+            for key in items_dict:
+                if key.startswith(name):
+                    item = items_dict.get(key)
+                    if item is not None:
+                        item.setBrush(QBrush(QColor(color)))
+
+        def mousePressEvent(item, event):
+            name = item.properties["fullname"]
+            if item.brush().color() == QColor(255, 255, 255):
+                item.setBrush(QBrush(QColor(255, 0, 0)))
+                changeColorByName(name, QColor(255, 0, 0), self.items_dict)
+
+            else:
+                item.setBrush(QBrush(QColor(255, 255, 255)))
+                changeColorByName(name, QColor(255, 255, 255), self.items_dict)
+            print(item.properties)
+
+        def hoverEnterEvent(item, event):
+            tooltip_text = "<br>".join(f"<b>{k}</b>: {v}" for k, v in item.properties.items())
+            QToolTip.showText(event.screenPos(), tooltip_text)
+
+        def hoverLeaveEvent(item, event):
+            QToolTip.hideText()
+
+        def drawPolygons(polygons, center):
+            scene = QGraphicsScene()
+            items_dict = {}
+            name_counts = {}
+            for polygon, properties in polygons:
+                path = QPainterPath()
+                path.addPolygon(polygon.translated(-center))
+                item = QGraphicsPathItem(path)
+                item.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
+                item.properties = properties
+                item.setBrush(QBrush(QColor(255, 255, 255)))
+                item.setAcceptHoverEvents(True)
+                setattr(item, 'mousePressEvent', mousePressEvent.__get__(item))
+                setattr(item, 'hoverEnterEvent', hoverEnterEvent.__get__(item))
+                setattr(item, 'hoverLeaveEvent', hoverLeaveEvent.__get__(item))
+                scene.addItem(item)
+                name = properties.get('fullname')
+                if name in name_counts:
+                    name_counts[name] += 1
+                    name += f"_{name_counts[name]}"
+                else:
+                    name_counts[name] = 0
+                items_dict[name] = item
+
+            self.items_dict = items_dict
+            self.graphicsView_Map.setScene(scene)
+            self.graphicsView_Map.scale(1, -1)
+            self.graphicsView_Map.rotate(250)
+
+        with open('./Maps/poland_map_low_quality.geojson', encoding='utf-8') as f:
+            geojson = json.load(f)
+
+        polygons, all_points = geojsonToQtPolygon(geojson)
+        center = QPointF(sum(p.x() for p in all_points) / len(all_points),
+                         sum(p.y() for p in all_points) / len(all_points))
+        drawPolygons(polygons, center)
