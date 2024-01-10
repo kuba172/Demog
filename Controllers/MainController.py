@@ -69,6 +69,13 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         self.show()
 
+    def changeColorByName(self, name, color):
+        for key in self.items_dict:
+            if key.startswith(name):
+                item = self.items_dict.get(key)
+                if item is not None:
+                    item.setBrush(QBrush(QColor(color)))
+
     def zoomMap(self, value):
         self.graphicsView_Map.resetTransform()
         self.graphicsView_Map.scale(value / 100, value / 100)
@@ -374,12 +381,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 if powiat_value not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
                                         for i in range(self.window_locations_list_ui.listWidget_Locatons_List.count())]:
                     self.window_locations_list_ui.listWidget_Locatons_List.addItem(powiat_value)
+                    self.changeColorByName(item, QColor(255, 0, 0))
                 else:
                     self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
             elif item in df['POWIAT'].values:
                 if item not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
                                 for i in range(self.window_locations_list_ui.listWidget_Locatons_List.count())]:
                     self.window_locations_list_ui.listWidget_Locatons_List.addItem(item)
+                    self.changeColorByName(item, QColor(255, 0, 0))
                 else:
                     self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
             else:
@@ -420,6 +429,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 self.window_locations_list_ui.listWidget_Locatons_List.row(item))
             self.window_locations_list_ui.pushButton_Delete.setEnabled(False)
             self.updateStatusBar()
+            self.changeColorByName(item.text(), QColor(255, 255, 255))
 
     def handleSelectionChange(self):
         self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
