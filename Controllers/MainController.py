@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel, QGraphicsScene, \
     QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, QGraphicsPathItem, QGraphicsItem, QToolTip
-from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor
+from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor, QCursor
 from PyQt6.QtCore import Qt, QDate, QFile, QPointF
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
@@ -61,8 +61,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.comboBox_Date_From.currentIndexChanged.connect(self.updateStatusBar)
         self.comboBox_Date_To.currentIndexChanged.connect(self.updateStatusBar)
 
-        self.horizontalSlider_Map_Size.setRange(50, 250)
-        self.horizontalSlider_Map_Size.setValue(100)
+        self.horizontalSlider_Map_Size.setRange(50, 400)
+        self.horizontalSlider_Map_Size.setValue(150)
         self.horizontalSlider_Map_Size.valueChanged.connect(self.zoomMap)
 
         self.draw_map_in_graphics_view()
@@ -726,6 +726,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
     def draw_map_in_graphics_view(self):
         self.items_dict = {}
+        self.original_pen = None
 
         def updateLocationsList(item):
             list_widget = self.window_locations_list_ui.listWidget_Locatons_List
@@ -785,11 +786,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             print(item.properties)
 
         def hoverEnterEvent(item, event):
-            tooltip_text = "<br>".join(f"<b>{k}</b>: {v}" for k, v in item.properties.items())
+            name = item.properties.get('name', '')
+            voivodeship = item.properties.get('voivodeship', '')
+            tooltip_text = f"<b>Nazwa</b>: {name}<br><br><b>Woj.</b>: {voivodeship}"
             QToolTip.showText(event.screenPos(), tooltip_text)
+            item.setPen(QPen(QColor(0, 0, 255), 3))
+            self.setCursor(QCursor(Qt.CursorShape.CrossCursor))
 
         def hoverLeaveEvent(item, event):
             QToolTip.hideText()
+            item.setPen(self.original_pen)
+            self.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
 
         def drawPolygons(polygons, center):
             scene = QGraphicsScene()
@@ -803,6 +810,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 item.properties = properties
                 item.setBrush(QBrush(QColor(255, 255, 255)))
                 item.setAcceptHoverEvents(True)
+                self.original_pen = item.pen()
                 setattr(item, 'mousePressEvent', mousePressEvent.__get__(item))
                 setattr(item, 'hoverEnterEvent', hoverEnterEvent.__get__(item))
                 setattr(item, 'hoverLeaveEvent', hoverLeaveEvent.__get__(item))
@@ -819,6 +827,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             self.graphicsView_Map.setScene(scene)
             self.graphicsView_Map.scale(1, -1)
             self.graphicsView_Map.rotate(250)
+            self.graphicsView_Map.scale(1.5, 1.5)
 
         with open('./Maps/poland_map_low_quality.geojson', encoding='utf-8') as f:
             geojson = json.load(f)
