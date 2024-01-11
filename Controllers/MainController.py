@@ -69,6 +69,13 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         self.show()
 
+    def loadSavedItemsOnMap(self):
+        districtsList = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
+                         range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
+
+        for item in districtsList:
+            self.changeColorByName(item, QColor(255, 0, 0))
+
     def changeColorByName(self, name, color):
         for key in self.items_dict:
             if key.startswith(name):
@@ -143,6 +150,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 self.window_locations_list_ui.listWidget_Locatons_List.addItems(districtsList)
 
                 self.setSavedFilePath(fileName[0])
+
+                self.loadSavedItemsOnMap()
+                self.updateStatusBar()
 
         except Exception as e:
             print(e)

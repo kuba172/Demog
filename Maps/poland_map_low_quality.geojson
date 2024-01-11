@@ -382,10 +382,5 @@
 { "type": "Feature", "properties": { "id": 369, "name": "Miasto Bydgoszcz na prawach powiatu", "fullname": "Miasto Bydgoszcz na prawach powiatu, Woj. Kujawsko-Pomorskie", "voivodeship": "Kujawsko-Pomorskie" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 17.8812, 53.1511 ], [ 17.9584, 53.1503 ], [ 17.9404, 53.2005 ], [ 17.9788, 53.2085 ], [ 17.975, 53.1677 ], [ 18.0136, 53.1764 ], [ 18.118, 53.1671 ], [ 18.1345, 53.178 ], [ 18.1784, 53.1836 ], [ 18.2023, 53.1754 ], [ 18.1865, 53.1498 ], [ 18.144, 53.1323 ], [ 18.1449, 53.1036 ], [ 18.154, 53.0988 ], [ 18.1402, 53.0855 ], [ 18.1364, 53.052 ], [ 18.1112, 53.0651 ], [ 18.0398, 53.0501 ], [ 18.0464, 53.0773 ], [ 18.0279, 53.0951 ], [ 17.948, 53.1025 ], [ 17.9514, 53.1188 ], [ 17.8874, 53.1344 ], [ 17.8812, 53.1511 ] ] ] } },
 { "type": "Feature", "properties": { "id": 259, "name": "Miasto Gorzów Wielkopolski na prawach powiatu", "fullname": "Miasto Gorzów Wielkopolski na prawach powiatu, Woj. Lubuskie", "voivodeship": "Lubuskie" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 15.2832, 52.7314 ], [ 15.3109, 52.7185 ], [ 15.2984, 52.693 ], [ 15.2499, 52.685 ], [ 15.2062, 52.6968 ], [ 15.1843, 52.7098 ], [ 15.1348, 52.7099 ], [ 15.1406, 52.7312 ], [ 15.1247, 52.7474 ], [ 15.1353, 52.7769 ], [ 15.1874, 52.7633 ], [ 15.2298, 52.7737 ], [ 15.2822, 52.7694 ], [ 15.2832, 52.7314 ] ] ] } },
 { "type": "Feature", "properties": { "id": 195, "name": "Miasto Legnica na prawach powiatu", "fullname": "Miasto Legnica na prawach powiatu, Woj. Dolnośląskie", "voivodeship": "Dolnośląskie" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 16.1282, 51.2002 ], [ 16.1632, 51.2416 ], [ 16.2205, 51.2402 ], [ 16.2302, 51.1987 ], [ 16.1953, 51.1933 ], [ 16.1837, 51.1607 ], [ 16.1057, 51.1668 ], [ 16.0928, 51.184 ], [ 16.1282, 51.2002 ] ] ] } }
-
-
-
-
-
 ]
 }
