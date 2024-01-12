@@ -14,6 +14,8 @@ from Models.data_storage_model import DataStorageModel
 from plotnine import ggplot, aes, geom_bar, labs, geom_line
 import Models.data_storage_model
 import Models_ML.model_random_forest_regression
+import Models_ML.model_linear_regression
+import Models_ML.model_polynomial_regression
 import pandas as pd
 import numpy as np
 import datetime
@@ -223,14 +225,25 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         else:
             return False
 
+    def getModelIndex(self):
+        if QFile.exists(MainController.SETTINGS_FILE):
+            with open(MainController.SETTINGS_FILE, 'r') as file:
+                settings_data = json.load(file)
+
+        if 'selected_model_index' in settings_data:
+            selected_model_index = settings_data['selected_model_index']
+            return int(selected_model_index)
+        else:
+            return False
+
     def getModelName(self):
         if QFile.exists(MainController.SETTINGS_FILE):
             with open(MainController.SETTINGS_FILE, 'r') as file:
                 settings_data = json.load(file)
 
         if 'selected_model_name' in settings_data:
-            report_in_many_files_value = settings_data['selected_model_name']
-            return report_in_many_files_value
+            selected_model_name = settings_data['selected_model_name']
+            return selected_model_name
         else:
             return False
 
@@ -279,9 +292,23 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         dateFrom = self.comboBox_Date_From.currentText()
         dateTo = self.comboBox_Date_To.currentText()
+        modelIndex = self.getModelIndex()
 
-        for district in districtList:
-            Models_ML.model_random_forest_regression.start(str(district), int(dateFrom), int(dateTo))
+        # 0 - random_forest_regression
+        # 1 - polynomial_regression
+        # 2 - linear_regression
+
+        if modelIndex == 0:
+            for district in districtList:
+                Models_ML.model_random_forest_regression.start(str(district), int(dateFrom), int(dateTo))
+        elif modelIndex == 1:
+            for district in districtList:
+                Models_ML.model_polynomial_regression.start(str(district), int(dateFrom), int(dateTo))
+        elif modelIndex == 2:
+            for district in districtList:
+                Models_ML.model_linear_regression.start(str(district), int(dateFrom), int(dateTo))
+        else:
+            self.errorStatus("Błąd modelu ucznia maszynowego", critical=True)
 
     def updateReportField(self):
         self.section_pages = {}

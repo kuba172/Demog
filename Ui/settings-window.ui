@@ -61,7 +61,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget_Content">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="General">
        <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -428,7 +428,17 @@
                 <widget class="QComboBox" name="comboBox_Model_Prediction">
                  <item>
                   <property name="text">
-                   <string>Random Forest Regressor</string>
+                   <string>Random Forest Regression</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Polynomial Regression</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Linear Regression</string>
                   </property>
                  </item>
                 </widget>

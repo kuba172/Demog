@@ -3,8 +3,6 @@ from PyQt6.QtCore import Qt, QDir, QFile
 from qt_material import QtStyleTools
 from xml.etree import ElementTree as ET
 from Views.Settings.settings_window import Ui_MainWindow_Settings
-from Models.data_storage_model import DataStorageModel
-import Models_ML.model_random_forest_regression
 import json
 
 
@@ -26,6 +24,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.loadSettings()
         self.loadAndApplyCustomStylesheet()
         self.loadLanguage()
+        self.setModelFromSettings()
 
         # Connections
         self.comboBox_Theme.currentIndexChanged.connect(self.loadThem)
@@ -66,6 +65,18 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
             lambda: self.changeColor('primaryTextColor', 'pushButton_Primary_Text_Color'))
         self.pushButton_Secondary_Text_Color.clicked.connect(
             lambda: self.changeColor('secondaryTextColor', 'pushButton_Secondary_Text_Color'))
+
+    def setModelFromSettings(self):
+        if QFile.exists(SettingsController.SETTINGS_FILE):
+            with open(SettingsController.SETTINGS_FILE, 'r') as file:
+                settings_data = json.load(file)
+
+        if 'selected_model_index' in settings_data:
+            selected_model_index = settings_data['selected_model_index']
+        else:
+            selected_model_index = 0
+
+        self.comboBox_Model_Prediction.setCurrentIndex(selected_model_index)
 
     def loadLanguage(self):
         language_files = {
