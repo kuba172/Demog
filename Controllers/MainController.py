@@ -13,7 +13,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from Models.data_storage_model import DataStorageModel
 from plotnine import ggplot, aes, geom_bar, labs, geom_line
 import Models.data_storage_model
-import Models_ML.model
+import Models_ML.model_random_forest_regression
 import pandas as pd
 import numpy as np
 import datetime
@@ -281,7 +281,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         dateTo = self.comboBox_Date_To.currentText()
 
         for district in districtList:
-            Models_ML.model.start(str(district), int(dateFrom), int(dateTo))
+            Models_ML.model_random_forest_regression.start(str(district), int(dateFrom), int(dateTo))
 
     def updateReportField(self):
         self.section_pages = {}

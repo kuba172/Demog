@@ -4,7 +4,7 @@ from qt_material import QtStyleTools
 from xml.etree import ElementTree as ET
 from Views.Settings.settings_window import Ui_MainWindow_Settings
 from Models.data_storage_model import DataStorageModel
-import Models_ML.model
+import Models_ML.model_random_forest_regression
 import json
 
 
