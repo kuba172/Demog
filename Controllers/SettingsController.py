@@ -1,3 +1,4 @@
+from PyQt6.QtGui import QPalette
 from PyQt6.QtWidgets import QMainWindow, QColorDialog, QPushButton
 from PyQt6.QtCore import Qt, QDir, QFile
 from qt_material import QtStyleTools
@@ -66,6 +67,40 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
             lambda: self.changeColor('primaryTextColor', 'pushButton_Primary_Text_Color'))
         self.pushButton_Secondary_Text_Color.clicked.connect(
             lambda: self.changeColor('secondaryTextColor', 'pushButton_Secondary_Text_Color'))
+
+        self.pushButton_Map_Color.clicked.connect(
+            lambda: self.changeMapColorButton('pushButton_Map_Color'))
+
+        self.pushButton_Border_Map_Color.clicked.connect(
+            lambda: self.changeMapColorButton('pushButton_Border_Map_Color'))
+
+        self.pushButton_Selection_Color.clicked.connect(
+            lambda: self.changeMapColorButton('pushButton_Selection_Color'))
+
+        self.pushButton_Hover_Color.clicked.connect(
+            lambda: self.changeMapColorButton('pushButton_Hover_Color'))
+
+        self.spinBox_Map_Border_Size.valueChanged.connect(self.saveSettings)
+        self.spinBox_Selection_Border_Size.valueChanged.connect(self.saveSettings)
+
+    def changeMapColorButton(self, button_name):
+        try:
+            button = self.findChild(QPushButton, button_name)
+
+            if button:
+                current_style = button.styleSheet()
+
+                color = QColorDialog.getColor(options=QColorDialog.ColorDialogOption.ShowAlphaChannel)
+
+                if color.isValid():
+                    button.setStyleSheet(f"{current_style}background-color: {color.name()};")
+                    self.saveSettings()
+                else:
+                    button.setStyleSheet(current_style)
+                    self.saveSettings()
+
+        except Exception as e:
+            print(f"Error changing color: {e}")
 
     def setModelFromSettings(self):
         if QFile.exists(SettingsController.SETTINGS_FILE):
@@ -222,6 +257,12 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 report_summary = settings.get("report_summary", True)
                 references = settings.get("references", True)
                 attachments = settings.get("attachments", True)
+                map_color_rgba = settings.get("map_color_rgba", [255, 255, 255, 255])
+                border_map_color_rgba = settings.get("border_map_color_rgba", [0, 0, 0, 255])
+                selection_color_rgba = settings.get("selection_color_rgba", [255, 0, 0, 255])
+                hover_color_rgba = settings.get("hover_color_rgba", [0, 0, 255, 255])
+                map_border_size = settings.get("map_border_size", 1)
+                selection_border_size = settings.get("selection_border_size", 3)
 
                 self.checkBox_Use_Custom_Theme.setChecked(custom_theme_enabled)
                 self.checkBox_Use_Secondary_Colors.setChecked(secondary_colors_enabled)
@@ -246,6 +287,22 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 self.checkBox_11_References.setChecked(references)
                 self.checkBox_12_Attachments.setChecked(attachments)
 
+                # Map
+                rgba_string = f"rgba({map_color_rgba[0]}, {map_color_rgba[1]}, {map_color_rgba[2]}, {map_color_rgba[3]})"
+                self.pushButton_Map_Color.setStyleSheet(f"background-color: {rgba_string};")
+
+                rgba_string = f"rgba({border_map_color_rgba[0]}, {border_map_color_rgba[1]}, {border_map_color_rgba[2]}, {border_map_color_rgba[3]})"
+                self.pushButton_Border_Map_Color.setStyleSheet(f"background-color: {rgba_string};")
+
+                rgba_string = f"rgba({selection_color_rgba[0]}, {selection_color_rgba[1]}, {selection_color_rgba[2]}, {selection_color_rgba[3]})"
+                self.pushButton_Selection_Color.setStyleSheet(f"background-color: {rgba_string};")
+
+                rgba_string = f"rgba({hover_color_rgba[0]}, {hover_color_rgba[1]}, {hover_color_rgba[2]}, {hover_color_rgba[3]})"
+                self.pushButton_Hover_Color.setStyleSheet(f"background-color: {rgba_string};")
+
+                self.spinBox_Map_Border_Size.setValue(map_border_size)
+                self.spinBox_Selection_Border_Size.setValue(selection_border_size)
+
                 self.loadThem()
         else:
             default_settings = {
@@ -267,7 +324,13 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 "additional_customer_specific_content": True,
                 "report_summary": True,
                 "references": True,
-                "attachments": True
+                "attachments": True,
+                "map_color_rgba": [255, 255, 255, 255],
+                "border_map_color_rgba": [0, 0, 0, 255],
+                "selection_color_rgba": [255, 0, 0, 255],
+                "hover_color_rgba": [0, 0, 255, 255],
+                "map_border_size": 1,
+                "selection_border_size": 3
             }
 
             with open(SettingsController.SETTINGS_FILE, 'w') as file:
@@ -305,6 +368,25 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         references = self.checkBox_11_References.isChecked()
         attachments = self.checkBox_12_Attachments.isChecked()
 
+        # pushButton_Map_Color
+        colorButton = self.pushButton_Map_Color.palette().color(QPalette.ColorRole.Button)
+        map_color_rgba = list(colorButton.getRgb())
+
+        # pushButton_Border_Map_Color
+        colorButton = self.pushButton_Border_Map_Color.palette().color(QPalette.ColorRole.Button)
+        border_map_color_rgba = list(colorButton.getRgb())
+
+        # pushButton_Selection_Color
+        colorButton = self.pushButton_Selection_Color.palette().color(QPalette.ColorRole.Button)
+        selection_color_rgba = list(colorButton.getRgb())
+
+        # pushButton_Hover_Color
+        colorButton = self.pushButton_Hover_Color.palette().color(QPalette.ColorRole.Button)
+        hover_color_rgba = list(colorButton.getRgb())
+
+        map_border_size = self.spinBox_Map_Border_Size.value()
+        selection_border_size = self.spinBox_Selection_Border_Size.value()
+
         settings = {
             "language_index": language_index,
             "theme_index": theme_index,
@@ -324,7 +406,13 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
             "additional_customer_specific_content": additional_customer_specific_content,
             "report_summary": report_summary,
             "references": references,
-            "attachments": attachments
+            "attachments": attachments,
+            "map_color_rgba": map_color_rgba,
+            "border_map_color_rgba": border_map_color_rgba,
+            "selection_color_rgba": selection_color_rgba,
+            "hover_color_rgba": hover_color_rgba,
+            "map_border_size": map_border_size,
+            "selection_border_size": selection_border_size
         }
 
         with open(SettingsController.SETTINGS_FILE, 'w') as file:
