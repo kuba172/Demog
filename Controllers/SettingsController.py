@@ -10,8 +10,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
     SETTINGS_FILE = "settings.json"
     CUSTOM_THEM_FILE = "Themes/my_custom.xml"
 
-    def __init__(self, app, translator):
+    def __init__(self, app, translator, mainController):
         super().__init__()
+        self.mainController = mainController
         self.app = app
         self.translator = translator
         self.setWindowFlags(

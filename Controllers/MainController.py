@@ -71,6 +71,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         self.show()
 
+    def deleteAllLocations(self):
+        districtsList = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
+                         range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
+
+        self.window_locations_list_ui.listWidget_Locatons_List.clear()
+
+        for district in districtsList:
+            self.changeColorByName(district, QColor(255, 255, 255))
+
+        self.updateStatusBar()
+
     def loadSavedItemsOnMap(self):
         districtsList = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
                          range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
@@ -403,6 +414,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.window_locations_list_ui.pushButton_Delete.clicked.connect(self.handleDeleteButtonClick)
         self.window_locations_list_ui.pushButton_Cancel.clicked.connect(self.window_locations_list.close)
         self.window_locations_list_ui.listWidget_Locatons_List.itemClicked.connect(self.handleSelectionChange)
+        self.window_locations_list_ui.pushButton_Delete_All.clicked.connect(self.deleteAllLocations)
 
     def showLocationsList(self):
         self.window_locations_list.show()
@@ -820,7 +832,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 updateLocationsList(name)
 
             self.updateStatusBar()
-            print(item.properties)
 
         def hoverEnterEvent(item, event):
             name = item.properties.get('name', '')
@@ -847,6 +858,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 item.properties = properties
                 item.setBrush(QBrush(QColor(255, 255, 255)))
                 item.setAcceptHoverEvents(True)
+                item.setPen(QPen(QColor(0, 0, 0), 1))
                 self.original_pen = item.pen()
                 setattr(item, 'mousePressEvent', mousePressEvent.__get__(item))
                 setattr(item, 'hoverEnterEvent', hoverEnterEvent.__get__(item))

@@ -16,7 +16,7 @@ class Main:
 
         # Controllers
         self.mainController = MainController()
-        self.settingsController = SettingsController(app, translator)
+        self.settingsController = SettingsController(app, translator, self.mainController)
 
         # Connections
         self.mainController.action_Settings.triggered.connect(self.settingsController.showSettingsWindow)
