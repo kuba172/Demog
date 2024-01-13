@@ -43,6 +43,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         self.showMaximized()
 
+        # Map
+        self.map_color_rgba = [255, 255, 255, 255]
+        self.border_map_color_rgba = [0, 0, 0, 255]
+        self.selection_color_rgba = [255, 0, 0, 255]
+        self.hover_color_rgba = [0, 0, 255, 255]
+        self.map_border_size = 1
+        self.selection_border_size = 3
+
         self.populateDateFrom()
         self.populateDateTo()
         self.createLocationsList()
@@ -67,9 +75,29 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.horizontalSlider_Map_Size.setValue(150)
         self.horizontalSlider_Map_Size.valueChanged.connect(self.zoomMap)
 
-        self.draw_map_in_graphics_view()
+        # self.draw_map_in_graphics_view()
+
+        # Test
+        # self.updateMapSettings([223, 75, 23, 255], [0, 0, 0, 255], [22, 0, 220, 255], [0, 0, 255, 255], 3, 3)
 
         self.show()
+
+    def updateMapSettings(self, map_color_rgba, border_map_color_rgba, selection_color_rgba, hover_color_rgba,
+                          map_border_size, selection_border_size):
+        self.map_color_rgba = map_color_rgba
+        self.border_map_color_rgba = border_map_color_rgba
+        self.selection_color_rgba = selection_color_rgba
+        self.hover_color_rgba = hover_color_rgba
+        self.map_border_size = map_border_size
+        self.selection_border_size = selection_border_size
+
+        # self.graphicsView_Map.deleteLater()
+        # self.graphicsView_Map = QGraphicsView()
+        # self.frame.layout().addWidget(self.graphicsView_Map)
+
+        self.draw_map_in_graphics_view()
+
+        self.zoomMap(self.horizontalSlider_Map_Size.value())
 
     def deleteAllLocations(self):
         districtsList = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
@@ -78,7 +106,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.window_locations_list_ui.listWidget_Locatons_List.clear()
 
         for district in districtsList:
-            self.changeColorByName(district, QColor(255, 255, 255))
+            self.changeColorByName(district,
+                                   QColor(self.map_color_rgba[0], self.map_color_rgba[1], self.map_color_rgba[2],
+                                          self.map_color_rgba[3]))
 
         self.updateStatusBar()
 
@@ -87,7 +117,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                          range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
 
         for item in districtsList:
-            self.changeColorByName(item, QColor(255, 0, 0))
+            self.changeColorByName(item, QColor(self.selection_color_rgba[0], self.selection_color_rgba[1],
+                                                self.selection_color_rgba[2], self.selection_color_rgba[3]))
 
     def changeColorByName(self, name, color):
         for key in self.items_dict:
@@ -430,14 +461,16 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 if powiat_value not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
                                         for i in range(self.window_locations_list_ui.listWidget_Locatons_List.count())]:
                     self.window_locations_list_ui.listWidget_Locatons_List.addItem(powiat_value)
-                    self.changeColorByName(item, QColor(255, 0, 0))
+                    self.changeColorByName(item, QColor(self.selection_color_rgba[0], self.selection_color_rgba[1],
+                                                        self.selection_color_rgba[2], self.selection_color_rgba[3]))
                 else:
                     self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
             elif item in df['POWIAT'].values:
                 if item not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
                                 for i in range(self.window_locations_list_ui.listWidget_Locatons_List.count())]:
                     self.window_locations_list_ui.listWidget_Locatons_List.addItem(item)
-                    self.changeColorByName(item, QColor(255, 0, 0))
+                    self.changeColorByName(item, QColor(self.selection_color_rgba[0], self.selection_color_rgba[1],
+                                                        self.selection_color_rgba[2], self.selection_color_rgba[3]))
                 else:
                     self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
             else:
@@ -478,7 +511,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 self.window_locations_list_ui.listWidget_Locatons_List.row(item))
             self.window_locations_list_ui.pushButton_Delete.setEnabled(False)
             self.updateStatusBar()
-            self.changeColorByName(item.text(), QColor(255, 255, 255))
+            self.changeColorByName(item.text(),
+                                   QColor(self.map_color_rgba[0], self.map_color_rgba[1], self.map_color_rgba[2],
+                                          self.map_color_rgba[3]))
 
     def handleSelectionChange(self):
         self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
@@ -821,14 +856,21 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         def mousePressEvent(item, event):
             name = item.properties["fullname"]
-            if item.brush().color() == QColor(255, 255, 255):
-                item.setBrush(QBrush(QColor(255, 0, 0)))
-                changeColorByName(name, QColor(255, 0, 0), self.items_dict)
+            if item.brush().color() == QColor(self.map_color_rgba[0], self.map_color_rgba[1], self.map_color_rgba[2],
+                                              self.map_color_rgba[3]):
+                item.setBrush(QBrush(
+                    QColor(self.selection_color_rgba[0], self.selection_color_rgba[1], self.selection_color_rgba[2],
+                           self.selection_color_rgba[3])))
+                changeColorByName(name, QColor(self.selection_color_rgba[0], self.selection_color_rgba[1],
+                                               self.selection_color_rgba[2], self.selection_color_rgba[3]),
+                                  self.items_dict)
                 updateLocationsList(name)
 
             else:
-                item.setBrush(QBrush(QColor(255, 255, 255)))
-                changeColorByName(name, QColor(255, 255, 255), self.items_dict)
+                item.setBrush(QBrush(QColor(self.map_color_rgba[0], self.map_color_rgba[1], self.map_color_rgba[2],
+                                            self.map_color_rgba[3])))
+                changeColorByName(name, QColor(self.map_color_rgba[0], self.map_color_rgba[1], self.map_color_rgba[2],
+                                               self.map_color_rgba[3]), self.items_dict)
                 updateLocationsList(name)
 
             self.updateStatusBar()
@@ -838,7 +880,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             voivodeship = item.properties.get('voivodeship', '')
             tooltip_text = f"<b>Nazwa</b>: {name}<br><br><b>Woj.</b>: {voivodeship}"
             QToolTip.showText(event.screenPos(), tooltip_text)
-            item.setPen(QPen(QColor(0, 0, 255), 3))
+            item.setPen(QPen(QColor(self.hover_color_rgba[0], self.hover_color_rgba[1], self.hover_color_rgba[2],
+                                    self.hover_color_rgba[3]), self.selection_border_size))
             self.setCursor(QCursor(Qt.CursorShape.CrossCursor))
 
         def hoverLeaveEvent(item, event):
@@ -856,9 +899,12 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 item = QGraphicsPathItem(path)
                 item.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
                 item.properties = properties
-                item.setBrush(QBrush(QColor(255, 255, 255)))
+                item.setBrush(QBrush(QColor(self.map_color_rgba[0], self.map_color_rgba[1], self.map_color_rgba[2],
+                                            self.map_color_rgba[3])))
                 item.setAcceptHoverEvents(True)
-                item.setPen(QPen(QColor(0, 0, 0), 1))
+                item.setPen(QPen(
+                    QColor(self.border_map_color_rgba[0], self.border_map_color_rgba[1], self.border_map_color_rgba[2],
+                           self.border_map_color_rgba[3]), self.map_border_size))
                 self.original_pen = item.pen()
                 setattr(item, 'mousePressEvent', mousePressEvent.__get__(item))
                 setattr(item, 'hoverEnterEvent', hoverEnterEvent.__get__(item))

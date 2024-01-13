@@ -27,6 +27,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.loadAndApplyCustomStylesheet()
         self.loadLanguage()
         self.setModelFromSettings()
+        self.loadMap()
 
         # Connections
         self.comboBox_Theme.currentIndexChanged.connect(self.loadThem)
@@ -83,6 +84,24 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.spinBox_Map_Border_Size.valueChanged.connect(self.saveSettings)
         self.spinBox_Selection_Border_Size.valueChanged.connect(self.saveSettings)
 
+        self.spinBox_Map_Border_Size.valueChanged.connect(self.loadMap)
+        self.spinBox_Selection_Border_Size.valueChanged.connect(self.loadMap)
+
+    def loadMap(self):
+        if QFile.exists(SettingsController.SETTINGS_FILE):
+            with open(SettingsController.SETTINGS_FILE, 'r') as file:
+                settings = json.load(file)
+
+                map_color_rgba = settings.get("map_color_rgba", [255, 255, 255, 255])
+                border_map_color_rgba = settings.get("border_map_color_rgba", [0, 0, 0, 255])
+                selection_color_rgba = settings.get("selection_color_rgba", [255, 0, 0, 255])
+                hover_color_rgba = settings.get("hover_color_rgba", [0, 0, 255, 255])
+                map_border_size = settings.get("map_border_size", 1)
+                selection_border_size = settings.get("selection_border_size", 3)
+
+                self.mainController.updateMapSettings(map_color_rgba, border_map_color_rgba, selection_color_rgba,
+                                                      hover_color_rgba, map_border_size, selection_border_size)
+
     def changeMapColorButton(self, button_name):
         try:
             button = self.findChild(QPushButton, button_name)
@@ -95,9 +114,13 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 if color.isValid():
                     button.setStyleSheet(f"{current_style}background-color: {color.name()};")
                     self.saveSettings()
+                    self.loadMap()
+
                 else:
                     button.setStyleSheet(current_style)
                     self.saveSettings()
+                    self.loadMap()
+
 
         except Exception as e:
             print(f"Error changing color: {e}")
