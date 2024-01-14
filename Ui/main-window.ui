@@ -220,6 +220,51 @@
        </widget>
       </item>
       <item>
+       <widget class="QGroupBox" name="groupBox_Target_Group">
+        <property name="title">
+         <string>Grupa docelowa</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QComboBox" name="comboBox_Target_Group">
+             <property name="currentIndex">
+              <number>-1</number>
+             </property>
+             <property name="placeholderText">
+              <string>Wybierz grupę docelową... </string>
+             </property>
+             <item>
+              <property name="text">
+               <string>Dzieci i młodzież</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Dorośli</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Emeryci</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_Target_Group_Error_Message">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
