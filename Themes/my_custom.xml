@@ -1,2 +1,2 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources><color name="primaryColor">#e0c1b3</color><color name="primaryLightColor">#f2e9e4</color><color name="secondaryColor">#aeb4a9</color><color name="secondaryLightColor">#ffffff</color><color name="secondaryDarkColor">#acbed8</color><color name="primaryTextColor">#000000</color><color name="secondaryTextColor">#000000</color></resources>
+<resources><color name="primaryColor">#eeeeee</color><color name="primaryLightColor">#f2e9e4</color><color name="secondaryColor">#aeb4a9</color><color name="secondaryLightColor">#ff320e</color><color name="secondaryDarkColor">#acbed8</color><color name="primaryTextColor">#1a29ff</color><color name="secondaryTextColor">#78ff30</color></resources>
