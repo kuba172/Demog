@@ -604,6 +604,20 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def getCurrentPage(self):
         return self.current_page
 
+    def draw_centered_strings(self, pdf_canvas, center_x, center_y, lines):
+
+        # Pobierz wysokość tekstu i odstępy między liniami
+        text_height = pdf_canvas._fontsize
+        line_spacing = 1.2 * text_height
+
+        # Oblicz położenie x dla tekstu wycentrowanego
+        center_x -= pdf_canvas.stringWidth(lines[0], pdf_canvas._fontname, pdf_canvas._fontsize) / 2
+
+        # Rysuj każdą linię tekstu jeden pod drugim
+        for line in lines:
+            pdf_canvas.drawString(center_x, center_y, line)
+            center_y -= line_spacing
+
     def addTitlePage(self, pdf_canvas, districtKey, targetGroupIndex):
 
         # Set page size and margins
@@ -639,7 +653,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                              range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
         elements_x = page_width / 2
         elements_y = date_y - 30  # Adjust as needed
-        pdf_canvas.drawCentredString(elements_x, elements_y, f"Wybrane powiaty: {', '.join(list_widget_items)}")
+        #pdf_canvas.drawCentredString(elements_x, elements_y, f"Wybrane powiaty: {', '.join(list_widget_items)}")
+        self.draw_centered_strings(pdf_canvas, elements_x, elements_y, list_widget_items)
 
         # Selected dates
         pdf_canvas.setFont("DejaVuSans", 12)
