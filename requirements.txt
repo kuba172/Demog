@@ -1,0 +1,7 @@
+PyQt6
+qt-material
+pandas
+matplotlib
+reportlab
+plotnine
+scikit-learn
