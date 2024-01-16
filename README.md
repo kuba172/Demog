@@ -21,4 +21,6 @@ Projekt studencki z przedmiotu "Systemy informatyczne"
 
 - scikit-learn
 
+### Instalacja
 
+pip install -r requirements.txt
