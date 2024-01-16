@@ -102,6 +102,8 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 self.mainController.updateMapSettings(map_color_rgba, border_map_color_rgba, selection_color_rgba,
                                                       hover_color_rgba, map_border_size, selection_border_size)
 
+                self.mainController.loadSavedItemsOnMap()
+
     def changeMapColorButton(self, button_name):
         try:
             button = self.findChild(QPushButton, button_name)
