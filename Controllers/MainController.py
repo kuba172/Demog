@@ -381,10 +381,13 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 else:
                     filePath = self.getFileNamePath()
 
-                self.runModel()
-                districktKeys = DataStorageModel.get_all_keys()
+                if filePath or directoryPath:
+                    self.runModel()
+                    districktKeys = DataStorageModel.get_all_keys()
 
-                targetGroupIndex = self.comboBox_Target_Group.currentIndex()
+                    targetGroupIndex = self.comboBox_Target_Group.currentIndex()
+                else:
+                    return False
 
                 if filePath and filePath.endswith(".pdf"):
 
