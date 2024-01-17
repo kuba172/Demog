@@ -2,11 +2,12 @@ import subprocess
 
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel, QGraphicsScene, \
     QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, QGraphicsPathItem, QGraphicsItem, QToolTip
-from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor, QCursor
-from PyQt6.QtCore import Qt, QDate, QFile, QPointF
+from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor, QCursor, QMovie
+from PyQt6.QtCore import Qt, QDate, QFile, QPointF, QRect, QSize
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
 from Views.Main.locations_list import Ui_Dialog_Location_List
+from Views.Main.loading_window import Ui_Dialog_Loading
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
@@ -84,6 +85,31 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         self.show()
 
+    def createLoadingWindow(self):
+        self.window_loading = QDialog()
+        self.window_loading_ui = Ui_Dialog_Loading()
+        self.window_loading_ui.setupUi(self.window_loading)
+        self.window_loading.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.window_loading.setModal(True)
+        self.window_loading.setWindowOpacity(0)
+        time = round(float(self.reportTimeNumber) / 60)
+        i = 0
+        timeWords = ["minutę", "minuty", "minut"]
+
+        if time <= 1:
+            i = 0
+        elif 1 < time <= 5:
+            i = 1
+        else:
+            i = 2
+
+        text = f"Proszę czekać, może to potrwać nawet {time} {timeWords[i]}..."
+        self.window_loading_ui.label_Dynamic_Text.setText(text)
+
+        self.window_loading.show()
+
+        return True
+
     def updateMapSettings(self, map_color_rgba, border_map_color_rgba, selection_color_rgba, hover_color_rgba,
                           map_border_size, selection_border_size):
         self.map_color_rgba = map_color_rgba
@@ -154,8 +180,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         estimatedTime = 10
 
         if dateFrom and dateTo and newValue > 0:
-            result = newValue * yearDifference * estimatedTime
-            self.reportGenerationTime.setText(f"Szacunkowy czas generowania raportu: {result} sekund    ")
+            self.reportTimeNumber = newValue * yearDifference * estimatedTime
+            self.reportGenerationTime.setText(
+                f"Szacunkowy czas generowania raportu: {self.reportTimeNumber} sekund    ")
         else:
             self.reportGenerationTime.setText("Brak szacunkowego czasu wygenerowania raportu   ")
 
@@ -368,6 +395,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         try:
             filePath = None
             directoryPath = None
+            loadingResult = None
 
             resultCheckDistrict = self.checkDistrict()
             resultCheckDate = self.checkDate()
@@ -378,12 +406,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             if resultCheckDistrict and resultCheckDate and resultCheckTargetGroup:
 
+                loadingResult = self.createLoadingWindow()
+
                 if self.resultInManyFiles():
                     directoryPath = self.getDirectoryPath()
+                    self.window_loading.setWindowOpacity(1)
                 else:
                     filePath = self.getFileNamePath()
+                    self.window_loading.setWindowOpacity(1)
 
-                if filePath or directoryPath:
+                if (filePath or directoryPath) and loadingResult == True:
+
                     self.runModel()
                     districktKeys = DataStorageModel.get_all_keys()
 
@@ -401,8 +434,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                         success = self.generatePdf(filePath, key, resultInOneFile=True, save=False,
                                                    targetGroupIndex=targetGroupIndex)
 
+                    self.window_loading.close()
                     self.statusConfirmation(filePath, success=success, isDir=False)
                     self.updateReportField()
+
                     return success
                 elif directoryPath:
                     for key in districktKeys:
@@ -410,9 +445,13 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                         success = self.generatePdf(filePath, key, resultInOneFile=False, save=True,
                                                    targetGroupIndex=targetGroupIndex)
 
+                    self.window_loading.close()
                     self.statusConfirmation(filePath, success=success, isDir=True)
                     self.updateReportField()
+
+                    return success
                 else:
+                    self.window_loading.close()
                     return False
             elif resultCheckDistrict == False and resultCheckDate == False and resultCheckTargetGroup == False:
                 self.errorStatus("Wybierz lokalizację, przedział czasowy oraz grupę docelową")
@@ -434,7 +473,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             return False
 
         except Exception as e:
-            print("Error occurred:", e)
+            self.window_loading.close()
             self.statusConfirmation(filePath, success=False)
 
     def populateDateFrom(self):
