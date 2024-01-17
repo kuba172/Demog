@@ -222,32 +222,38 @@
       <item>
        <widget class="QGroupBox" name="groupBox_Target_Group">
         <property name="title">
-         <string>Grupa docelowa</string>
+         <string>Segment docelowy</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
             <widget class="QComboBox" name="comboBox_Target_Group">
+             <property name="minimumSize">
+              <size>
+               <width>220</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="currentIndex">
               <number>-1</number>
              </property>
              <property name="placeholderText">
-              <string>Wybierz grupę docelową... </string>
+              <string>Wybierz segment docelowy... </string>
              </property>
              <item>
               <property name="text">
-               <string>Dzieci i młodzież</string>
+               <string>Dzieci i młodzież: poniżej 19 lat</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Dorośli</string>
+               <string>Dorośli: 19 - 64 lat</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Emeryci</string>
+               <string>Emeryci: powyżej 64 lat</string>
               </property>
              </item>
             </widget>
