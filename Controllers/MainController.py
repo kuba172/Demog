@@ -27,6 +27,15 @@ import sys
 import os
 import io
 
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+import matplotlib.pyplot as plt
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+
 # Fonts
 pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
 pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
@@ -612,22 +621,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                     self.addIntroduction(self.pdf_canvas, districtKey, targetGroupIndex)
                 if settings_data.get("methodology", True):
                     self.addMethodology(self.pdf_canvas, districtKey, targetGroupIndex)
-                if settings_data.get("description_of_the_location", True):
-                    self.addLocationDescription(self.pdf_canvas, districtKey, targetGroupIndex)
                 if settings_data.get("annual_analysis", True):
                     self.addAnnualAnalysis(self.pdf_canvas, districtKey, targetGroupIndex)
-                if settings_data.get("results_and_conclusions", True):
-                    self.addResultsAndConclusions(self.pdf_canvas, districtKey, targetGroupIndex)
                 if settings_data.get("recommendations", True):
                     self.addRecommendations(self.pdf_canvas, districtKey, targetGroupIndex)
-                if settings_data.get("additional_customer_specific_content", True):
-                    self.addClientSpecificContent(self.pdf_canvas, districtKey, targetGroupIndex)
                 if settings_data.get("report_summary", True):
                     self.addSummaryReport(self.pdf_canvas, districtKey, targetGroupIndex)
                 if settings_data.get("references", True):
                     self.addReferences(self.pdf_canvas, districtKey, targetGroupIndex)
-                if settings_data.get("attachments", True):
-                    self.addAttachments(self.pdf_canvas, districtKey, targetGroupIndex)
 
                 if save == True:
                     self.pdf_canvas.save()
@@ -757,7 +758,11 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         start_page = self.getCurrentPage()
         self.section_pages['Wprowadzenie'] = {'start': start_page, 'end': start_page}
 
-        # ... Add content for the introduction section ...
+        # Kontekst i cel badania
+
+        # Niniejszy projekt jest pionierską aplikacją, która wykorzystuje moc uczenia maszynowego do przewidywania danych demograficznych dla określonych lokalizacji w Polsce w wybranych okresach czasu. Opracowana przy użyciu języka Python i integrująca różne potężne biblioteki, takie jak PyQt6, qt-material, pandas, matplotlib, reportlab, plotnine i scikit-learn, ma na celu zapewnienie dokładnego, opartego na danych wglądu w trendy demograficzne.
+
+        # Głównym celem aplikacji jest pomoc w analizie demograficznej poprzez oferowanie prognoz opartych na danych historycznych. Jest to szczególnie przydatne dla urbanistów, decydentów, demografów i badaczy, którzy potrzebują zrozumienia dynamiki populacji w celu podejmowania świadomych decyzji. Przyjazny dla użytkownika interfejs pozwala użytkownikom wybrać lokalizację i analizować dane dla wybranego okresu, dzięki czemu jest to narzędzie dostępne dla szerokiego grona odbiorców.
 
         # Update the end page for the section
         self.section_pages['Wprowadzenie']['end'] = self.getCurrentPage()
@@ -767,90 +772,174 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         start_page = self.getCurrentPage()
         self.section_pages['Metodologia'] = {'start': start_page, 'end': start_page}
 
-        # ... Add content for the methodology section ...
+        # Źródło danych
+
+        # Dane demograficzne wykorzystane w tej aplikacji pochodzą z Głównego Urzędu Statystycznego w Polsce. Dane te są znane ze swojej wiarygodności i kompleksowego pokrycia statystyk ludności w Polsce.
+
+        # Techniki uczenia maszynowego
+
+        # Aplikacja wykorzystuje kilka modeli uczenia maszynowego do analizy i przewidywania danych demograficznych:
+
+            # Random Forest Regression: Metoda uczenia zespołowego stosowana do regresji. Działa poprzez konstruowanie wielu drzew decyzyjnych w czasie szkolenia i wyprowadzanie średniej prognozy poszczególnych drzew.
+
+            # Regresja wielomianowa: Forma analizy regresji, w której związek między zmienną niezależną a zmienną zależną jest modelowany jako wielomian n-tego stopnia.
+
+            # Regresja liniowa: Podstawowy i powszechnie stosowany rodzaj analizy predykcyjnej, który zakłada liniową zależność między zmiennymi wejściowymi (X) a pojedynczą zmienną wyjściową (Y).
+
+        # Kryteria i przebieg procesu
+
+        # Wybór tych modeli opiera się na ich zdolności do obsługi dużych zbiorów danych i zapewniania dokładnych prognoz. Proces obejmuje szkolenie tych modeli na historycznych danych demograficznych, a następnie wykorzystanie ich do przewidywania przyszłych trendów.
 
         # Update the end page for the section
         self.section_pages['Metodologia']['end'] = self.getCurrentPage()
 
-    def addLocationDescription(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Opis wybranej lokalizacji'] = {'start': start_page, 'end': start_page}
-
-        # ... Add content for the location description section ...
-
-        # Update the end page for the section
-        self.section_pages['Opis wybranej lokalizacji']['end'] = self.getCurrentPage()
+    def calculate_attractiveness(self, districtKey, targetGroupIndex):
+        data_frame = DataStorageModel.get(districtKey)
+        print(data_frame)
 
     def addAnnualAnalysis(self, pdf_canvas, districtKey, targetGroupIndex):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Analiza roczna'] = {'start': start_page, 'end': start_page}
 
-        # ... Add content for the annual analysis section ...
+        data_frame = DataStorageModel.get(districtKey)
+
+        styles = getSampleStyleSheet()
+        title = "Analiza roczna dla powiatu: {}".format(districtKey)
+        title_paragraph = Paragraph(title, styles['Heading1'])
+        title_paragraph.wrapOn(pdf_canvas, 450, 200)
+        title_paragraph.drawOn(pdf_canvas, 50, 750)
+
+        # Adding the table
+        data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety", "Wieś_ludzie", "Wieś_mężczyźni", "Wieś_kobiety"]] + data_frame.values.tolist()
+        table = Table(data)
+        table.setStyle(TableStyle([
+                       ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                       ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                       ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                       ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                       ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                       ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                       ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                       ]))
+        table.wrapOn(pdf_canvas, 450, 200)
+        table.drawOn(pdf_canvas, 50, 600)
+
+        # Adding the graph
+        plt.figure(figsize=(6, 4))
+        plt.plot(data_frame['wiek'], data_frame['ludzie'], label='Total Population')
+        plt.xlabel('Age')
+        plt.ylabel('Population')
+        plt.title('Population by Age in ' + districtKey)
+        plt.legend()
+
+        # Saving the plot to a BytesIO object
+        img_buffer = BytesIO()
+        plt.savefig(img_buffer, format='PNG')
+        img_buffer.seek(0)
+        img = Image(img_buffer)
+        img.drawHeight = 4 * inch
+        img.drawWidth = 6 * inch
+        img.wrapOn(pdf_canvas, 450, 200)
+        img.drawOn(pdf_canvas, 50, 300)
 
         # Update the end page for the section
         self.section_pages['Analiza roczna']['end'] = self.getCurrentPage()
-
-    def addResultsAndConclusions(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Wyniki i wnioski'] = {'start': start_page, 'end': start_page}
-
-        # ... Add content for the results and conclusions section ...
-
-        # Update the end page for the section
-        self.section_pages['Wyniki i wnioski']['end'] = self.getCurrentPage()
-
-    def addRecommendations(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Zalecenia'] = {'start': start_page, 'end': start_page}
-
-        # ... Add content for the recommendations section ...
-
-        # Update the end page for the section
-        self.section_pages['Zalecenia']['end'] = self.getCurrentPage()
-
-    def addClientSpecificContent(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Dodatkowa treść specyficzna dla klienta'] = {'start': start_page, 'end': start_page}
-
-        # ... Add content for the client-specific content section ...
-
-        # Update the end page for the section
-        self.section_pages['Dodatkowa treść specyficzna dla klienta']['end'] = self.getCurrentPage()
 
     def addSummaryReport(self, pdf_canvas, districtKey, targetGroupIndex):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Podsumowanie'] = {'start': start_page, 'end': start_page}
 
-        # ... Add content for the summary report section ...
+        styles = getSampleStyleSheet()
+        report_title = "Podsumowanie i wnioski dla lokalizacji: {}".format(districtKey)
+        report_paragraph = Paragraph(report_title, styles['Heading1'])
+        report_paragraph.wrapOn(pdf_canvas, 450, 200)
+        report_paragraph.drawOn(pdf_canvas, 50, 750)
+
+        # Add content for the summary report section
+        summary_text = "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranej dzielnicy i okresu."
+        summary_paragraph = Paragraph(summary_text, styles['Normal'])
+        summary_paragraph.wrapOn(pdf_canvas, 450, 200)
+        summary_paragraph.drawOn(pdf_canvas, 50, 720)
+
+        # Example data - replace with actual data
+        data = [['Rok', 'Współczynnik atrakcyjności biznesowej']]
+        years = range()  # Replace with actual years
+        for year in years:
+            attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex) # Replace with your method
+            data.append([year, attractiveness_factor])
+
+        # Creating a table for data
+        table = Table(data)
+        table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                    ]))
+        table.wrapOn(pdf_canvas, 450, 200)
+        table.drawOn(pdf_canvas, 50, 600)
+
+        # Update the end page number for the summary section
+        self.section_pages['Podsumowanie']['end'] = self.getCurrentPage()
+
+    def addRecommendations(self, pdf_canvas, districtKey, targetGroupIndex):
+        self.start_new_page(pdf_canvas)
+        start_page = self.getCurrentPage()
+        self.section_pages['Zalecenia'] = {'start': start_page, 'end': start_page}
+
+        styles = getSampleStyleSheet()
+        report_title = "Zalecenia dla lokalizacji: {}".format(districtKey)
+        report_paragraph = Paragraph(report_title, styles['Heading1'])
+        report_paragraph.wrapOn(pdf_canvas, 450, 200)
+        report_paragraph.drawOn(pdf_canvas, 50, 750)
+
+
+        attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex)
+
+        # Generating recommendations based on the business attractiveness factor
+        if attractiveness_factor > 0.75:
+            recommendation_text = "Powiat jest bardzo atrakcyjną lokalizacją dla nowych firm, wykazując obiecujące trendy demograficzne na przyszłość dla wybranego przedziału czasowego."
+        elif 0.25 < attractiveness_factor <= 0.75:
+            recommendation_text = "Powiat jest umiarkowanie atrakcyjną lokalizacją, ale należy dokładnie rozważyć potencjalne zagrożenia dla wybranego przedziału czasowego."
+        else:  # attractiveness_factor <= 0.24
+            recommendation_text = "Obecnie powiat ten stanowi poważne wyzwanie dla rozwoju nowych firm i może nie być idealnym wyborem dla wybranego przedziału czasowego."
+
+        recommendation_paragraph = Paragraph(recommendation_text, styles['Normal'])
+        recommendation_paragraph.wrapOn(pdf_canvas, 450, 200)
+        recommendation_paragraph.drawOn(pdf_canvas, 50, 720)
 
         # Update the end page for the section
-        self.section_pages['Podsumowanie']['end'] = self.getCurrentPage()
+        self.section_pages['Zalecenia']['end'] = self.getCurrentPage()
 
     def addReferences(self, pdf_canvas, districtKey, targetGroupIndex):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Referencje'] = {'start': start_page, 'end': start_page}
 
-        # ... Add content for the references section ...
+        # Aby zapewnić rzetelność i wiarygodność badania, odwołano się do następujących źródeł:
+            # Główny Urząd Statystyczny (Central Statistical Office) - Poland:
+            # Strona internetowa: stat.gov.pl
+
+            # "Random Forests" - Leo Breiman, Adele Cutler
+            
+
+            # "An Introduction to Statistical Learning" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani
+        
+            #Scikit-Learn Documentation:
+            # Strona internetowa: scikit-learn.org/stable
+
+            # Python - dokumentacja dla Pandas, Matplotlib, i innych użytych bibliotek:
+                # Python Official Documentation: python.org/doc
+                # Pandas Documentation: pandas.pydata.org/pandas-docs/stable
+                # Matplotlib Documentation: matplotlib.org/stable/users/index.html
 
         # Update the end page for the section
         self.section_pages['Referencje']['end'] = self.getCurrentPage()
-
-    def addAttachments(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Załączniki'] = {'start': start_page, 'end': start_page}
-
-        # ... Add content for the attachments section ...
-
-        # Update the end page for the section
-        self.section_pages['Załączniki']['end'] = self.getCurrentPage()
 
     def addPlot(self, dane, key):
         dane = Models.data_storage_model.DataStorageModel.get(key)
