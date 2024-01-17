@@ -484,8 +484,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 if powiat_value not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
                                         for i in range(self.window_locations_list_ui.listWidget_Locatons_List.count())]:
                     self.window_locations_list_ui.listWidget_Locatons_List.addItem(powiat_value)
-                    self.changeColorByName(item, QColor(self.selection_color_rgba[0], self.selection_color_rgba[1],
-                                                        self.selection_color_rgba[2], self.selection_color_rgba[3]))
+                    self.changeColorByName(powiat_value,
+                                           QColor(self.selection_color_rgba[0], self.selection_color_rgba[1],
+                                                  self.selection_color_rgba[2], self.selection_color_rgba[3]))
                 else:
                     self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
             elif item in df['POWIAT'].values:
@@ -653,7 +654,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                              range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
         elements_x = page_width / 2
         elements_y = date_y - 30  # Adjust as needed
-        #pdf_canvas.drawCentredString(elements_x, elements_y, f"Wybrane powiaty: {', '.join(list_widget_items)}")
+        # pdf_canvas.drawCentredString(elements_x, elements_y, f"Wybrane powiaty: {', '.join(list_widget_items)}")
         self.draw_centered_strings(pdf_canvas, elements_x, elements_y, list_widget_items)
 
         # Selected dates
