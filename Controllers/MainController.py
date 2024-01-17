@@ -1018,13 +1018,13 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             report_paragraph.wrapOn(pdf_canvas, 450, 200)
             report_paragraph.drawOn(pdf_canvas, 50, 750)
 
-            
-            attractiveness_factor = self.calculate_attractiveness(targetGroupIndex)
 
+            attractiveness_factor = self.calculate_attractiveness(targetGroupIndex)
+            end_factor = np.mean(attractiveness_factor)
             # Generating recommendations based on the business attractiveness factor
-            if attractiveness_factor > 0.75:
+            if end_factor > 0.75:
                 recommendation_text = "Powiat jest bardzo atrakcyjną lokalizacją dla nowych firm, wykazując obiecujące trendy demograficzne na przyszłość dla wybranego przedziału czasowego."
-            elif 0.25 < attractiveness_factor <= 0.75:
+            elif 0.25 < end_factor <= 0.75:
                 recommendation_text = "Powiat jest umiarkowanie atrakcyjną lokalizacją, ale należy dokładnie rozważyć potencjalne zagrożenia dla wybranego przedziału czasowego."
             else:  # attractiveness_factor <= 0.24
                 recommendation_text = "Obecnie powiat ten stanowi poważne wyzwanie dla rozwoju nowych firm i może nie być idealnym wyborem dla wybranego przedziału czasowego."
