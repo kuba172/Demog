@@ -35,6 +35,9 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.lib.pagesizes import A4
 
 # Fonts
 pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
@@ -652,6 +655,13 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def getCurrentPage(self):
         return self.current_page
 
+    def draw_paragraph(canvas, paragraph, x, y, width):
+        page_width, page_height = A4
+        margin = 72
+        paragraph.wrapOn(canvas, width, page_height)
+        paragraph.drawOn(canvas, x, y)
+        return y - paragraph.height  # Update Y to the position after the paragraph
+
     def draw_centered_strings(self, pdf_canvas, center_x, center_y, lines):
 
         # Pobierz wysokość tekstu i odstępy między liniami
@@ -669,7 +679,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def addTitlePage(self, pdf_canvas, districtKey, targetGroupIndex):
 
         # Set page size and margins
-        page_width, page_height = letter
+        page_width, page_height = A4
         margin = inch
         image_width = 1.5 * inch  # Adjust as needed
         image_height = 1.3 * inch  # Adjust as needed
@@ -711,11 +721,11 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         values_x = page_width / 2
         values_y = elements_y - 20  # Adjust as needed
         pdf_canvas.drawCentredString(values_x, values_y,
-                                     f"Wybrany przedział czasowy: od {combo1_value} do {combo2_value}")
+                                     f"Wybrany przedział czasowy: od roku {combo1_value} do roku {combo2_value}")
 
         modelName = self.getModelName()
         pdf_canvas.drawCentredString(values_x, values_y - 20, f"Wybrany model: {modelName}")
-        pdf_canvas.drawCentredString(values_x, values_y - 40, f"Aktulany  powiat: {districtKey}")
+        pdf_canvas.drawCentredString(values_x, values_y - 40, f"Aktulany powiat: {districtKey}")
         # pdf_canvas.drawCentredString(values_x, values_y - 80, f"Grupa docelowa indeks: {targetGroupIndex}")
         pdf_canvas.drawCentredString(values_x, values_y - 60,
                                      f"Grupa docelowa: {self.comboBox_Target_Group.currentText()}")
@@ -725,8 +735,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         start_page = self.getCurrentPage()
         self.section_pages['Spis treści'] = {'start': start_page, 'end': start_page}
 
-        # ... Add content for the summary section ...
-        pdf_canvas.drawString(100, 750, "Spis treści")
+        heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15, alignment=TA_CENTER)
+        header_text = "Spis treści"
+        header_paragraph = Paragraph(header_text, heading_style)
+
+        page_width, page_height = A4
+
+        x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
+        y_position = page_height - 50      # Adjust this value to move the header up or down
+
+        header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+        header_paragraph.drawOn(pdf_canvas, x_position, y_position)
 
         # Update the end page for the section
         self.section_pages['Spis treści']['end'] = self.getCurrentPage()
@@ -736,210 +755,316 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         start_page = self.getCurrentPage()
         self.section_pages['Streszczenie'] = {'start': start_page, 'end': start_page}
 
-        # ... Add content for the summary section ...
-        pdf_canvas.drawString(100, 750, "Streszczenie")
+        heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15, alignment=TA_CENTER)
+        header_text = "Streszczenie"
+        header_paragraph = Paragraph(header_text, heading_style)
 
-        msg = f"""Wprowadzenie do raportu predykcyjnego dotyczącego danych demograficznych dla {districtKey} w danym
-        odstępie czasowym stanowi dogłębne spojrzenie na przyszłość społeczności. Program, oparty na zaawansowanych
-        algorytmach, analizuje wielorakie czynniki wpływające na dynamikę populacyjną, dostarczając prognoz zmian w 
-        strukturze demograficznej. Raport nie tylko przewiduje liczbę mieszkańców, lecz również identyfikuje kluczowe 
-        czynniki kształtujące te zmiany, dostarczając cennych informacji dla lokalnych władz i decydentów. 
-        Obejmując równowagę płci, strukturę wiekową oraz rekomendacje polityki publicznej, 
-        raport staje się nieocenionym narzędziem wspierającym podejmowanie strategicznych decyzji na rzecz
-        zrównoważonego rozwoju społeczności.
-        """
-        pdf_canvas.drawString(80, 500, msg)
+        page_width, page_height = A4
+
+        x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
+        y_position = page_height - 50      # Adjust this value to move the header up or down
+
+        header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+        header_paragraph.drawOn(pdf_canvas, x_position, y_position)
+
+        style2 = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15, alignment=TA_JUSTIFY)
+        msg2 = f"""Wprowadzenie do raportu predykcyjnego dotyczącego danych demograficznych dla: {districtKey} w danym odstępie czasowym stanowi dogłębne spojrzenie na przyszłość społeczności. Program, oparty na zaawansowanych algorytmach, analizuje wielorakie czynniki wpływające na dynamikę populacyjną, dostarczając prognoz zmian w strukturze demograficznej. Raport nie tylko przewiduje liczbę mieszkańców, lecz również identyfikuje kluczowe czynniki kształtujące te zmiany, dostarczając cennych informacji dla lokalnych władz i decydentów. Obejmując równowagę płci, strukturę wiekową oraz rekomendacje polityki publicznej, raport staje się nieocenionym narzędziem wspierającym podejmowanie strategicznych decyzji na rzecz zrównoważonego rozwoju społeczności."""
+        msg_paragraph = Paragraph(msg2, style2)
+        width = 450  # Width in points - adjust as needed
+        height = 500  # Starting height position - adjust as needed
+        msg_paragraph.wrapOn(pdf_canvas, width, height)
+        msg_paragraph.drawOn(pdf_canvas, 80, height)
+
 
         # Update the end page for the section
         self.section_pages['Streszczenie']['end'] = self.getCurrentPage()
 
     def addIntroduction(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Wprowadzenie'] = {'start': start_page, 'end': start_page}
+        try:
+            self.start_new_page(pdf_canvas)
+            start_page = self.getCurrentPage()
+            self.section_pages['Wprowadzenie'] = {'start': start_page, 'end': start_page}
 
-        # Kontekst i cel badania
+            subsection_style = ParagraphStyle(
+                name='Subsection',
+                fontName='DejaVuSans-Bold',
+                fontSize=14,
+                leading=17,
+                alignment=TA_LEFT)
 
-        # Niniejszy projekt jest pionierską aplikacją, która wykorzystuje moc uczenia maszynowego do przewidywania danych demograficznych dla określonych lokalizacji w Polsce w wybranych okresach czasu. Opracowana przy użyciu języka Python i integrująca różne potężne biblioteki, takie jak PyQt6, qt-material, pandas, matplotlib, reportlab, plotnine i scikit-learn, ma na celu zapewnienie dokładnego, opartego na danych wglądu w trendy demograficzne.
+            content_style = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15, alignment=TA_JUSTIFY)
+            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15, alignment=TA_CENTER)
 
-        # Głównym celem aplikacji jest pomoc w analizie demograficznej poprzez oferowanie prognoz opartych na danych historycznych. Jest to szczególnie przydatne dla urbanistów, decydentów, demografów i badaczy, którzy potrzebują zrozumienia dynamiki populacji w celu podejmowania świadomych decyzji. Przyjazny dla użytkownika interfejs pozwala użytkownikom wybrać lokalizację i analizować dane dla wybranego okresu, dzięki czemu jest to narzędzie dostępne dla szerokiego grona odbiorców.
+            header_text = "Wprowadzenie"
+            header_paragraph = Paragraph(header_text, heading_style)
 
-        # Update the end page for the section
-        self.section_pages['Wprowadzenie']['end'] = self.getCurrentPage()
+            page_width, page_height = A4
 
+            x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
+            y_position = page_height - 50      # Adjust this value to move the header up or down
+
+            header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            header_paragraph.drawOn(pdf_canvas, x_position, y_position)
+            
+            subsection1 = Paragraph("Kontekst i cel badania", subsection_style)
+            content1 = Paragraph("Niniejszy projekt jest pionierską aplikacją, która wykorzystuje moc uczenia maszynowego do przewidywania danych demograficznych dla określonych lokalizacji w Polsce w wybranych okresach czasu. Opracowana przy użyciu języka Python i integrująca różne potężne biblioteki, takie jak PyQt6, qt-material, pandas, matplotlib, reportlab, plotnine i scikit-learn, ma na celu zapewnienie dokładnego, opartego na danych wglądu w trendy demograficzne. Głównym celem aplikacji jest pomoc w analizie demograficznej poprzez oferowanie prognoz opartych na danych historycznych. Jest to szczególnie przydatne dla urbanistów, decydentów, demografów i badaczy, którzy potrzebują zrozumienia dynamiki populacji w celu podejmowania świadomych decyzji. Przyjazny dla użytkownika interfejs pozwala użytkownikom wybrać lokalizację i analizować dane dla wybranego okresu, dzięki czemu jest to narzędzie dostępne dla szerokiego grona odbiorców.", content_style)
+
+            subsection1.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            subsection1.drawOn(pdf_canvas, x_position, y_position - 20)
+
+            content1.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            content1.drawOn(pdf_canvas, x_position, y_position - 300)
+
+            self.section_pages['Wprowadzenie']['end'] = self.getCurrentPage()
+        except Exception as e:
+            print("1" + str(e))
+            
     def addMethodology(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Metodologia'] = {'start': start_page, 'end': start_page}
+        try:
+            self.start_new_page(pdf_canvas)
+            start_page = self.getCurrentPage()
+            self.section_pages['Metodologia'] = {'start': start_page, 'end': start_page}
 
-        # Źródło danych
+            subsection_style = ParagraphStyle(
+                name='Subsection',
+                fontName='DejaVuSans-Bold',  # Bold font for subsections
+                fontSize=14,  # Slightly larger than normal text
+                leading=17,
+                alignment=TA_LEFT  # Left-aligned
+)
+            content_style = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15, alignment=TA_JUSTIFY)
+            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15, alignment=TA_CENTER)
+            header_text = "Metodologia"
+            header_paragraph = Paragraph(header_text, heading_style)
 
-        # Dane demograficzne wykorzystane w tej aplikacji pochodzą z Głównego Urzędu Statystycznego w Polsce. Dane te są znane ze swojej wiarygodności i kompleksowego pokrycia statystyk ludności w Polsce.
+            page_width, page_height = A4
 
-        # Techniki uczenia maszynowego
+            x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
+            y_position = page_height - 50      # Adjust this value to move the header up or down
 
-        # Aplikacja wykorzystuje kilka modeli uczenia maszynowego do analizy i przewidywania danych demograficznych:
+            header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            header_paragraph.drawOn(pdf_canvas, x_position, y_position)
 
-            # Random Forest Regression: Metoda uczenia zespołowego stosowana do regresji. Działa poprzez konstruowanie wielu drzew decyzyjnych w czasie szkolenia i wyprowadzanie średniej prognozy poszczególnych drzew.
+            subsection2 = Paragraph("Źródło danych", subsection_style)
+            content2 = Paragraph("Dane demograficzne wykorzystane w tej aplikacji pochodzą z Głównego Urzędu Statystycznego w Polsce. Dane te są znane ze swojej wiarygodności i kompleksowego pokrycia statystyk ludności w Polsce.", content_style)
 
-            # Regresja wielomianowa: Forma analizy regresji, w której związek między zmienną niezależną a zmienną zależną jest modelowany jako wielomian n-tego stopnia.
+            subsection3 = Paragraph("Techniki uczenia maszynowego", subsection_style)
+            content3 = Paragraph("Aplikacja wykorzystuje kilka modeli uczenia maszynowego do analizy i przewidywania danych demograficznych:\n\n- Random Forest Regression: Metoda uczenia zespołowego stosowana do regresji. Działa poprzez konstruowanie wielu drzew decyzyjnych w czasie szkolenia i wyprowadzanie średniej prognozy poszczególnych drzew.\n\n- Regresja wielomianowa: Forma analizy regresji, w której związek między zmienną niezależną a zmienną zależną jest modelowany jako wielomian n-tego stopnia.\n\n- Regresja liniowa: Podstawowy i powszechnie stosowany rodzaj analizy predykcyjnej, który zakłada liniową zależność między zmiennymi wejściowymi (X) a pojedynczą zmienną wyjściową (Y).", content_style)
 
-            # Regresja liniowa: Podstawowy i powszechnie stosowany rodzaj analizy predykcyjnej, który zakłada liniową zależność między zmiennymi wejściowymi (X) a pojedynczą zmienną wyjściową (Y).
+            subsection4 = Paragraph("Kryteria i przebieg procesu", subsection_style)
+            content4 = Paragraph("Wybór tych modeli opiera się na ich zdolności do obsługi dużych zbiorów danych i zapewniania dokładnych prognoz. Proces obejmuje szkolenie tych modeli na historycznych danych demograficznych, a następnie wykorzystanie ich do przewidywania przyszłych trendów.", content_style)
 
-        # Kryteria i przebieg procesu
 
-        # Wybór tych modeli opiera się na ich zdolności do obsługi dużych zbiorów danych i zapewniania dokładnych prognoz. Proces obejmuje szkolenie tych modeli na historycznych danych demograficznych, a następnie wykorzystanie ich do przewidywania przyszłych trendów.
+            subsection2.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            subsection2.drawOn(pdf_canvas, x_position, y_position - 50)
 
-        # Update the end page for the section
-        self.section_pages['Metodologia']['end'] = self.getCurrentPage()
+            content2.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            content2.drawOn(pdf_canvas, x_position, y_position - 200)
 
-    def calculate_attractiveness(self, districtKey, targetGroupIndex):
-        data_frame = DataStorageModel.get(districtKey)
-        print(data_frame)
+            subsection3.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            subsection3.drawOn(pdf_canvas, x_position, y_position - 250)
+
+            content3.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            content3.drawOn(pdf_canvas, x_position, y_position - 400)
+
+            subsection4.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            subsection4.drawOn(pdf_canvas, x_position, y_position - 450)
+
+            content4.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            content4.drawOn(pdf_canvas, x_position, y_position - 600)
+
+            # Update the end page for the section
+            self.section_pages['Metodologia']['end'] = self.getCurrentPage()
+        except Exception as e:
+            print("2" + str(e))
+
+    def calculate_attractiveness(self, targetGroupIndex):
+        try:
+            districtKeys = DataStorageModel.get_all_keys()
+            attractiveness = []
+            for key in districtKeys:
+                data_frame = DataStorageModel.get(key)
+                attr = 0.5 # wzór
+                print(attr)
+                attractiveness.append(attr)
+            return attractiveness
+        
+        except Exception as e:
+            print("3" + str(e))
 
     def addAnnualAnalysis(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Analiza roczna'] = {'start': start_page, 'end': start_page}
+        try:
+            self.start_new_page(pdf_canvas)
+            start_page = self.getCurrentPage()
+            self.section_pages['Analiza roczna'] = {'start': start_page, 'end': start_page}
+            
+            districtKeys = DataStorageModel.get_all_keys()
+            print(districtKeys)
 
-        data_frame = DataStorageModel.get(districtKey)
+            data_frame = DataStorageModel.get(districtKey)
 
-        styles = getSampleStyleSheet()
-        title = "Analiza roczna dla powiatu: {}".format(districtKey)
-        title_paragraph = Paragraph(title, styles['Heading1'])
-        title_paragraph.wrapOn(pdf_canvas, 450, 200)
-        title_paragraph.drawOn(pdf_canvas, 50, 750)
+            styles = getSampleStyleSheet()
+            title = "Analiza roczna dla powiatu: {}".format(districtKey)
+            title_paragraph = Paragraph(title, styles['Heading1'])
+            title_paragraph.wrapOn(pdf_canvas, 450, 200)
+            title_paragraph.drawOn(pdf_canvas, 50, 750)
 
-        # Adding the table
-        data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety", "Wieś_ludzie", "Wieś_mężczyźni", "Wieś_kobiety"]] + data_frame.values.tolist()
-        table = Table(data)
-        table.setStyle(TableStyle([
-                       ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                       ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                       ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                       ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                       ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                       ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                       ('GRID', (0, 0), (-1, -1), 1, colors.black)
-                       ]))
-        table.wrapOn(pdf_canvas, 450, 200)
-        table.drawOn(pdf_canvas, 50, 600)
+            # Adding the table
+            data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety", "Wieś_ludzie", "Wieś_mężczyźni", "Wieś_kobiety"]] + data_frame.values.tolist()
+            table = Table(data)
+            table.setStyle(TableStyle([
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                        ]))
+            table.wrapOn(pdf_canvas, 0, 0)
+            table.drawOn(pdf_canvas, 0, 0)
 
-        # Adding the graph
-        plt.figure(figsize=(6, 4))
-        plt.plot(data_frame['wiek'], data_frame['ludzie'], label='Total Population')
-        plt.xlabel('Age')
-        plt.ylabel('Population')
-        plt.title('Population by Age in ' + districtKey)
-        plt.legend()
+            # Adding the graph
+            plt.figure(figsize=(6, 4))
+            plt.bar(data_frame['wiek'], data_frame['ludzie'], label='Total Population')
+            plt.xlabel('Age')
+            plt.ylabel('Population')
+            plt.title('Population by Age in ' + districtKey)
+            plt.legend()
 
-        # Saving the plot to a BytesIO object
-        img_buffer = BytesIO()
-        plt.savefig(img_buffer, format='PNG')
-        img_buffer.seek(0)
-        img = Image(img_buffer)
-        img.drawHeight = 4 * inch
-        img.drawWidth = 6 * inch
-        img.wrapOn(pdf_canvas, 450, 200)
-        img.drawOn(pdf_canvas, 50, 300)
+            # Saving the plot to a BytesIO object
+            img_buffer = BytesIO()
+            plt.savefig(img_buffer, format='PNG')
+            img_buffer.seek(0)
+            img = Image(img_buffer)
+            img.drawHeight = 4 * inch
+            img.drawWidth = 6 * inch
+            img.wrapOn(pdf_canvas, 450, 200)
+            img.drawOn(pdf_canvas, 50, 300)
 
-        # Update the end page for the section
-        self.section_pages['Analiza roczna']['end'] = self.getCurrentPage()
+            # Update the end page for the section
+            self.section_pages['Analiza roczna']['end'] = self.getCurrentPage()
+        except Exception as e:
+            print("4" + str(e))
 
     def addSummaryReport(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Podsumowanie'] = {'start': start_page, 'end': start_page}
+        try:
+            self.start_new_page(pdf_canvas)
+            start_page = self.getCurrentPage()
+            self.section_pages['Podsumowanie'] = {'start': start_page, 'end': start_page}
 
-        styles = getSampleStyleSheet()
-        report_title = "Podsumowanie i wnioski dla lokalizacji: {}".format(districtKey)
-        report_paragraph = Paragraph(report_title, styles['Heading1'])
-        report_paragraph.wrapOn(pdf_canvas, 450, 200)
-        report_paragraph.drawOn(pdf_canvas, 50, 750)
+            pdf_canvas.setFont("DejaVuSans", 9)
 
-        # Add content for the summary report section
-        summary_text = "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranej dzielnicy i okresu."
-        summary_paragraph = Paragraph(summary_text, styles['Normal'])
-        summary_paragraph.wrapOn(pdf_canvas, 450, 200)
-        summary_paragraph.drawOn(pdf_canvas, 50, 720)
+            styles = getSampleStyleSheet()
+            report_title = "Podsumowanie i wnioski dla lokalizacji: {}".format(districtKey)
+            report_paragraph = Paragraph(report_title, styles['Normal'])
+            report_paragraph.wrapOn(pdf_canvas, 450, 200)
+            report_paragraph.drawOn(pdf_canvas, 50, 750)
 
-        # Example data - replace with actual data
-        data = [['Rok', 'Współczynnik atrakcyjności biznesowej']]
-        years = range()  # Replace with actual years
-        for year in years:
-            attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex) # Replace with your method
-            data.append([year, attractiveness_factor])
+            # Add content for the summary report section
+            summary_text = "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranej dzielnicy i okresu."
+            summary_paragraph = Paragraph(summary_text, styles['Normal'])
+            summary_paragraph.wrapOn(pdf_canvas, 450, 200)
+            summary_paragraph.drawOn(pdf_canvas, 50, 720)
 
-        # Creating a table for data
-        table = Table(data)
-        table.setStyle(TableStyle([
-                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
-                    ]))
-        table.wrapOn(pdf_canvas, 450, 200)
-        table.drawOn(pdf_canvas, 50, 600)
 
-        # Update the end page number for the summary section
-        self.section_pages['Podsumowanie']['end'] = self.getCurrentPage()
+
+            # Example data - replace with actual data
+            print(self.comboBox_Date_From.currentText)
+            data = [['Rok', 'Współczynnik atrakcyjności biznesowej']]
+            combo1_value = self.comboBox_Date_From.currentText()
+            combo1_value = int(combo1_value)
+            combo2_value = self.comboBox_Date_To.currentText()
+            combo2_value = int(combo2_value)
+            years = list(range(combo1_value, combo2_value))  # Replace with actual years
+            years = []
+            for i in range(combo1_value, combo2_value + 1):
+                years.append(i)
+            print(years)
+            attractiveness_factor = self.calculate_attractiveness(targetGroupIndex)
+            print(attractiveness_factor)
+            for i, year in enumerate(years):
+                data.append([year, attractiveness_factor[i]])
+
+
+            # Creating a table for data
+            table = Table(data)
+            table.setStyle(TableStyle([
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                        ]))
+            table.wrapOn(pdf_canvas, 450, 200)
+            table.drawOn(pdf_canvas, 50, 600)
+
+            # Update the end page number for the summary section
+            self.section_pages['Podsumowanie']['end'] = self.getCurrentPage()
+        except Exception as e:
+            print("5" + str(e))
 
     def addRecommendations(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Zalecenia'] = {'start': start_page, 'end': start_page}
+        try:
+            self.start_new_page(pdf_canvas)
+            start_page = self.getCurrentPage()
+            self.section_pages['Zalecenia'] = {'start': start_page, 'end': start_page}
 
-        styles = getSampleStyleSheet()
-        report_title = "Zalecenia dla lokalizacji: {}".format(districtKey)
-        report_paragraph = Paragraph(report_title, styles['Heading1'])
-        report_paragraph.wrapOn(pdf_canvas, 450, 200)
-        report_paragraph.drawOn(pdf_canvas, 50, 750)
+            styles = getSampleStyleSheet()
+            report_title = "Zalecenia dla lokalizacji: {}".format(districtKey)
+            report_paragraph = Paragraph(report_title, styles['Heading1'])
+            report_paragraph.wrapOn(pdf_canvas, 450, 200)
+            report_paragraph.drawOn(pdf_canvas, 50, 750)
 
+            
+            attractiveness_factor = self.calculate_attractiveness(targetGroupIndex)
 
-        attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex)
+            # Generating recommendations based on the business attractiveness factor
+            if attractiveness_factor > 0.75:
+                recommendation_text = "Powiat jest bardzo atrakcyjną lokalizacją dla nowych firm, wykazując obiecujące trendy demograficzne na przyszłość dla wybranego przedziału czasowego."
+            elif 0.25 < attractiveness_factor <= 0.75:
+                recommendation_text = "Powiat jest umiarkowanie atrakcyjną lokalizacją, ale należy dokładnie rozważyć potencjalne zagrożenia dla wybranego przedziału czasowego."
+            else:  # attractiveness_factor <= 0.24
+                recommendation_text = "Obecnie powiat ten stanowi poważne wyzwanie dla rozwoju nowych firm i może nie być idealnym wyborem dla wybranego przedziału czasowego."
 
-        # Generating recommendations based on the business attractiveness factor
-        if attractiveness_factor > 0.75:
-            recommendation_text = "Powiat jest bardzo atrakcyjną lokalizacją dla nowych firm, wykazując obiecujące trendy demograficzne na przyszłość dla wybranego przedziału czasowego."
-        elif 0.25 < attractiveness_factor <= 0.75:
-            recommendation_text = "Powiat jest umiarkowanie atrakcyjną lokalizacją, ale należy dokładnie rozważyć potencjalne zagrożenia dla wybranego przedziału czasowego."
-        else:  # attractiveness_factor <= 0.24
-            recommendation_text = "Obecnie powiat ten stanowi poważne wyzwanie dla rozwoju nowych firm i może nie być idealnym wyborem dla wybranego przedziału czasowego."
+            recommendation_paragraph = Paragraph(recommendation_text, styles['Normal'])
+            recommendation_paragraph.wrapOn(pdf_canvas, 450, 200)
+            recommendation_paragraph.drawOn(pdf_canvas, 50, 720)
 
-        recommendation_paragraph = Paragraph(recommendation_text, styles['Normal'])
-        recommendation_paragraph.wrapOn(pdf_canvas, 450, 200)
-        recommendation_paragraph.drawOn(pdf_canvas, 50, 720)
-
-        # Update the end page for the section
-        self.section_pages['Zalecenia']['end'] = self.getCurrentPage()
+            # Update the end page for the section
+            self.section_pages['Zalecenia']['end'] = self.getCurrentPage()
+        except Exception as e:
+            print("6" + str(e))
 
     def addReferences(self, pdf_canvas, districtKey, targetGroupIndex):
-        self.start_new_page(pdf_canvas)
-        start_page = self.getCurrentPage()
-        self.section_pages['Referencje'] = {'start': start_page, 'end': start_page}
+        try:
+            self.start_new_page(pdf_canvas)
+            start_page = self.getCurrentPage()
+            self.section_pages['Referencje'] = {'start': start_page, 'end': start_page}
 
-        # Aby zapewnić rzetelność i wiarygodność badania, odwołano się do następujących źródeł:
-            # Główny Urząd Statystyczny (Central Statistical Office) - Poland:
-            # Strona internetowa: stat.gov.pl
+            # Aby zapewnić rzetelność i wiarygodność badania, odwołano się do następujących źródeł:
+                # Główny Urząd Statystyczny (Central Statistical Office) - Poland:
+                # Strona internetowa: stat.gov.pl
 
-            # "Random Forests" - Leo Breiman, Adele Cutler
+                # "Random Forests" - Leo Breiman, Adele Cutler
+                
+
+                # "An Introduction to Statistical Learning" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani
             
+                #Scikit-Learn Documentation:
+                # Strona internetowa: scikit-learn.org/stable
 
-            # "An Introduction to Statistical Learning" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani
-        
-            #Scikit-Learn Documentation:
-            # Strona internetowa: scikit-learn.org/stable
+                # Python - dokumentacja dla Pandas, Matplotlib, i innych użytych bibliotek:
+                    # Python Official Documentation: python.org/doc
+                    # Pandas Documentation: pandas.pydata.org/pandas-docs/stable
+                    # Matplotlib Documentation: matplotlib.org/stable/users/index.html
 
-            # Python - dokumentacja dla Pandas, Matplotlib, i innych użytych bibliotek:
-                # Python Official Documentation: python.org/doc
-                # Pandas Documentation: pandas.pydata.org/pandas-docs/stable
-                # Matplotlib Documentation: matplotlib.org/stable/users/index.html
-
-        # Update the end page for the section
-        self.section_pages['Referencje']['end'] = self.getCurrentPage()
+            # Update the end page for the section
+            self.section_pages['Referencje']['end'] = self.getCurrentPage()
+        except Exception as e:
+            print("7" + str(e))
 
     def addPlot(self, dane, key):
         dane = Models.data_storage_model.DataStorageModel.get(key)
@@ -1085,7 +1210,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         def hoverEnterEvent(item, event):
             name = item.properties.get('name', '')
             voivodeship = item.properties.get('voivodeship', '')
-            tooltip_text = f"<b>Nazwa</b>: {name}<br><br><b>Woj.</b>: {voivodeship}"
+            tooltip_text = f"<b>Nazwa</b>: {name}<br><br><b>woj.</b>: {voivodeship}"
             QToolTip.showText(event.screenPos(), tooltip_text)
             item.setPen(QPen(QColor(self.hover_color_rgba[0], self.hover_color_rgba[1], self.hover_color_rgba[2],
                                     self.hover_color_rgba[3]), self.selection_border_size))
