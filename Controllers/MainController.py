@@ -1,3 +1,5 @@
+import subprocess
+
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel, QGraphicsScene, \
     QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, QGraphicsPathItem, QGraphicsItem, QToolTip
 from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor, QCursor
@@ -399,7 +401,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                         success = self.generatePdf(filePath, key, resultInOneFile=True, save=False,
                                                    targetGroupIndex=targetGroupIndex)
 
-                    self.statusConfirmation(filePath, success=success)
+                    self.statusConfirmation(filePath, success=success, isDir=False)
                     self.updateReportField()
                     return success
                 elif directoryPath:
@@ -408,7 +410,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                         success = self.generatePdf(filePath, key, resultInOneFile=False, save=True,
                                                    targetGroupIndex=targetGroupIndex)
 
-                    self.statusConfirmation(filePath, success=success)
+                    self.statusConfirmation(filePath, success=success, isDir=True)
                     self.updateReportField()
                 else:
                     return False
@@ -810,32 +812,51 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         dane = Models.data_storage_model.DataStorageModel.get(key)
         ggplot(dane)
 
-    def statusConfirmation(self, fileName, success=True):
+    def statusConfirmation(self, fileName, success=True, isDir=False):
         try:
+
             if fileName:
+                filePath = fileName
+                folderPath = os.path.dirname(filePath)
                 fileName = os.path.basename(fileName)
                 msg = QMessageBox()
                 msg.setWindowTitle('DemoG')
 
-                if success:
+                if success and isDir == False:
                     message = f"Raport '{fileName}' został pomyślnie wygenerowany."
+                    msg.setIcon(QMessageBox.Icon.Information)
+                elif success and isDir == True:
+                    message = f"Raporty zostały pomyślnie wygenerowane w folderze:\n{folderPath}"
                     msg.setIcon(QMessageBox.Icon.Information)
                 else:
                     message = f"Błąd podczas generowania raportu '{fileName}'."
                     msg.setIcon(QMessageBox.Icon.Warning)
 
                 msg.setText(message)
-                msg.setStandardButtons(QMessageBox.StandardButton.Close)
+                msg.setStandardButtons(QMessageBox.StandardButton.Close | QMessageBox.StandardButton.Open)
                 msg.button(QMessageBox.StandardButton.Close).setText('Zamknij')
+                msg.button(QMessageBox.StandardButton.Open).setText('Otwórz')
 
                 reply = msg.exec()
-                return reply == QMessageBox.StandardButton.Close
-            else:
-                self.errorStatus("Nie wybrano miejsca zapisu raportu")
 
-
+                if reply == QMessageBox.StandardButton.Open and isDir == True and success == True:
+                    self.openPdfDir(folderPath)
+                    return reply == QMessageBox.StandardButton.Close
+                elif reply == QMessageBox.StandardButton.Open and isDir == False and success == True:
+                    self.openPdf(filePath)
+                    return reply == QMessageBox.StandardButton.Close
+                elif reply == QMessageBox.StandardButton.Close:
+                    return reply == QMessageBox.StandardButton.Close
+                else:
+                    self.errorStatus("Nie wybrano miejsca zapisu raportu")
         except Exception as e:
             print(e)
+
+    def openPdfDir(self, filePath):
+        os.startfile(filePath)
+
+    def openPdf(self, filePath):
+        os.startfile(filePath)
 
     def errorStatus(self, text="", critical=False):
         try:
