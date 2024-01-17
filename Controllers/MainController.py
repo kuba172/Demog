@@ -105,7 +105,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.window_loading.setModal(True)
         self.window_loading.setWindowOpacity(0)
         time = round(float(self.reportTimeNumber) / 60)
-        print(time)
+
         i = 0
         timeWords = ["minutę", "minuty", "minut"]
 
@@ -432,6 +432,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                     filePath = self.getFileNamePath()
                     self.window_loading.setWindowOpacity(1)
 
+                if not filePath and not directoryPath:
+                    self.window_loading.close()
+
                 if (filePath or directoryPath) and loadingResult == True:
 
                     self.runModel()
@@ -735,14 +738,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         start_page = self.getCurrentPage()
         self.section_pages['Spis treści'] = {'start': start_page, 'end': start_page}
 
-        heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15, alignment=TA_CENTER)
+        heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15,
+                                       alignment=TA_CENTER)
         header_text = "Spis treści"
         header_paragraph = Paragraph(header_text, heading_style)
 
         page_width, page_height = A4
 
         x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
-        y_position = page_height - 50      # Adjust this value to move the header up or down
+        y_position = page_height - 50  # Adjust this value to move the header up or down
 
         header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
         header_paragraph.drawOn(pdf_canvas, x_position, y_position)
@@ -755,14 +759,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         start_page = self.getCurrentPage()
         self.section_pages['Streszczenie'] = {'start': start_page, 'end': start_page}
 
-        heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15, alignment=TA_CENTER)
+        heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15,
+                                       alignment=TA_CENTER)
         header_text = "Streszczenie"
         header_paragraph = Paragraph(header_text, heading_style)
 
         page_width, page_height = A4
 
         x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
-        y_position = page_height - 50      # Adjust this value to move the header up or down
+        y_position = page_height - 50  # Adjust this value to move the header up or down
 
         header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
         header_paragraph.drawOn(pdf_canvas, x_position, y_position)
@@ -774,7 +779,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         height = 500  # Starting height position - adjust as needed
         msg_paragraph.wrapOn(pdf_canvas, width, height)
         msg_paragraph.drawOn(pdf_canvas, 80, height)
-
 
         # Update the end page for the section
         self.section_pages['Streszczenie']['end'] = self.getCurrentPage()
@@ -792,8 +796,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 leading=17,
                 alignment=TA_LEFT)
 
-            content_style = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15, alignment=TA_JUSTIFY)
-            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15, alignment=TA_CENTER)
+            content_style = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15,
+                                           alignment=TA_JUSTIFY)
+            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15,
+                                           alignment=TA_CENTER)
 
             header_text = "Wprowadzenie"
             header_paragraph = Paragraph(header_text, heading_style)
@@ -801,13 +807,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             page_width, page_height = A4
 
             x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
-            y_position = page_height - 50      # Adjust this value to move the header up or down
+            y_position = page_height - 50  # Adjust this value to move the header up or down
 
             header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
             header_paragraph.drawOn(pdf_canvas, x_position, y_position)
-            
+
             subsection1 = Paragraph("Kontekst i cel badania", subsection_style)
-            content1 = Paragraph("Niniejszy projekt jest pionierską aplikacją, która wykorzystuje moc uczenia maszynowego do przewidywania danych demograficznych dla określonych lokalizacji w Polsce w wybranych okresach czasu. Opracowana przy użyciu języka Python i integrująca różne potężne biblioteki, takie jak PyQt6, qt-material, pandas, matplotlib, reportlab, plotnine i scikit-learn, ma na celu zapewnienie dokładnego, opartego na danych wglądu w trendy demograficzne. Głównym celem aplikacji jest pomoc w analizie demograficznej poprzez oferowanie prognoz opartych na danych historycznych. Jest to szczególnie przydatne dla urbanistów, decydentów, demografów i badaczy, którzy potrzebują zrozumienia dynamiki populacji w celu podejmowania świadomych decyzji. Przyjazny dla użytkownika interfejs pozwala użytkownikom wybrać lokalizację i analizować dane dla wybranego okresu, dzięki czemu jest to narzędzie dostępne dla szerokiego grona odbiorców.", content_style)
+            content1 = Paragraph(
+                "Niniejszy projekt jest pionierską aplikacją, która wykorzystuje moc uczenia maszynowego do przewidywania danych demograficznych dla określonych lokalizacji w Polsce w wybranych okresach czasu. Opracowana przy użyciu języka Python i integrująca różne potężne biblioteki, takie jak PyQt6, qt-material, pandas, matplotlib, reportlab, plotnine i scikit-learn, ma na celu zapewnienie dokładnego, opartego na danych wglądu w trendy demograficzne. Głównym celem aplikacji jest pomoc w analizie demograficznej poprzez oferowanie prognoz opartych na danych historycznych. Jest to szczególnie przydatne dla urbanistów, decydentów, demografów i badaczy, którzy potrzebują zrozumienia dynamiki populacji w celu podejmowania świadomych decyzji. Przyjazny dla użytkownika interfejs pozwala użytkownikom wybrać lokalizację i analizować dane dla wybranego okresu, dzięki czemu jest to narzędzie dostępne dla szerokiego grona odbiorców.",
+                content_style)
 
             subsection1.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
             subsection1.drawOn(pdf_canvas, x_position, y_position - 20)
@@ -818,7 +826,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             self.section_pages['Wprowadzenie']['end'] = self.getCurrentPage()
         except Exception as e:
             print("1" + str(e))
-            
+
     def addMethodology(self, pdf_canvas, districtKey, targetGroupIndex):
         try:
             self.start_new_page(pdf_canvas)
@@ -831,29 +839,36 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 fontSize=14,  # Slightly larger than normal text
                 leading=17,
                 alignment=TA_LEFT  # Left-aligned
-)
-            content_style = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15, alignment=TA_JUSTIFY)
-            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15, alignment=TA_CENTER)
+            )
+            content_style = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15,
+                                           alignment=TA_JUSTIFY)
+            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15,
+                                           alignment=TA_CENTER)
             header_text = "Metodologia"
             header_paragraph = Paragraph(header_text, heading_style)
 
             page_width, page_height = A4
 
             x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
-            y_position = page_height - 50      # Adjust this value to move the header up or down
+            y_position = page_height - 50  # Adjust this value to move the header up or down
 
             header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
             header_paragraph.drawOn(pdf_canvas, x_position, y_position)
 
             subsection2 = Paragraph("Źródło danych", subsection_style)
-            content2 = Paragraph("Dane demograficzne wykorzystane w tej aplikacji pochodzą z Głównego Urzędu Statystycznego w Polsce. Dane te są znane ze swojej wiarygodności i kompleksowego pokrycia statystyk ludności w Polsce.", content_style)
+            content2 = Paragraph(
+                "Dane demograficzne wykorzystane w tej aplikacji pochodzą z Głównego Urzędu Statystycznego w Polsce. Dane te są znane ze swojej wiarygodności i kompleksowego pokrycia statystyk ludności w Polsce.",
+                content_style)
 
             subsection3 = Paragraph("Techniki uczenia maszynowego", subsection_style)
-            content3 = Paragraph("Aplikacja wykorzystuje kilka modeli uczenia maszynowego do analizy i przewidywania danych demograficznych:\n\n- Random Forest Regression: Metoda uczenia zespołowego stosowana do regresji. Działa poprzez konstruowanie wielu drzew decyzyjnych w czasie szkolenia i wyprowadzanie średniej prognozy poszczególnych drzew.\n\n- Regresja wielomianowa: Forma analizy regresji, w której związek między zmienną niezależną a zmienną zależną jest modelowany jako wielomian n-tego stopnia.\n\n- Regresja liniowa: Podstawowy i powszechnie stosowany rodzaj analizy predykcyjnej, który zakłada liniową zależność między zmiennymi wejściowymi (X) a pojedynczą zmienną wyjściową (Y).", content_style)
+            content3 = Paragraph(
+                "Aplikacja wykorzystuje kilka modeli uczenia maszynowego do analizy i przewidywania danych demograficznych:\n\n- Random Forest Regression: Metoda uczenia zespołowego stosowana do regresji. Działa poprzez konstruowanie wielu drzew decyzyjnych w czasie szkolenia i wyprowadzanie średniej prognozy poszczególnych drzew.\n\n- Regresja wielomianowa: Forma analizy regresji, w której związek między zmienną niezależną a zmienną zależną jest modelowany jako wielomian n-tego stopnia.\n\n- Regresja liniowa: Podstawowy i powszechnie stosowany rodzaj analizy predykcyjnej, który zakłada liniową zależność między zmiennymi wejściowymi (X) a pojedynczą zmienną wyjściową (Y).",
+                content_style)
 
             subsection4 = Paragraph("Kryteria i przebieg procesu", subsection_style)
-            content4 = Paragraph("Wybór tych modeli opiera się na ich zdolności do obsługi dużych zbiorów danych i zapewniania dokładnych prognoz. Proces obejmuje szkolenie tych modeli na historycznych danych demograficznych, a następnie wykorzystanie ich do przewidywania przyszłych trendów.", content_style)
-
+            content4 = Paragraph(
+                "Wybór tych modeli opiera się na ich zdolności do obsługi dużych zbiorów danych i zapewniania dokładnych prognoz. Proces obejmuje szkolenie tych modeli na historycznych danych demograficznych, a następnie wykorzystanie ich do przewidywania przyszłych trendów.",
+                content_style)
 
             subsection2.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
             subsection2.drawOn(pdf_canvas, x_position, y_position - 50)
@@ -884,11 +899,11 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             attractiveness = []
             for key in districtKeys:
                 data_frame = DataStorageModel.get(key)
-                attr = 0.5 # wzór
+                attr = 0.5  # wzór
                 print(attr)
                 attractiveness.append(attr)
             return attractiveness
-        
+
         except Exception as e:
             print("3" + str(e))
 
@@ -897,7 +912,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             self.start_new_page(pdf_canvas)
             start_page = self.getCurrentPage()
             self.section_pages['Analiza roczna'] = {'start': start_page, 'end': start_page}
-            
+
             districtKeys = DataStorageModel.get_all_keys()
             print(districtKeys)
 
@@ -910,17 +925,18 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             title_paragraph.drawOn(pdf_canvas, 50, 750)
 
             # Adding the table
-            data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety", "Wieś_ludzie", "Wieś_mężczyźni", "Wieś_kobiety"]] + data_frame.values.tolist()
+            data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety",
+                     "Wieś_ludzie", "Wieś_mężczyźni", "Wieś_kobiety"]] + data_frame.values.tolist()
             table = Table(data)
             table.setStyle(TableStyle([
-                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-                        ]))
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
             table.wrapOn(pdf_canvas, 0, 0)
             table.drawOn(pdf_canvas, 0, 0)
 
@@ -967,8 +983,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             summary_paragraph.wrapOn(pdf_canvas, 450, 200)
             summary_paragraph.drawOn(pdf_canvas, 50, 720)
 
-
-
             # Example data - replace with actual data
             print(self.comboBox_Date_From.currentText)
             data = [['Rok', 'Współczynnik atrakcyjności biznesowej']]
@@ -986,18 +1000,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             for i, year in enumerate(years):
                 data.append([year, attractiveness_factor[i]])
 
-
             # Creating a table for data
             table = Table(data)
             table.setStyle(TableStyle([
-                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-                        ]))
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
             table.wrapOn(pdf_canvas, 450, 200)
             table.drawOn(pdf_canvas, 50, 600)
 
@@ -1017,7 +1030,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             report_paragraph = Paragraph(report_title, styles['Heading1'])
             report_paragraph.wrapOn(pdf_canvas, 450, 200)
             report_paragraph.drawOn(pdf_canvas, 50, 750)
-
 
             attractiveness_factor = self.calculate_attractiveness(targetGroupIndex)
             end_factor = np.mean(attractiveness_factor)
@@ -1045,21 +1057,20 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             self.section_pages['Referencje'] = {'start': start_page, 'end': start_page}
 
             # Aby zapewnić rzetelność i wiarygodność badania, odwołano się do następujących źródeł:
-                # Główny Urząd Statystyczny (Central Statistical Office) - Poland:
-                # Strona internetowa: stat.gov.pl
+            # Główny Urząd Statystyczny (Central Statistical Office) - Poland:
+            # Strona internetowa: stat.gov.pl
 
-                # "Random Forests" - Leo Breiman, Adele Cutler
-                
+            # "Random Forests" - Leo Breiman, Adele Cutler
 
-                # "An Introduction to Statistical Learning" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani
-            
-                #Scikit-Learn Documentation:
-                # Strona internetowa: scikit-learn.org/stable
+            # "An Introduction to Statistical Learning" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani
 
-                # Python - dokumentacja dla Pandas, Matplotlib, i innych użytych bibliotek:
-                    # Python Official Documentation: python.org/doc
-                    # Pandas Documentation: pandas.pydata.org/pandas-docs/stable
-                    # Matplotlib Documentation: matplotlib.org/stable/users/index.html
+            # Scikit-Learn Documentation:
+            # Strona internetowa: scikit-learn.org/stable
+
+            # Python - dokumentacja dla Pandas, Matplotlib, i innych użytych bibliotek:
+            # Python Official Documentation: python.org/doc
+            # Pandas Documentation: pandas.pydata.org/pandas-docs/stable
+            # Matplotlib Documentation: matplotlib.org/stable/users/index.html
 
             # Update the end page for the section
             self.section_pages['Referencje']['end'] = self.getCurrentPage()
