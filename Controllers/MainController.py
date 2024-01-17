@@ -93,6 +93,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.window_loading.setModal(True)
         self.window_loading.setWindowOpacity(0)
         time = round(float(self.reportTimeNumber) / 60)
+        print(time)
         i = 0
         timeWords = ["minutę", "minuty", "minut"]
 
@@ -102,6 +103,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             i = 1
         else:
             i = 2
+
+        if time == 0:
+            time = 0.5
+            i = 1
 
         text = f"Proszę czekać, może to potrwać nawet {time} {timeWords[i]}..."
         self.window_loading_ui.label_Dynamic_Text.setText(text)
@@ -454,19 +459,19 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                     self.window_loading.close()
                     return False
             elif resultCheckDistrict == False and resultCheckDate == False and resultCheckTargetGroup == False:
-                self.errorStatus("Wybierz lokalizację, przedział czasowy oraz grupę docelową")
+                self.errorStatus("Wybierz lokalizację, przedział czasowy oraz segment docelowy")
             elif resultCheckDistrict == False and resultCheckDate == False and resultCheckTargetGroup == True:
                 self.errorStatus("Wybierz lokalizację oraz przedział czasowy")
             elif resultCheckDistrict == False and resultCheckDate == True and resultCheckTargetGroup == False:
-                self.errorStatus("Wybierz lokalizację oraz grupę docelową")
+                self.errorStatus("Wybierz lokalizację oraz segment docelowy")
             elif resultCheckDistrict == True and resultCheckDate == False and resultCheckTargetGroup == False:
-                self.errorStatus("Wybierz przedział czasowy oraz grupę docelową")
+                self.errorStatus("Wybierz przedział czasowy oraz segment docelowy")
             elif resultCheckDistrict == False:
                 self.errorStatus("Wybierz lokalizację")
             elif resultCheckDate == False:
                 self.errorStatus("Wybierz przedział czasowy")
             elif resultCheckTargetGroup == False:
-                self.errorStatus("Wybierz grupę docelową")
+                self.errorStatus("Wybierz segment docelowy")
             else:
                 self.errorStatus("Coś poszło nie tak", critical=True)
 
