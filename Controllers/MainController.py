@@ -624,8 +624,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # Set page size and margins
         page_width, page_height = letter
         margin = inch
-        image_width = 2 * inch  # Adjust as needed
-        image_height = 1 * inch  # Adjust as needed
+        image_width = 1.5 * inch  # Adjust as needed
+        image_height = 1.3 * inch  # Adjust as needed
 
         # Centered logo
         logo_path = os.path.join('images', 'AppIcon', 'icon-map-800-800.png')  # placeholder logo
@@ -639,7 +639,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         title_y = 500  # Adjust as needed
         pdf_canvas.drawCentredString(title_x, title_y, "Raport z badania atrakcyjności biznesowej")
         pdf_canvas.setFont("DejaVuSans", 12)
-        pdf_canvas.drawCentredString(title_x, title_y - 30, f"Kompleksowa analiza []")
+        pdf_canvas.drawCentredString(title_x, title_y - 30, f"Kompleksowa analiza")
 
         # Date of Report Generation
         pdf_canvas.setFont("DejaVuSans", 12)
@@ -650,12 +650,12 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         # Selected Districts
         pdf_canvas.setFont("DejaVuSans", 12)
-        list_widget_items = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
-                             range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
+        # list_widget_items = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
+        # range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
         elements_x = page_width / 2
         elements_y = date_y - 30  # Adjust as needed
         # pdf_canvas.drawCentredString(elements_x, elements_y, f"Wybrane powiaty: {', '.join(list_widget_items)}")
-        self.draw_centered_strings(pdf_canvas, elements_x, elements_y, list_widget_items)
+        # self.draw_centered_strings(pdf_canvas, elements_x, elements_y, list_widget_items)
 
         # Selected dates
         pdf_canvas.setFont("DejaVuSans", 12)
@@ -663,15 +663,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         combo2_value = self.comboBox_Date_To.currentText()
         values_x = page_width / 2
         values_y = elements_y - 20  # Adjust as needed
-        pdf_canvas.drawCentredString(values_x, values_y, f"Dane od roku {combo1_value}")
-        pdf_canvas.drawCentredString(values_x, values_y - 20, f"Dane do roku: {combo2_value}")
+        pdf_canvas.drawCentredString(values_x, values_y,
+                                     f"Wybrany przedział czasowy: od {combo1_value} do {combo2_value}")
 
         modelName = self.getModelName()
-        pdf_canvas.drawCentredString(values_x, values_y - 40, f"Wybrany model: {modelName}")
-        pdf_canvas.drawCentredString(values_x, values_y - 60, f"Aktulany  powiat: {districtKey}")
-        pdf_canvas.drawCentredString(values_x, values_y - 80, f"Grupa docelowa indeks: {targetGroupIndex}")
-        pdf_canvas.drawCentredString(values_x, values_y - 100,
-                                     f"Grupa docelowa nazwa: {self.comboBox_Target_Group.currentText()}")
+        pdf_canvas.drawCentredString(values_x, values_y - 20, f"Wybrany model: {modelName}")
+        pdf_canvas.drawCentredString(values_x, values_y - 40, f"Aktulany  powiat: {districtKey}")
+        # pdf_canvas.drawCentredString(values_x, values_y - 80, f"Grupa docelowa indeks: {targetGroupIndex}")
+        pdf_canvas.drawCentredString(values_x, values_y - 60,
+                                     f"Grupa docelowa: {self.comboBox_Target_Group.currentText()}")
 
     def addTableOfContents(self, pdf_canvas, districtKey, targetGroupIndex):
         self.start_new_page(pdf_canvas)
@@ -691,6 +691,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         # ... Add content for the summary section ...
         pdf_canvas.drawString(100, 750, "Streszczenie")
+
+        msg = f"""Wprowadzenie do raportu predykcyjnego dotyczącego danych demograficznych dla {districtKey} w danym
+        odstępie czasowym stanowi dogłębne spojrzenie na przyszłość społeczności. Program, oparty na zaawansowanych
+        algorytmach, analizuje wielorakie czynniki wpływające na dynamikę populacyjną, dostarczając prognoz zmian w 
+        strukturze demograficznej. Raport nie tylko przewiduje liczbę mieszkańców, lecz również identyfikuje kluczowe 
+        czynniki kształtujące te zmiany, dostarczając cennych informacji dla lokalnych władz i decydentów. 
+        Obejmując równowagę płci, strukturę wiekową oraz rekomendacje polityki publicznej, 
+        raport staje się nieocenionym narzędziem wspierającym podejmowanie strategicznych decyzji na rzecz
+        zrównoważonego rozwoju społeczności.
+        """
+        pdf_canvas.drawString(80, 500, msg)
 
         # Update the end page for the section
         self.section_pages['Streszczenie']['end'] = self.getCurrentPage()
