@@ -49,3 +49,8 @@ class DataStorageModel:
     @classmethod
     def clear(cls):
         cls._dataFrames.clear()
+
+    @classmethod
+    def get_all_keys_for_the_same_districts(cls, prefix):
+        prefix = prefix.rsplit(', rok', 1)[0]
+        return [key for key in cls._dataFrames.keys() if key.startswith(prefix)]

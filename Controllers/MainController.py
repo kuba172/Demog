@@ -225,6 +225,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
                 dateFrom = data.get("dateFrom", "")
                 dateTo = data.get("dateTo", "")
+                targetGroup = data.get("targetGroup", "")
 
                 if dateFrom in [self.comboBox_Date_From.itemText(i) for i in range(self.comboBox_Date_From.count())]:
                     index = self.comboBox_Date_From.findText(dateFrom)
@@ -233,6 +234,11 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 if dateTo in [self.comboBox_Date_To.itemText(i) for i in range(self.comboBox_Date_To.count())]:
                     index = self.comboBox_Date_To.findText(dateTo)
                     self.comboBox_Date_To.setCurrentIndex(index)
+
+                if targetGroup in [self.comboBox_Target_Group.itemText(i) for i in
+                                   range(self.comboBox_Target_Group.count())]:
+                    index = self.comboBox_Target_Group.findText(targetGroup)
+                    self.comboBox_Target_Group.setCurrentIndex(index)
 
                 districtsList = data.get("districtsList", [])
 
@@ -275,7 +281,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             if fileName[0] and fileName[0].endswith(".demog"):
                 self.save(fileName[0])
-                print(fileName[0])
+                # print(fileName[0])
             elif fileName[0]:
                 print("Not supported extension")
 
@@ -287,8 +293,11 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         dateTo = self.comboBox_Date_To.currentText()
         districtsList = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
                          range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
+        targetGroup = self.comboBox_Target_Group.currentText()
+
         dataDump = {}
 
+        dataDump["targetGroup"] = targetGroup
         dataDump["dateFrom"] = dateFrom
         dataDump["dateTo"] = dateTo
         dataDump["districtsList"] = districtsList
@@ -299,8 +308,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             self.setSavedFilePath(filePath)
 
-        print(dateFrom, dateTo, districtsList)
-        print(dataDump)
+        # print(dateFrom, dateTo, districtsList)
+        # print(dataDump)
 
     def resultInManyFiles(self):
         if QFile.exists(MainController.SETTINGS_FILE):
@@ -893,9 +902,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         except Exception as e:
             print("2" + str(e))
 
-    def calculate_attractiveness(self, targetGroupIndex):
+    def calculate_attractiveness(self, districtKey, targetGroupIndex):
         try:
-            districtKeys = DataStorageModel.get_all_keys()
+            districtKeys = DataStorageModel.get_all_keys_for_the_same_districts(districtKey)
             attractiveness = []
             for key in districtKeys:
                 data_frame = DataStorageModel.get(key)
@@ -927,6 +936,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             # Adding the table
             data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety",
                      "Wieś_ludzie", "Wieś_mężczyźni", "Wieś_kobiety"]] + data_frame.values.tolist()
+
             table = Table(data)
             table.setStyle(TableStyle([
                 ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
@@ -995,7 +1005,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             for i in range(combo1_value, combo2_value + 1):
                 years.append(i)
             print(years)
-            attractiveness_factor = self.calculate_attractiveness(targetGroupIndex)
+            attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex)
             print(attractiveness_factor)
             for i, year in enumerate(years):
                 data.append([year, attractiveness_factor[i]])
@@ -1031,7 +1041,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             report_paragraph.wrapOn(pdf_canvas, 450, 200)
             report_paragraph.drawOn(pdf_canvas, 50, 750)
 
-            attractiveness_factor = self.calculate_attractiveness(targetGroupIndex)
+            attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex)
             end_factor = np.mean(attractiveness_factor)
             # Generating recommendations based on the business attractiveness factor
             if end_factor > 0.75:
