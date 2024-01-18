@@ -32,10 +32,9 @@ from reportlab.lib import colors
 import matplotlib.pyplot as plt
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak, BaseDocTemplate
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import A4
 
@@ -617,10 +616,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         try:
             if filePath:
                 if resultInOneFile == True and self.pageCreated == False:
-                    self.pdf_canvas = canvas.Canvas(filePath)
+                    self.pdf_canvas = canvas.Canvas(filePath, pagesize = A4)
                     self.pageCreated = True
                 elif resultInOneFile == False:
-                    self.pdf_canvas = canvas.Canvas(filePath)
+                    self.pdf_canvas = canvas.Canvas(filePath, pagesize = A4)
 
                 if QFile.exists(MainController.SETTINGS_FILE):
                     with open(MainController.SETTINGS_FILE, 'r') as file:
@@ -936,6 +935,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             # Adding the table
             data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety",
                      "Wieś_ludzie", "Wieś_mężczyźni", "Wieś_kobiety"]] + data_frame.values.tolist()
+            width, height = A4
 
             table = Table(data)
             table.setStyle(TableStyle([
@@ -943,12 +943,25 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
                 ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                 ('GRID', (0, 0), (-1, -1), 1, colors.black)
             ]))
-            table.wrapOn(pdf_canvas, 0, 0)
+            required_width, required_height = table.wrap(0, 0)
+            left_margin = 50
+            right_margin = 50
+            top_margin = 50
+            bottom_margin = 50
+            available_width = width - left_margin - right_margin
+            available_height = height - top_margin - bottom_margin
+            scale_factor = min(available_width / required_width, available_height / required_height)
+            centered_x_position = left_margin + (available_width - (required_width * scale_factor)) / 2
+            centered_y_position = bottom_margin + (available_height - (required_height * scale_factor)) / 2
+            pdf_canvas.saveState()
+            pdf_canvas.translate(centered_x_position, centered_y_position)
+            pdf_canvas.scale(scale_factor, scale_factor)
             table.drawOn(pdf_canvas, 0, 0)
+            pdf_canvas.restoreState()
 
             # Adding the graph
             plt.figure(figsize=(6, 4))
