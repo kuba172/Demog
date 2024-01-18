@@ -91,7 +91,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.horizontalSlider_Map_Size.valueChanged.connect(self.updateZoomValueLabel)
 
         self.horizontalSlider_Map_Size.setRange(50, 1000)
-        self.horizontalSlider_Map_Size.setValue(100)
+        # self.horizontalSlider_Map_Size.setValue(100)
         self.horizontalSlider_Map_Size.valueChanged.connect(self.zoomMap)
 
         # self.draw_map_in_graphics_view()

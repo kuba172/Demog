@@ -28,6 +28,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.loadLanguage()
         self.setModelFromSettings()
         self.loadMap()
+        self.loadMapScale()
 
         # Connections
         self.comboBox_Theme.currentIndexChanged.connect(self.loadThem)
@@ -83,9 +84,20 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
         self.spinBox_Map_Border_Size.valueChanged.connect(self.saveSettings)
         self.spinBox_Selection_Border_Size.valueChanged.connect(self.saveSettings)
+        self.spinBox_Default_Map_Scale.valueChanged.connect(self.saveSettings)
 
+        self.spinBox_Default_Map_Scale.valueChanged.connect(self.loadMapScale)
         self.spinBox_Map_Border_Size.valueChanged.connect(self.loadMap)
         self.spinBox_Selection_Border_Size.valueChanged.connect(self.loadMap)
+
+    def loadMapScale(self):
+        if QFile.exists(SettingsController.SETTINGS_FILE):
+            with open(SettingsController.SETTINGS_FILE, 'r') as file:
+                settings = json.load(file)
+
+                default_map_scale = settings.get("default_map_scale", 100)
+
+                self.mainController.horizontalSlider_Map_Size.setValue(default_map_scale)
 
     def loadMap(self):
         if QFile.exists(SettingsController.SETTINGS_FILE):
@@ -288,6 +300,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 hover_color_rgba = settings.get("hover_color_rgba", [0, 0, 255, 255])
                 map_border_size = settings.get("map_border_size", 1)
                 selection_border_size = settings.get("selection_border_size", 3)
+                default_map_scale = settings.get("default_map_scale", 100)
 
                 self.checkBox_Use_Custom_Theme.setChecked(custom_theme_enabled)
                 self.checkBox_Use_Secondary_Colors.setChecked(secondary_colors_enabled)
@@ -327,6 +340,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
                 self.spinBox_Map_Border_Size.setValue(map_border_size)
                 self.spinBox_Selection_Border_Size.setValue(selection_border_size)
+                self.spinBox_Default_Map_Scale.setValue(default_map_scale)
 
                 self.loadThem()
         else:
@@ -355,7 +369,8 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 "selection_color_rgba": [255, 0, 0, 255],
                 "hover_color_rgba": [0, 0, 255, 255],
                 "map_border_size": 1,
-                "selection_border_size": 3
+                "selection_border_size": 3,
+                "default_map_scale": 100
             }
 
             with open(SettingsController.SETTINGS_FILE, 'w') as file:
@@ -411,6 +426,7 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
 
         map_border_size = self.spinBox_Map_Border_Size.value()
         selection_border_size = self.spinBox_Selection_Border_Size.value()
+        default_map_scale = self.spinBox_Default_Map_Scale.value()
 
         settings = {
             "language_index": language_index,
@@ -437,7 +453,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
             "selection_color_rgba": selection_color_rgba,
             "hover_color_rgba": hover_color_rgba,
             "map_border_size": map_border_size,
-            "selection_border_size": selection_border_size
+            "selection_border_size": selection_border_size,
+            "default_map_scale": default_map_scale
+
         }
 
         with open(SettingsController.SETTINGS_FILE, 'w') as file:
