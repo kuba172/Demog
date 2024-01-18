@@ -97,5 +97,5 @@ def start(district_name, year_from, year_to):
     """
     Run a model to predict data for a selected district
     """
-    for year in range(year_from, year_to + 1):
+    for year in range(year_from - 1, year_to + 1):
         model(district_name, year)

@@ -32,7 +32,8 @@ from reportlab.lib import colors
 import matplotlib.pyplot as plt
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak, BaseDocTemplate
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak, \
+    BaseDocTemplate
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER, TA_LEFT, TA_RIGHT
@@ -447,7 +448,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
                     self.runModel()
                     districktKeys = DataStorageModel.get_all_keys()
-
+                    districktKeys.pop(0)
                     targetGroupIndex = self.comboBox_Target_Group.currentIndex()
                 else:
                     return False
@@ -616,10 +617,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         try:
             if filePath:
                 if resultInOneFile == True and self.pageCreated == False:
-                    self.pdf_canvas = canvas.Canvas(filePath, pagesize = A4)
+                    self.pdf_canvas = canvas.Canvas(filePath, pagesize=A4)
                     self.pageCreated = True
                 elif resultInOneFile == False:
-                    self.pdf_canvas = canvas.Canvas(filePath, pagesize = A4)
+                    self.pdf_canvas = canvas.Canvas(filePath, pagesize=A4)
 
                 if QFile.exists(MainController.SETTINGS_FILE):
                     with open(MainController.SETTINGS_FILE, 'r') as file:
@@ -901,17 +902,64 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         except Exception as e:
             print("2" + str(e))
 
+    # def calculate_attractiveness(self, districtKey, targetGroupIndex):
+    #     try:
+    #         districtKeys = DataStorageModel.get_all_keys_for_the_same_districts(districtKey)
+    #         attractiveness = []
+    #         for key in districtKeys:
+    #             data_frame = DataStorageModel.get(key)
+    #             attr = 0.5  # wzór
+    #             print(attr)
+    #             attractiveness.append(attr)
+    #         return attractiveness
+    #     except Exception as e:
+    #         print("3" + str(e))
+
+    def get_xy(self, targetGroupIndex):
+        x = [0, 19, 65]
+        y = [18, 64, 70]
+        if targetGroupIndex == 0:
+            tab = [x[0], y[0], x[1], y[1], x[2], y[2]]
+        elif targetGroupIndex == 1:
+            tab = [x[1], y[1], x[0], y[0], x[2], y[2]]
+        else:
+            tab = [x[2], y[2], x[1], y[1], x[0], y[0]]
+        return tab
+
+    def podziel_elementy(self, lista):
+        nowa_lista = []
+        for i in range(0, len(lista)):
+            if i + 1 < len(lista) and lista[i + 1] != 0:
+                wynik = lista[i] / lista[i + 1]
+            else:
+                wynik = lista[i] / 1
+            nowa_lista.append(wynik)
+        return nowa_lista
+
     def calculate_attractiveness(self, districtKey, targetGroupIndex):
         try:
             districtKeys = DataStorageModel.get_all_keys_for_the_same_districts(districtKey)
             attractiveness = []
+            sum_target_ludzie = []
+            sum_other_ludzie = []
+            tab = self.get_xy(targetGroupIndex)
+
             for key in districtKeys:
                 data_frame = DataStorageModel.get(key)
-                attr = 0.5  # wzór
-                print(attr)
-                attractiveness.append(attr)
-            return attractiveness
+                target_result = data_frame[data_frame['wiek'].between(tab[0], tab[1])]['ludzie'].sum()  # waga 0,6
+                other_result = data_frame[data_frame['wiek'].between(tab[2], tab[3])]['ludzie'].sum() + \
+                               data_frame[data_frame['wiek'].between(tab[4], tab[5])]['ludzie'].sum()  # waga 0,4
+                sum_target_ludzie.append(target_result)
+                sum_other_ludzie.append(other_result)
 
+            target_wsp = self.podziel_elementy(sum_target_ludzie)
+            other_wsp = self.podziel_elementy(sum_other_ludzie)
+            print(target_wsp, other_wsp, "TEST WSP")
+            # for i in range(len(sum_target_ludzie)):
+            #     attr = sum_target_ludzie[i]
+            #     attractiveness.append(attr)
+            # print(attractiveness, "Test -1")
+            return target_wsp
         except Exception as e:
             print("3" + str(e))
 
@@ -1013,13 +1061,12 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             combo1_value = int(combo1_value)
             combo2_value = self.comboBox_Date_To.currentText()
             combo2_value = int(combo2_value)
-            years = list(range(combo1_value, combo2_value))  # Replace with actual years
             years = []
             for i in range(combo1_value, combo2_value + 1):
                 years.append(i)
-            print(years)
+            print(years, "Test0")
             attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex)
-            print(attractiveness_factor)
+            print(attractiveness_factor, "Test1")
             for i, year in enumerate(years):
                 data.append([year, attractiveness_factor[i]])
 
