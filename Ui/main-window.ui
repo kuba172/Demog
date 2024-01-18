@@ -309,12 +309,15 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QPushButton" name="pushButton_Zoom_Out">
         <property name="font">
          <font>
-          <pointsize>13</pointsize>
+          <pointsize>25</pointsize>
           <bold>true</bold>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {font-size: 25pt;}</string>
         </property>
         <property name="text">
          <string>-</string>
@@ -341,15 +344,31 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QPushButton" name="pushButton_Zoom_In">
         <property name="font">
          <font>
-          <pointsize>13</pointsize>
+          <pointsize>20</pointsize>
           <bold>true</bold>
          </font>
         </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {font-size: 20pt;}</string>
+        </property>
         <property name="text">
          <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_Zoom_Value_Text">
+        <property name="styleSheet">
+         <string notr="true">QLabel {font-size: 13pt;}</string>
+        </property>
+        <property name="text">
+         <string>100%</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -368,8 +387,13 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_Generate_Report">
+        <property name="font">
+         <font>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>Generuj raport</string>
+         <string>Generuj raport 🞂</string>
         </property>
        </widget>
       </item>

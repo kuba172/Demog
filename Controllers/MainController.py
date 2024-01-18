@@ -86,7 +86,11 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.comboBox_Date_From.currentIndexChanged.connect(self.updateStatusBar)
         self.comboBox_Date_To.currentIndexChanged.connect(self.updateStatusBar)
 
-        self.horizontalSlider_Map_Size.setRange(50, 400)
+        self.pushButton_Zoom_In.clicked.connect(self.zoomIn)
+        self.pushButton_Zoom_Out.clicked.connect(self.zoomOut)
+        self.horizontalSlider_Map_Size.valueChanged.connect(self.updateZoomValueLabel)
+
+        self.horizontalSlider_Map_Size.setRange(50, 1000)
         self.horizontalSlider_Map_Size.setValue(100)
         self.horizontalSlider_Map_Size.valueChanged.connect(self.zoomMap)
 
@@ -96,6 +100,15 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # self.updateMapSettings([223, 75, 23, 255], [0, 0, 0, 255], [22, 0, 220, 255], [0, 0, 255, 255], 3, 3)
 
         self.show()
+
+    def zoomOut(self):
+        self.horizontalSlider_Map_Size.setValue(self.horizontalSlider_Map_Size.value() - 10)
+
+    def zoomIn(self):
+        self.horizontalSlider_Map_Size.setValue(self.horizontalSlider_Map_Size.value() + 10)
+
+    def updateZoomValueLabel(self, value):
+        self.label_Zoom_Value_Text.setText(f"{str(value)}%")
 
     def createLoadingWindow(self):
         self.window_loading = QDialog()
