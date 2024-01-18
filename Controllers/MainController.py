@@ -3,7 +3,7 @@ import subprocess
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel, QGraphicsScene, \
     QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, QGraphicsPathItem, QGraphicsItem, QToolTip
 from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor, QCursor, QMovie
-from PyQt6.QtCore import Qt, QDate, QFile, QPointF, QRect, QSize
+from PyQt6.QtCore import Qt, QDate, QFile, QPointF, QRect, QSize, QTimer
 from Views.Main.main_window import Ui_MainWindow_Main
 from Views.Main.about_app import Ui_Dialog_About_App
 from Views.Main.locations_list import Ui_Dialog_Location_List
@@ -559,7 +559,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def addToLocationsList(self):
         try:
             item = self.lineEdit_Location.text().strip()
-            self.label_Location_Error_Message.clear()
 
             df = pd.read_csv('Resources/locations-suggestion.csv', delimiter=';')
             if item in df['KOD POCZTOWY'].values:
@@ -571,7 +570,8 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                                            QColor(self.selection_color_rgba[0], self.selection_color_rgba[1],
                                                   self.selection_color_rgba[2], self.selection_color_rgba[3]))
                 else:
-                    self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
+                    self.errorStatus(f"Lokalizacja '{powiat_value}' dla kodu '{item}' jest już dodany.",
+                                     information=True)
             elif item in df['POWIAT'].values:
                 if item not in [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text()
                                 for i in range(self.window_locations_list_ui.listWidget_Locatons_List.count())]:
@@ -579,13 +579,16 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                     self.changeColorByName(item, QColor(self.selection_color_rgba[0], self.selection_color_rgba[1],
                                                         self.selection_color_rgba[2], self.selection_color_rgba[3]))
                 else:
-                    self.label_Location_Error_Message.setText(f"Lokalizacja '{item}' jest już dodana")
+                    self.errorStatus(f"Lokalizacja '{item}' jest już dodana.", information=True)
             else:
                 if self.lineEdit_Location.text() != "":
-                    self.label_Location_Error_Message.setText("Nieprawidłowa lokalizacja")
+                    self.errorStatus(f"Lokalizacja '{item}' jest nieprawidłowa.")
+
+            self.updateStatusBar()
 
             self.lineEdit_Location.clear()
-            self.updateStatusBar()
+            QTimer.singleShot(0, self.lineEdit_Location.clear)
+
 
         except Exception as e:
             print(e)
@@ -1210,7 +1213,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def openPdf(self, filePath):
         os.startfile(filePath)
 
-    def errorStatus(self, text="", critical=False):
+    def errorStatus(self, text="", critical=False, information=False):
         try:
 
             msg = QMessageBox()
@@ -1219,6 +1222,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             if critical:
                 message = f"{text}"
                 msg.setIcon(QMessageBox.Icon.Critical)
+
+            elif information:
+                message = f"{text}"
+                msg.setIcon(QMessageBox.Icon.Information)
             else:
                 message = f"{text}"
                 msg.setIcon(QMessageBox.Icon.Warning)

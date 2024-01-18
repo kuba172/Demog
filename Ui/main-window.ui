@@ -102,23 +102,6 @@
              </item>
             </layout>
            </item>
-           <item>
-            <widget class="QLabel" name="label_Location_Error_Message">
-             <property name="styleSheet">
-              <string notr="true">QLabel{
-                                                            color: red;
-                                                            font-weight: bold;
-                                                            }
-                                                        </string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
         </layout>
@@ -200,20 +183,6 @@
              </item>
             </layout>
            </item>
-           <item>
-            <widget class="QLabel" name="label_Date_From_To_Error_Message">
-             <property name="styleSheet">
-              <string notr="true">QLabel{
-                                                            color: red;
-                                                            font-weight: bold;
-                                                            }
-                                                        </string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
         </layout>
@@ -258,13 +227,6 @@
              </item>
             </widget>
            </item>
-           <item>
-            <widget class="QLabel" name="label_Target_Group_Error_Message">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
         </layout>
@@ -286,25 +248,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QFrame" name="frame">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QGraphicsView" name="graphicsView_Map"/>
-       </item>
-      </layout>
-     </widget>
+     <widget class="QGraphicsView" name="graphicsView_Map"/>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
