@@ -1231,7 +1231,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         def hoverEnterEvent(item, event):
             name = item.properties.get('name', '')
             voivodeship = item.properties.get('voivodeship', '')
-            tooltip_text = f"<b>Nazwa</b>: {name}<br><br><b>woj.</b>: {voivodeship}"
+            tooltip_text = f"<b>Nazwa</b>: {name}<br><br><b>województwo</b>: {voivodeship}"
             QToolTip.showText(event.screenPos(), tooltip_text)
             item.setPen(QPen(QColor(self.hover_color_rgba[0], self.hover_color_rgba[1], self.hover_color_rgba[2],
                                     self.hover_color_rgba[3]), self.selection_border_size))
