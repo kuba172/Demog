@@ -1,5 +1,3 @@
-import subprocess
-
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel, QGraphicsScene, \
     QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, QGraphicsPathItem, QGraphicsItem, QToolTip
 from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor, QCursor, QMovie
@@ -91,13 +89,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.horizontalSlider_Map_Size.valueChanged.connect(self.updateZoomValueLabel)
 
         self.horizontalSlider_Map_Size.setRange(50, 1000)
-        # self.horizontalSlider_Map_Size.setValue(100)
         self.horizontalSlider_Map_Size.valueChanged.connect(self.zoomMap)
-
-        # self.draw_map_in_graphics_view()
-
-        # Test
-        # self.updateMapSettings([223, 75, 23, 255], [0, 0, 0, 255], [22, 0, 220, 255], [0, 0, 255, 255], 3, 3)
 
         self.show()
 
@@ -148,10 +140,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         self.hover_color_rgba = hover_color_rgba
         self.map_border_size = map_border_size
         self.selection_border_size = selection_border_size
-
-        # self.graphicsView_Map.deleteLater()
-        # self.graphicsView_Map = QGraphicsView()
-        # self.frame.layout().addWidget(self.graphicsView_Map)
 
         self.draw_map_in_graphics_view()
 
@@ -294,7 +282,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             if fileName[0] and fileName[0].endswith(".demog"):
                 self.save(fileName[0])
-                # print(fileName[0])
             elif fileName[0]:
                 print("Not supported extension")
 
@@ -321,8 +308,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             self.setSavedFilePath(filePath)
 
-        # print(dateFrom, dateTo, districtsList)
-        # print(dataDump)
 
     def resultInManyFiles(self):
         if QFile.exists(MainController.SETTINGS_FILE):
