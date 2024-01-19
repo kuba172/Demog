@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QDialog, QFileDialog, QCompleter, QMessageBox, QLabel, QGraphicsScene, \
-    QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, QGraphicsPathItem, QGraphicsItem, QToolTip
+    QGraphicsView, QApplication, QVBoxLayout, QPushButton, QWidget, QSlider, QGraphicsPathItem, QGraphicsItem, QToolTip, \
+    QStyle
 from PyQt6.QtGui import QPolygonF, QPainterPath, QPen, QBrush, QColor, QCursor, QMovie
 from PyQt6.QtCore import Qt, QDate, QFile, QPointF, QRect, QSize, QTimer
 from Views.Main.main_window import Ui_MainWindow_Main
@@ -307,7 +308,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 json.dump(dataDump, file)
 
             self.setSavedFilePath(filePath)
-
 
     def resultInManyFiles(self):
         if QFile.exists(MainController.SETTINGS_FILE):
@@ -1314,7 +1314,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             for polygon, properties in polygons:
                 path = QPainterPath()
                 path.addPolygon(polygon.translated(-center))
-                item = QGraphicsPathItem(path)
+                item = MyQGraphicsPathItem(path)
                 item.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
                 item.properties = properties
                 item.setBrush(QBrush(QColor(self.map_color_rgba[0], self.map_color_rgba[1], self.map_color_rgba[2],
@@ -1349,3 +1349,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         center = QPointF(sum(p.x() for p in all_points) / len(all_points),
                          sum(p.y() for p in all_points) / len(all_points))
         drawPolygons(polygons, center)
+
+
+class MyQGraphicsPathItem(QGraphicsPathItem):
+    def paint(self, painter, option, widget):
+        option.state &= ~QStyle.StateFlag.State_Selected
+        super().paint(painter, option, widget)
