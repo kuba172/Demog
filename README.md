@@ -24,3 +24,5 @@ Projekt studencki z przedmiotu "Systemy informatyczne"
 ### Instalacja
 
 pip install -r requirements.txt
+
+python main.py
