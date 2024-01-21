@@ -613,7 +613,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
     def handleSelectionChange(self):
         self.window_locations_list_ui.pushButton_Delete.setEnabled(True)
 
-    def generatePdf(self, filePath, districtKey, resultInOneFile, save, targetGroupIndex):
+    def generatePdf(self, filePath, districtKey, resultInOneFile, save, targetGroupIndex, titles=[]):
         self.section_pages = {}
         try:
             if filePath:
@@ -630,21 +630,28 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 self.addTitlePage(self.pdf_canvas, districtKey, targetGroupIndex)
 
                 if settings_data.get("table_of_contents", True):
-                    self.addTableOfContents(self.pdf_canvas, districtKey, targetGroupIndex)
+                    self.addTableOfContents(self.pdf_canvas, districtKey, targetGroupIndex, titles)
                 if settings_data.get("summary", True):
                     self.addSummary(self.pdf_canvas, districtKey, targetGroupIndex)
+                    titles += ["Streszczenie"]
                 if settings_data.get("introduction", True):
                     self.addIntroduction(self.pdf_canvas, districtKey, targetGroupIndex)
+                    titles += ["Wprowadzenie"]
                 if settings_data.get("methodology", True):
                     self.addMethodology(self.pdf_canvas, districtKey, targetGroupIndex)
+                    titles += ["Metodologia"]
                 if settings_data.get("annual_analysis", True):
                     self.addAnnualAnalysis(self.pdf_canvas, districtKey, targetGroupIndex)
-                if settings_data.get("recommendations", True):
-                    self.addRecommendations(self.pdf_canvas, districtKey, targetGroupIndex)
+                    titles += ["Analiza roczna"]
                 if settings_data.get("report_summary", True):
                     self.addSummaryReport(self.pdf_canvas, districtKey, targetGroupIndex)
+                    titles += ["Podsumowanie i wnioski dla wybranych lokalizacji"]
+                #if settings_data.get("recommendations", True):
+                 #   self.addRecommendations(self.pdf_canvas, districtKey, targetGroupIndex)
+                  #  titles += ["Zalecenia dla wybranych lokalizacji"]
                 if settings_data.get("references", True):
                     self.addReferences(self.pdf_canvas, districtKey, targetGroupIndex)
+                    titles += ["Referencje"]
 
                 if save == True:
                     self.pdf_canvas.save()
@@ -718,32 +725,35 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         date_y = title_y - 60  # Adjust as needed
         pdf_canvas.drawCentredString(date_x, date_y, f"Data wygenerowania raportu: {current_date}")
 
-        # Selected Districts
-        pdf_canvas.setFont("DejaVuSans", 12)
-        # list_widget_items = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
-        # range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
         elements_x = page_width / 2
         elements_y = date_y - 30  # Adjust as needed
-        # pdf_canvas.drawCentredString(elements_x, elements_y, f"Wybrane powiaty: {', '.join(list_widget_items)}")
-        # self.draw_centered_strings(pdf_canvas, elements_x, elements_y, list_widget_items)
 
         # Selected dates
         pdf_canvas.setFont("DejaVuSans", 12)
         combo1_value = self.comboBox_Date_From.currentText()
         combo2_value = self.comboBox_Date_To.currentText()
         values_x = page_width / 2
-        values_y = elements_y - 20  # Adjust as needed
-        pdf_canvas.drawCentredString(values_x, values_y,
+        pdf_canvas.drawCentredString(values_x, elements_y,
                                      f"Wybrany przedział czasowy: od roku {combo1_value} do roku {combo2_value}")
 
+        values_y = elements_y - 20  # Adjust as needed
+
         modelName = self.getModelName()
-        pdf_canvas.drawCentredString(values_x, values_y - 20, f"Wybrany model: {modelName}")
-        pdf_canvas.drawCentredString(values_x, values_y - 40, f"Aktulany powiat: {districtKey}")
+        pdf_canvas.drawCentredString(values_x, values_y, f"Wybrany model: {modelName}")
+        #pdf_canvas.drawCentredString(values_x, values_y - 40, f"Aktulany powiat: {districtKey}")
         # pdf_canvas.drawCentredString(values_x, values_y - 80, f"Grupa docelowa indeks: {targetGroupIndex}")
-        pdf_canvas.drawCentredString(values_x, values_y - 60,
+        pdf_canvas.drawCentredString(values_x, values_y - 20,
                                      f"Grupa docelowa: {self.comboBox_Target_Group.currentText()}")
 
-    def addTableOfContents(self, pdf_canvas, districtKey, targetGroupIndex):
+        # Selected Districts
+        pdf_canvas.setFont("DejaVuSans", 12)
+        list_widget_items = [self.window_locations_list_ui.listWidget_Locatons_List.item(i).text() for i in
+        range(self.window_locations_list_ui.listWidget_Locatons_List.count())]
+        pdf_canvas.drawCentredString(elements_x, values_y -40, f"Wybrane powiaty:")
+        # f"Wybrane powiaty: {', '.join(list_widget_items)}"
+        self.draw_centered_strings(pdf_canvas, elements_x, values_y - 60, list_widget_items)
+
+    def addTableOfContents(self, pdf_canvas, districtKey, targetGroupIndex, titles=[]):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Spis treści'] = {'start': start_page, 'end': start_page}
@@ -760,6 +770,17 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
         header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
         header_paragraph.drawOn(pdf_canvas, x_position, y_position)
+
+        # Dodanie pozycji do spisu treści
+        try:
+            for title in titles:
+                current_page_number = pdf_canvas.getPageNumber()
+                pdf_canvas.drawString(x_position, y_position - 65, title)
+                pdf_canvas.drawRightString(x_position + 250, y_position - 65,
+                                           str(current_page_number))
+                pdf_canvas.translate(0, -pdf_canvas._leading)
+        except Exception as e:
+            print("0" + str(e))
 
         # Update the end page for the section
         self.section_pages['Spis treści']['end'] = self.getCurrentPage()
@@ -783,10 +804,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         header_paragraph.drawOn(pdf_canvas, x_position, y_position)
 
         style2 = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15, alignment=TA_JUSTIFY)
-        msg2 = f"""Wprowadzenie do raportu predykcyjnego dotyczącego danych demograficznych dla: {districtKey} w danym odstępie czasowym stanowi dogłębne spojrzenie na przyszłość społeczności. Program, oparty na zaawansowanych algorytmach, analizuje wielorakie czynniki wpływające na dynamikę populacyjną, dostarczając prognoz zmian w strukturze demograficznej. Raport nie tylko przewiduje liczbę mieszkańców, lecz również identyfikuje kluczowe czynniki kształtujące te zmiany, dostarczając cennych informacji dla lokalnych władz i decydentów. Obejmując równowagę płci, strukturę wiekową oraz rekomendacje polityki publicznej, raport staje się nieocenionym narzędziem wspierającym podejmowanie strategicznych decyzji na rzecz zrównoważonego rozwoju społeczności."""
+        msg2 = f"""Raport predykcyjny dotyczący danych demograficznych dla wybranych powiatów w danym odstępie czasowym stanowi dogłębne spojrzenie na przyszłość społeczności. Program, oparty na zaawansowanych algorytmach, analizuje wielorakie czynniki wpływające na dynamikę populacyjną, dostarczając prognoz zmian w strukturze demograficznej. Raport nie tylko przewiduje liczbę mieszkańców, lecz również identyfikuje kluczowe czynniki kształtujące te zmiany, dostarczając cennych informacji dla lokalnych władz i decydentów. Obejmując równowagę płci, strukturę wiekową oraz rekomendacje polityki publicznej, raport staje się nieocenionym narzędziem wspierającym podejmowanie strategicznych decyzji na rzecz zrównoważonego rozwoju społeczności."""
         msg_paragraph = Paragraph(msg2, style2)
         width = 450  # Width in points - adjust as needed
-        height = 500  # Starting height position - adjust as needed
+        height = 575  # Starting height position - adjust as needed
         msg_paragraph.wrapOn(pdf_canvas, width, height)
         msg_paragraph.drawOn(pdf_canvas, 80, height)
 
@@ -828,7 +849,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 content_style)
 
             subsection1.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
-            subsection1.drawOn(pdf_canvas, x_position, y_position - 20)
+            subsection1.drawOn(pdf_canvas, x_position, y_position - 60)
 
             content1.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
             content1.drawOn(pdf_canvas, x_position, y_position - 300)
@@ -872,7 +893,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             subsection3 = Paragraph("Techniki uczenia maszynowego", subsection_style)
             content3 = Paragraph(
-                "Aplikacja wykorzystuje kilka modeli uczenia maszynowego do analizy i przewidywania danych demograficznych:\n\n- Random Forest Regression: Metoda uczenia zespołowego stosowana do regresji. Działa poprzez konstruowanie wielu drzew decyzyjnych w czasie szkolenia i wyprowadzanie średniej prognozy poszczególnych drzew.\n\n- Regresja wielomianowa: Forma analizy regresji, w której związek między zmienną niezależną a zmienną zależną jest modelowany jako wielomian n-tego stopnia.\n\n- Regresja liniowa: Podstawowy i powszechnie stosowany rodzaj analizy predykcyjnej, który zakłada liniową zależność między zmiennymi wejściowymi (X) a pojedynczą zmienną wyjściową (Y).",
+                "Aplikacja wykorzystuje kilka modeli uczenia maszynowego do analizy i przewidywania danych demograficznych:<br/><br/>- <u>Random Forest Regression</u>: Metoda uczenia zespołowego stosowana do regresji. Działa poprzez konstruowanie wielu drzew decyzyjnych w czasie szkolenia i wyprowadzanie średniej prognozy poszczególnych drzew.<br/><br/>- <u>Regresja wielomianowa</u>: Forma analizy regresji, w której związek między zmienną niezależną a zmienną zależną jest modelowany jako wielomian n-tego stopnia.<br/><br/>- <u>Regresja liniowa</u>: Podstawowy i powszechnie stosowany rodzaj analizy predykcyjnej, który zakłada liniową zależność między zmiennymi wejściowymi (X) a pojedynczą zmienną wyjściową (Y).",
                 content_style)
 
             subsection4 = Paragraph("Kryteria i przebieg procesu", subsection_style)
@@ -884,19 +905,19 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             subsection2.drawOn(pdf_canvas, x_position, y_position - 50)
 
             content2.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
-            content2.drawOn(pdf_canvas, x_position, y_position - 200)
+            content2.drawOn(pdf_canvas, x_position, y_position - 115)
 
             subsection3.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
-            subsection3.drawOn(pdf_canvas, x_position, y_position - 250)
+            subsection3.drawOn(pdf_canvas, x_position, y_position - 180)
 
             content3.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
-            content3.drawOn(pdf_canvas, x_position, y_position - 400)
+            content3.drawOn(pdf_canvas, x_position, y_position - 410)
 
-            subsection4.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
-            subsection4.drawOn(pdf_canvas, x_position, y_position - 450)
+            subsection4.wrapOn(pdf_canvas, 450, 350)  # Width and height for wrapping
+            subsection4.drawOn(pdf_canvas, x_position, y_position -480)
 
             content4.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
-            content4.drawOn(pdf_canvas, x_position, y_position - 600)
+            content4.drawOn(pdf_canvas, x_position, y_position - 575)
 
             # Update the end page for the section
             self.section_pages['Metodologia']['end'] = self.getCurrentPage()
@@ -975,11 +996,25 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             data_frame = DataStorageModel.get(districtKey)
 
-            styles = getSampleStyleSheet()
-            title = "Analiza roczna dla powiatu: {}".format(districtKey)
-            title_paragraph = Paragraph(title, styles['Heading1'])
-            title_paragraph.wrapOn(pdf_canvas, 450, 200)
-            title_paragraph.drawOn(pdf_canvas, 50, 750)
+            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15,
+                                           alignment=TA_CENTER)
+            header_text = "Analiza roczna dla powiatu: {}".format(districtKey)
+            header_paragraph = Paragraph(header_text, heading_style)
+
+            page_width, page_height = A4
+
+            x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
+            y_position = page_height - 50  # Adjust this value to move the header up or down
+
+            header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            header_paragraph.drawOn(pdf_canvas, x_position, y_position)
+
+
+            #styles = getSampleStyleSheet()
+            #title = "Analiza roczna dla powiatu: {}".format(districtKey)
+            #title_paragraph = Paragraph(title, styles['Heading1'])
+            #title_paragraph.wrapOn(pdf_canvas, 450, 200)
+            #title_paragraph.drawOn(pdf_canvas, 50, 750)
 
             # Adding the table
             data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety",
@@ -991,16 +1026,16 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTNAME', (0, 0), (-1, 0), 'DejaVuSans-Bold'),
                 ('BOTTOMPADDING', (0, 0), (-1, 0), 6),
                 ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                 ('GRID', (0, 0), (-1, -1), 1, colors.black)
             ]))
-            required_width, required_height = table.wrap(0, 0)
+            required_width, required_height = table.wrap(2, 2)
             left_margin = 50
             right_margin = 50
-            top_margin = 50
-            bottom_margin = 50
+            top_margin = 100
+            bottom_margin = 100
             available_width = width - left_margin - right_margin
             available_height = height - top_margin - bottom_margin
             scale_factor = min(available_width / required_width, available_height / required_height)
@@ -1012,12 +1047,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             table.drawOn(pdf_canvas, 0, 0)
             pdf_canvas.restoreState()
 
+            self.start_new_page(pdf_canvas)
+
             # Adding the graph
             plt.figure(figsize=(6, 4))
             plt.bar(data_frame['wiek'], data_frame['ludzie'], label='Total Population')
             plt.xlabel('Age')
             plt.ylabel('Population')
-            plt.title('Population by Age in ' + districtKey)
+            plt.title('Population by Age in ' + districtKey, fontsize = 9)
             plt.legend()
 
             # Saving the plot to a BytesIO object
@@ -1028,7 +1065,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             img.drawHeight = 4 * inch
             img.drawWidth = 6 * inch
             img.wrapOn(pdf_canvas, 450, 200)
-            img.drawOn(pdf_canvas, 50, 300)
+            img.drawOn(pdf_canvas, 100, 300)
 
             # Update the end page for the section
             self.section_pages['Analiza roczna']['end'] = self.getCurrentPage()
@@ -1041,19 +1078,50 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             start_page = self.getCurrentPage()
             self.section_pages['Podsumowanie'] = {'start': start_page, 'end': start_page}
 
-            pdf_canvas.setFont("DejaVuSans", 9)
+            #pdf_canvas.setFont("DejaVuSans", 9)
 
-            styles = getSampleStyleSheet()
-            report_title = "Podsumowanie i wnioski dla lokalizacji: {}".format(districtKey)
-            report_paragraph = Paragraph(report_title, styles['Normal'])
-            report_paragraph.wrapOn(pdf_canvas, 450, 200)
-            report_paragraph.drawOn(pdf_canvas, 50, 750)
+
+            subsection_style = ParagraphStyle(
+                name='Subsection',
+                fontName='DejaVuSans-Bold',  # Bold font for subsections
+                fontSize=14,  # Slightly larger than normal text
+                leading=17,
+                alignment=TA_LEFT  # Left-aligned
+            )
+            content_style = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15,
+                                           alignment=TA_JUSTIFY)
+            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15,
+                                           alignment=TA_CENTER)
+            header_text = "Podsumowanie i wnioski dla lokalizacji: {}".format(districtKey)
+            header_paragraph = Paragraph(header_text, heading_style)
+
+            page_width, page_height = A4
+
+            x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
+            y_position = page_height - 50  # Adjust this value to move the header up or down
+
+            header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            header_paragraph.drawOn(pdf_canvas, x_position, y_position)
 
             # Add content for the summary report section
-            summary_text = "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranej dzielnicy i okresu."
-            summary_paragraph = Paragraph(summary_text, styles['Normal'])
-            summary_paragraph.wrapOn(pdf_canvas, 450, 200)
-            summary_paragraph.drawOn(pdf_canvas, 50, 720)
+            content5 = Paragraph(
+                "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranej dzielnicy i okresu.",
+                content_style)
+
+            content5.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            content5.drawOn(pdf_canvas, x_position, y_position - 100)
+
+            #styles = getSampleStyleSheet()
+            #report_title = "Podsumowanie i wnioski dla lokalizacji: {}".format(districtKey)
+            #report_paragraph = Paragraph(report_title, styles['Normal'])
+            #report_paragraph.wrapOn(pdf_canvas, 450, 200)
+            #report_paragraph.drawOn(pdf_canvas, 50, 750)
+
+            # Add content for the summary report section
+            #summary_text = "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranej dzielnicy i okresu."
+            #summary_paragraph = Paragraph(summary_text, styles['Normal'])
+            #summary_paragraph.wrapOn(pdf_canvas, 450, 200)
+            #summary_paragraph.drawOn(pdf_canvas, 50, 720)
 
             # Example data - replace with actual data
             print(self.comboBox_Date_From.currentText)
@@ -1077,7 +1145,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTNAME', (0, 0), (-1, 0), 'DejaVuSans-Bold'),
                 ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
                 ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                 ('GRID', (0, 0), (-1, -1), 1, colors.black)
@@ -1085,11 +1153,33 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             table.wrapOn(pdf_canvas, 450, 200)
             table.drawOn(pdf_canvas, 50, 600)
 
+            subsection6 = Paragraph("Zalecenia dla lokalizacji: {}".format(districtKey), subsection_style)
+
+            attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex)
+            end_factor = np.mean(attractiveness_factor)
+            # Generating recommendations based on the business attractiveness factor
+            if end_factor > 0.75:
+                recommendation_text = "powiat jest bardzo atrakcyjną lokalizacją dla nowych firm, wykazując obiecujące trendy demograficzne na przyszłość dla wybranego przedziału czasowego."
+            elif 0.25 < end_factor <= 0.75:
+                recommendation_text = "powiat jest umiarkowanie atrakcyjną lokalizacją, ale należy dokładnie rozważyć potencjalne zagrożenia dla wybranego przedziału czasowego."
+            else:  # attractiveness_factor <= 0.24
+                recommendation_text = "obecnie powiat ten stanowi poważne wyzwanie dla rozwoju nowych firm i może nie być idealnym wyborem dla wybranego przedziału czasowego."
+
+            start_of_recommendation = "Ze względu na fakt, że współczynnik atrakcyjności biznesowej dla {} średnio wynosi {} można stwierdzić, że ".format(districtKey, end_factor)
+            #recommendation = start_of_recommendation + recommendation_text
+            content6 = Paragraph(start_of_recommendation + recommendation_text, content_style)
+
+            subsection6.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            subsection6.drawOn(pdf_canvas, x_position, y_position - 300)
+
+            content6.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            content6.drawOn(pdf_canvas, x_position, y_position - 430)
+
             # Update the end page number for the summary section
             self.section_pages['Podsumowanie']['end'] = self.getCurrentPage()
         except Exception as e:
             print("5" + str(e))
-
+    '''
     def addRecommendations(self, pdf_canvas, districtKey, targetGroupIndex):
         try:
             self.start_new_page(pdf_canvas)
@@ -1120,7 +1210,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             self.section_pages['Zalecenia']['end'] = self.getCurrentPage()
         except Exception as e:
             print("6" + str(e))
-
+    '''
     def addReferences(self, pdf_canvas, districtKey, targetGroupIndex):
         try:
             self.start_new_page(pdf_canvas)
