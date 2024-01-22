@@ -46,14 +46,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         self.checkBox_2_Summary.clicked.connect(self.saveSettings)
         self.checkBox_3_Introduction.clicked.connect(self.saveSettings)
         self.checkBox_4_Methodology.clicked.connect(self.saveSettings)
-        self.checkBox_5_Description_Of_The_Location.clicked.connect(self.saveSettings)
         self.checkBox_6_Annual_Analysis.clicked.connect(self.saveSettings)
-        self.checkBox_7_Results_And_Conclusions.clicked.connect(self.saveSettings)
-        self.checkBox_8_Recommendations.clicked.connect(self.saveSettings)
-        self.checkBox_9_Additional_Customer_Specific_Content.clicked.connect(self.saveSettings)
         self.checkBox_10_Report_Summary.clicked.connect(self.saveSettings)
         self.checkBox_11_References.clicked.connect(self.saveSettings)
-        self.checkBox_12_Attachments.clicked.connect(self.saveSettings)
 
         self.pushButton_Primary_Color.clicked.connect(
             lambda: self.changeColor('primaryColor', 'pushButton_Primary_Color'))
@@ -286,14 +281,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 summary = settings.get("summary", True)
                 introduction = settings.get("introduction", True)
                 methodology = settings.get("methodology", True)
-                description_of_the_location = settings.get("description_of_the_location", True)
                 annual_analysis = settings.get("annual_analysis", True)
-                results_and_conclusions = settings.get("results_and_conclusions", True)
-                recommendations = settings.get("recommendations", True)
-                additional_customer_specific_content = settings.get("additional_customer_specific_content", True)
                 report_summary = settings.get("report_summary", True)
                 references = settings.get("references", True)
-                attachments = settings.get("attachments", True)
                 map_color_rgba = settings.get("map_color_rgba", [255, 255, 255, 255])
                 border_map_color_rgba = settings.get("border_map_color_rgba", [0, 0, 0, 255])
                 selection_color_rgba = settings.get("selection_color_rgba", [255, 0, 0, 255])
@@ -316,14 +306,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 self.checkBox_2_Summary.setChecked(summary)
                 self.checkBox_3_Introduction.setChecked(introduction)
                 self.checkBox_4_Methodology.setChecked(methodology)
-                self.checkBox_5_Description_Of_The_Location.setChecked(description_of_the_location)
                 self.checkBox_6_Annual_Analysis.setChecked(annual_analysis)
-                self.checkBox_7_Results_And_Conclusions.setChecked(results_and_conclusions)
-                self.checkBox_8_Recommendations.setChecked(recommendations)
-                self.checkBox_9_Additional_Customer_Specific_Content.setChecked(additional_customer_specific_content)
                 self.checkBox_10_Report_Summary.setChecked(report_summary)
                 self.checkBox_11_References.setChecked(references)
-                self.checkBox_12_Attachments.setChecked(attachments)
 
                 # Map
                 rgba_string = f"rgba({map_color_rgba[0]}, {map_color_rgba[1]}, {map_color_rgba[2]}, {map_color_rgba[3]})"
@@ -356,14 +341,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
                 "summary": True,
                 "introduction": True,
                 "methodology": True,
-                "description_of_the_location": True,
                 "annual_analysis": True,
-                "results_and_conclusions": True,
-                "recommendations": True,
-                "additional_customer_specific_content": True,
                 "report_summary": True,
                 "references": True,
-                "attachments": True,
                 "map_color_rgba": [255, 255, 255, 255],
                 "border_map_color_rgba": [0, 0, 0, 255],
                 "selection_color_rgba": [255, 0, 0, 255],
@@ -399,14 +379,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
         summary = self.checkBox_2_Summary.isChecked()
         introduction = self.checkBox_3_Introduction.isChecked()
         methodology = self.checkBox_4_Methodology.isChecked()
-        description_of_the_location = self.checkBox_5_Description_Of_The_Location.isChecked()
         annual_analysis = self.checkBox_6_Annual_Analysis.isChecked()
-        results_and_conclusions = self.checkBox_7_Results_And_Conclusions.isChecked()
-        recommendations = self.checkBox_8_Recommendations.isChecked()
-        additional_customer_specific_content = self.checkBox_9_Additional_Customer_Specific_Content.isChecked()
         report_summary = self.checkBox_10_Report_Summary.isChecked()
         references = self.checkBox_11_References.isChecked()
-        attachments = self.checkBox_12_Attachments.isChecked()
 
         # pushButton_Map_Color
         colorButton = self.pushButton_Map_Color.palette().color(QPalette.ColorRole.Button)
@@ -440,14 +415,9 @@ class SettingsController(QMainWindow, Ui_MainWindow_Settings, QtStyleTools):
             "summary": summary,
             "introduction": introduction,
             "methodology": methodology,
-            "description_of_the_location": description_of_the_location,
             "annual_analysis": annual_analysis,
-            "results_and_conclusions": results_and_conclusions,
-            "recommendations": recommendations,
-            "additional_customer_specific_content": additional_customer_specific_content,
             "report_summary": report_summary,
             "references": references,
-            "attachments": attachments,
             "map_color_rgba": map_color_rgba,
             "border_map_color_rgba": border_map_color_rgba,
             "selection_color_rgba": selection_color_rgba,

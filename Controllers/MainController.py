@@ -637,6 +637,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
                 self.addTitlePage(self.pdf_canvas, districtKey, targetGroupIndex)
 
+                if settings_data.get("table_of_contents", True):
+                    self.addTableOfContents(self.pdf_canvas, districtKey, targetGroupIndex)
+                    titles += ["Spis treści"]
                 if settings_data.get("summary", True):
                     self.addSummary(self.pdf_canvas, districtKey, targetGroupIndex)
                     titles += ["Streszczenie"]
@@ -655,9 +658,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 if settings_data.get("references", True):
                     self.addReferences(self.pdf_canvas, districtKey, targetGroupIndex)
                     titles += ["Referencje"]
-                if settings_data.get("table_of_contents", True):
-                    self.addTableOfContents(self.pdf_canvas, districtKey, targetGroupIndex)
-                    titles += ["Spis treści"]
 
                 if save == True:
                     self.pdf_canvas.save()

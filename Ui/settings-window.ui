@@ -61,7 +61,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget_Content">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="General">
        <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -77,8 +77,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>285</width>
-               <height>460</height>
+               <width>629</width>
+               <height>528</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -387,8 +387,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>270</width>
-             <height>512</height>
+             <width>631</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -493,49 +493,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="checkBox_5_Description_Of_The_Location">
-                 <property name="text">
-                  <string>Opis wybranej lokalizacji</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QCheckBox" name="checkBox_6_Annual_Analysis">
                  <property name="text">
                   <string>Analiza roczna</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBox_7_Results_And_Conclusions">
-                 <property name="text">
-                  <string>Wyniki i wnioski</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBox_8_Recommendations">
-                 <property name="text">
-                  <string>Zalecenia</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBox_9_Additional_Customer_Specific_Content">
-                 <property name="text">
-                  <string>Dodatkowa treść specyficzna dla klienta</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -556,16 +516,6 @@
                 <widget class="QCheckBox" name="checkBox_11_References">
                  <property name="text">
                   <string>Referencje</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBox_12_Attachments">
-                 <property name="text">
-                  <string>Załączniki</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
