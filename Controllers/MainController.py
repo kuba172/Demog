@@ -629,8 +629,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
                 self.addTitlePage(self.pdf_canvas, districtKey, targetGroupIndex)
 
-                if settings_data.get("table_of_contents", True):
-                    self.addTableOfContents(self.pdf_canvas, districtKey, targetGroupIndex, titles)
                 if settings_data.get("summary", True):
                     self.addSummary(self.pdf_canvas, districtKey, targetGroupIndex)
                     titles += ["Streszczenie"]
@@ -646,12 +644,12 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 if settings_data.get("report_summary", True):
                     self.addSummaryReport(self.pdf_canvas, districtKey, targetGroupIndex)
                     titles += ["Podsumowanie i wnioski dla wybranych lokalizacji"]
-                # if settings_data.get("recommendations", True):
-                #   self.addRecommendations(self.pdf_canvas, districtKey, targetGroupIndex)
-                #  titles += ["Zalecenia dla wybranych lokalizacji"]
                 if settings_data.get("references", True):
                     self.addReferences(self.pdf_canvas, districtKey, targetGroupIndex)
                     titles += ["Referencje"]
+                if settings_data.get("table_of_contents", True):
+                    self.addTableOfContents(self.pdf_canvas, districtKey, targetGroupIndex)
+                    titles += ["Spis treści"]
 
                 if save == True:
                     self.pdf_canvas.save()
@@ -697,7 +695,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             center_y -= line_spacing
 
     def addTitlePage(self, pdf_canvas, districtKey, targetGroupIndex):
-
+        self.start_new_page(pdf_canvas)
         # Set page size and margins
         page_width, page_height = A4
         margin = inch
@@ -753,7 +751,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         # f"Wybrane powiaty: {', '.join(list_widget_items)}"
         self.draw_centered_strings(pdf_canvas, elements_x, values_y - 60, list_widget_items)
 
-    def addTableOfContents(self, pdf_canvas, districtKey, targetGroupIndex, titles=[]):
+    def generate_toc_entries(self):
+        toc_entries = []
+        for section_title, pages in self.section_pages.items():
+            toc_entry = "{}: {} - {}".format(section_title, pages['start'], pages['end'])
+            toc_entries.append(toc_entry)
+        return toc_entries
+
+    def addTableOfContents(self, pdf_canvas, districtKey, targetGroupIndex):
         self.start_new_page(pdf_canvas)
         start_page = self.getCurrentPage()
         self.section_pages['Spis treści'] = {'start': start_page, 'end': start_page}
@@ -772,13 +777,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
         header_paragraph.drawOn(pdf_canvas, x_position, y_position)
 
         # Dodanie pozycji do spisu treści
+        toc_entries = self.generate_toc_entries()
         try:
-            for title in titles:
-                current_page_number = pdf_canvas.getPageNumber()
-                pdf_canvas.drawString(x_position, y_position - 65, title)
-                pdf_canvas.drawRightString(x_position + 250, y_position - 65,
-                                           str(current_page_number))
-                pdf_canvas.translate(0, -pdf_canvas._leading)
+            page_width, page_height = A4
+            y_position = page_height - 150  # Adjust this value to move the header up or down
+            line_height = 20  # Adjust this based on your desired spacing between lines
+            for entry in toc_entries:
+                pdf_canvas.drawString(100, y_position, entry)
+                y_position -= line_height  # Move down for the next entry
         except Exception as e:
             print("0" + str(e))
 
@@ -954,14 +960,31 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             if i + 1 < len(lista) and lista[i + 1] != 0:
                 wynik = lista[i] / lista[i + 1]
             else:
-                wynik = lista[i] / 1
+                wynik = lista[i] / lista[i]
             nowa_lista.append(wynik)
         return nowa_lista
+
+    def calculate_sum(self, districtKey, targetGroupIndex):
+        try:
+            districtKeys = DataStorageModel.get_all_keys_for_the_same_districts(districtKey)
+            sum_target_ludzie = []
+            sum_other_ludzie = []
+            tab = self.get_xy(targetGroupIndex)
+
+            for key in districtKeys:
+                data_frame = DataStorageModel.get(key)
+                target_result = data_frame[data_frame['wiek'].between(tab[0], tab[1])]['ludzie'].sum()  # waga 0,6
+                other_result = data_frame[data_frame['wiek'].between(tab[2], tab[3])]['ludzie'].sum() + \
+                               data_frame[data_frame['wiek'].between(tab[4], tab[5])]['ludzie'].sum()  # waga 0,4
+                sum_target_ludzie.append(target_result)
+                sum_other_ludzie.append(other_result)
+            return sum_target_ludzie, sum_other_ludzie
+        except Exception as e:
+            print("3" + str(e))
 
     def calculate_attractiveness(self, districtKey, targetGroupIndex):
         try:
             districtKeys = DataStorageModel.get_all_keys_for_the_same_districts(districtKey)
-            attractiveness = []
             sum_target_ludzie = []
             sum_other_ludzie = []
             tab = self.get_xy(targetGroupIndex)
@@ -974,14 +997,12 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 sum_target_ludzie.append(target_result)
                 sum_other_ludzie.append(other_result)
 
-            target_wsp = self.podziel_elementy(sum_target_ludzie)
-            other_wsp = self.podziel_elementy(sum_other_ludzie)
-            print(target_wsp, other_wsp, "TEST WSP")
-            # for i in range(len(sum_target_ludzie)):
-            #     attr = sum_target_ludzie[i]
-            #     attractiveness.append(attr)
-            # print(attractiveness, "Test -1")
-            return target_wsp
+            target_wsp = [(1 - x) * 100 for x in self.podziel_elementy(sum_target_ludzie)]
+            other_wsp = [(1 - x) * 100 for x in self.podziel_elementy(sum_other_ludzie)]
+            weighted_means = [(0.6 * target + 0.4 * other) for target, other in zip(target_wsp, other_wsp)]
+
+            print(target_wsp, other_wsp, weighted_means, "TEST WSP")
+            return weighted_means
         except Exception as e:
             print("3" + str(e))
 
@@ -1008,12 +1029,6 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
             header_paragraph.drawOn(pdf_canvas, x_position, y_position)
-
-            # styles = getSampleStyleSheet()
-            # title = "Analiza roczna dla powiatu: {}".format(districtKey)
-            # title_paragraph = Paragraph(title, styles['Heading1'])
-            # title_paragraph.wrapOn(pdf_canvas, 450, 200)
-            # title_paragraph.drawOn(pdf_canvas, 50, 750)
 
             # Adding the table
             data = [["Wiek", "Ludzie", "Mężczyźni", "Kobiety", "Miasto_ludzie", "Miasto_mężczyźni", "Miasto_kobiety",
@@ -1050,10 +1065,10 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             # Adding the graph
             plt.figure(figsize=(6, 4))
-            plt.bar(data_frame['wiek'], data_frame['ludzie'], label='Total Population')
-            plt.xlabel('Age')
-            plt.ylabel('Population')
-            plt.title('Population by Age in ' + districtKey, fontsize=9)
+            plt.bar(data_frame['wiek'], data_frame['ludzie'], label='Liczba ludności')
+            plt.xlabel('Wiek')
+            plt.ylabel('Populacja')
+            plt.title('Rozkład populacji w: ' + districtKey, fontsize=9)
             plt.legend()
 
             # Saving the plot to a BytesIO object
@@ -1065,6 +1080,92 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             img.drawWidth = 6 * inch
             img.wrapOn(pdf_canvas, 450, 200)
             img.drawOn(pdf_canvas, 100, 300)
+
+            self.start_new_page(pdf_canvas)
+
+            combo1_value = self.comboBox_Date_From.currentText()
+            combo1_value = int(combo1_value)
+            combo2_value = self.comboBox_Date_To.currentText()
+            combo2_value = int(combo2_value)
+            years = []
+            for i in range(combo1_value, combo2_value + 1):
+                years.append(i)
+            suma = self.calculate_sum(districtKey, targetGroupIndex)
+            sum1 = suma[0]
+            sum2 = suma[1]
+
+            data1 = [['Rok', 'Liczba ludności w grupie docelowej']]
+            data2 = [['Rok', 'Liczba ludności w grupach niedocelowych']]
+
+            for i, year in enumerate(years):
+                data1.append([year, sum1[i]])
+
+            table = Table(data1)
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'DejaVuSans-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            table.wrapOn(pdf_canvas, 450, 200)
+            table.drawOn(pdf_canvas, 100, y_position - 200)
+
+            plt.figure(figsize=(6, 4))
+            plt.plot(years, sum1[:len(years)])
+            plt.xlabel('Rok')
+            plt.ylabel('Liczba ludności')
+            plt.title('Liczba ludności w grupie docelowej', fontsize=9)
+            plt.xticks(years)
+            plt.legend()
+
+            # Saving the plot to a BytesIO object
+            img_buffer = BytesIO()
+            plt.savefig(img_buffer, format='PNG')
+            img_buffer.seek(0)
+            img = Image(img_buffer)
+            img.drawHeight = 4 * inch
+            img.drawWidth = 6 * inch
+            img.wrapOn(pdf_canvas, 450, 200)
+            img.drawOn(pdf_canvas, 100, y_position - 600)
+
+            self.start_new_page(pdf_canvas)
+
+            for i, year in enumerate(years):
+                data2.append([year, sum2[i]])
+
+            table = Table(data2)
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'DejaVuSans-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            table.wrapOn(pdf_canvas, 450, 200)
+            table.drawOn(pdf_canvas, 100, y_position - 200)
+
+            plt.figure(figsize=(6, 4))
+            plt.plot(years, sum2[:len(years)])
+            plt.xlabel('Rok')
+            plt.ylabel('Liczba ludności')
+            plt.title('Liczba ludności w grupach niedocelowych', fontsize=9)
+            plt.xticks(years)
+            plt.legend()
+
+            # Saving the plot to a BytesIO object
+            img_buffer = BytesIO()
+            plt.savefig(img_buffer, format='PNG')
+            img_buffer.seek(0)
+            img = Image(img_buffer)
+            img.drawHeight = 4 * inch
+            img.drawWidth = 6 * inch
+            img.wrapOn(pdf_canvas, 450, 200)
+            img.drawOn(pdf_canvas, 100, y_position - 600)
 
             # Update the end page for the section
             self.section_pages['Analiza roczna']['end'] = self.getCurrentPage()
@@ -1103,23 +1204,11 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             # Add content for the summary report section
             content5 = Paragraph(
-                "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranej dzielnicy i okresu.",
+                "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranego powiatu i okresu.",
                 content_style)
 
             content5.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
             content5.drawOn(pdf_canvas, x_position, y_position - 100)
-
-            # styles = getSampleStyleSheet()
-            # report_title = "Podsumowanie i wnioski dla lokalizacji: {}".format(districtKey)
-            # report_paragraph = Paragraph(report_title, styles['Normal'])
-            # report_paragraph.wrapOn(pdf_canvas, 450, 200)
-            # report_paragraph.drawOn(pdf_canvas, 50, 750)
-
-            # Add content for the summary report section
-            # summary_text = "Ta sekcja zawiera przegląd współczynnika atrakcyjności biznesowej dla wybranej dzielnicy i okresu."
-            # summary_paragraph = Paragraph(summary_text, styles['Normal'])
-            # summary_paragraph.wrapOn(pdf_canvas, 450, 200)
-            # summary_paragraph.drawOn(pdf_canvas, 50, 720)
 
             # Example data - replace with actual data
             print(self.comboBox_Date_From.currentText)
@@ -1149,16 +1238,16 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 ('GRID', (0, 0), (-1, -1), 1, colors.black)
             ]))
             table.wrapOn(pdf_canvas, 450, 200)
-            table.drawOn(pdf_canvas, 50, 600)
+            table.drawOn(pdf_canvas, 100, y_position - 275)
 
             subsection6 = Paragraph("Zalecenia dla lokalizacji: {}".format(districtKey), subsection_style)
 
             attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex)
             end_factor = np.mean(attractiveness_factor)
             # Generating recommendations based on the business attractiveness factor
-            if end_factor > 0.75:
-                recommendation_text = "powiat jest bardzo atrakcyjną lokalizacją dla nowych firm, wykazując obiecujące trendy demograficzne na przyszłość dla wybranego przedziału czasowego."
-            elif 0.25 < end_factor <= 0.75:
+            if end_factor > 0.1:
+                recommendation_text = "powiat jest atrakcyjną lokalizacją dla nowych firm, wykazując obiecujące trendy demograficzne na przyszłość dla wybranego przedziału czasowego."
+            elif 0 < end_factor <= 0.1:
                 recommendation_text = "powiat jest umiarkowanie atrakcyjną lokalizacją, ale należy dokładnie rozważyć potencjalne zagrożenia dla wybranego przedziału czasowego."
             else:  # attractiveness_factor <= 0.24
                 recommendation_text = "obecnie powiat ten stanowi poważne wyzwanie dla rozwoju nowych firm i może nie być idealnym wyborem dla wybranego przedziału czasowego."
@@ -1166,51 +1255,37 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             start_of_recommendation = "Ze względu na fakt, że współczynnik atrakcyjności biznesowej dla {} średnio wynosi {} można stwierdzić, że ".format(
                 districtKey, end_factor)
             # recommendation = start_of_recommendation + recommendation_text
-            content6 = Paragraph(start_of_recommendation + recommendation_text, content_style)
+            content6 = Paragraph(start_of_recommendation + recommendation_text + " Należy jednak zwrócić uwagę na trend i zmianę współczynnika atrakcyjności biznesowej w czasie.", content_style)
 
             subsection6.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
-            subsection6.drawOn(pdf_canvas, x_position, y_position - 300)
+            subsection6.drawOn(pdf_canvas, x_position, y_position - 400)
 
             content6.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
-            content6.drawOn(pdf_canvas, x_position, y_position - 430)
+            content6.drawOn(pdf_canvas, x_position, y_position - 530)
+
+            self.start_new_page(pdf_canvas)
+            plt.figure(figsize=(6, 4))
+            plt.plot(years, attractiveness_factor[:len(years)])
+            plt.xlabel('Rok')
+            plt.ylabel('Współczynnik atrakcyjności biznesowej')
+            plt.title('Zmiana współczynnika atrakcyjności biznesowej w czasie', fontsize=9)
+            plt.xticks(years)
+            plt.legend()
+
+            # Saving the plot to a BytesIO object
+            img_buffer = BytesIO()
+            plt.savefig(img_buffer, format='PNG')
+            img_buffer.seek(0)
+            img = Image(img_buffer)
+            img.drawHeight = 4 * inch
+            img.drawWidth = 6 * inch
+            img.wrapOn(pdf_canvas, 450, 200)
+            img.drawOn(pdf_canvas, 100, 300)
 
             # Update the end page number for the summary section
             self.section_pages['Podsumowanie']['end'] = self.getCurrentPage()
         except Exception as e:
             print("5" + str(e))
-
-    '''
-    def addRecommendations(self, pdf_canvas, districtKey, targetGroupIndex):
-        try:
-            self.start_new_page(pdf_canvas)
-            start_page = self.getCurrentPage()
-            self.section_pages['Zalecenia'] = {'start': start_page, 'end': start_page}
-
-            styles = getSampleStyleSheet()
-            report_title = "Zalecenia dla lokalizacji: {}".format(districtKey)
-            report_paragraph = Paragraph(report_title, styles['Heading1'])
-            report_paragraph.wrapOn(pdf_canvas, 450, 200)
-            report_paragraph.drawOn(pdf_canvas, 50, 750)
-
-            attractiveness_factor = self.calculate_attractiveness(districtKey, targetGroupIndex)
-            end_factor = np.mean(attractiveness_factor)
-            # Generating recommendations based on the business attractiveness factor
-            if end_factor > 0.75:
-                recommendation_text = "Powiat jest bardzo atrakcyjną lokalizacją dla nowych firm, wykazując obiecujące trendy demograficzne na przyszłość dla wybranego przedziału czasowego."
-            elif 0.25 < end_factor <= 0.75:
-                recommendation_text = "Powiat jest umiarkowanie atrakcyjną lokalizacją, ale należy dokładnie rozważyć potencjalne zagrożenia dla wybranego przedziału czasowego."
-            else:  # attractiveness_factor <= 0.24
-                recommendation_text = "Obecnie powiat ten stanowi poważne wyzwanie dla rozwoju nowych firm i może nie być idealnym wyborem dla wybranego przedziału czasowego."
-
-            recommendation_paragraph = Paragraph(recommendation_text, styles['Normal'])
-            recommendation_paragraph.wrapOn(pdf_canvas, 450, 200)
-            recommendation_paragraph.drawOn(pdf_canvas, 50, 720)
-
-            # Update the end page for the section
-            self.section_pages['Zalecenia']['end'] = self.getCurrentPage()
-        except Exception as e:
-            print("6" + str(e))
-    '''
 
     def addReferences(self, pdf_canvas, districtKey, targetGroupIndex):
         try:
@@ -1218,21 +1293,55 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             start_page = self.getCurrentPage()
             self.section_pages['Referencje'] = {'start': start_page, 'end': start_page}
 
-            # Aby zapewnić rzetelność i wiarygodność badania, odwołano się do następujących źródeł:
-            # Główny Urząd Statystyczny (Central Statistical Office) - Poland:
-            # Strona internetowa: stat.gov.pl
+            subsection_style = ParagraphStyle(
+                name='Subsection',
+                fontName='DejaVuSans-Bold',  # Bold font for subsections
+                fontSize=14,  # Slightly larger than normal text
+                leading=17,
+                alignment=TA_LEFT  # Left-aligned
+            )
+            content_style = ParagraphStyle(name='Normal', fontName='DejaVuSans', fontSize=12, leading=15,
+                                           alignment=TA_JUSTIFY)
+            heading_style = ParagraphStyle(name='Heading', fontName='DejaVuSans-Bold', fontSize=18, leading=15,
+                                           alignment=TA_CENTER)
+            header_text = "Referencje"
+            header_paragraph = Paragraph(header_text, heading_style)
 
-            # "Random Forests" - Leo Breiman, Adele Cutler
+            page_width, page_height = A4
 
-            # "An Introduction to Statistical Learning" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani
+            x_position = (page_width - 450) / 2  # Adjust width as necessary for your layout
+            y_position = page_height - 50  # Adjust this value to move the header up or down
 
-            # Scikit-Learn Documentation:
-            # Strona internetowa: scikit-learn.org/stable
+            header_paragraph.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
+            header_paragraph.drawOn(pdf_canvas, x_position, y_position)
 
-            # Python - dokumentacja dla Pandas, Matplotlib, i innych użytych bibliotek:
-            # Python Official Documentation: python.org/doc
-            # Pandas Documentation: pandas.pydata.org/pandas-docs/stable
-            # Matplotlib Documentation: matplotlib.org/stable/users/index.html
+            text_content = [
+                (
+                "<b>Aby zapewnić rzetelność i wiarygodność badania, odwołano się do następujących źródeł:</b><br/><br/>",
+                content_style),
+                ("Główny Urząd Statystyczny (Central Statistical Office) - Poland:<br/><br/>", content_style),
+                ("Strona internetowa: stat.gov.pl<br/><br/>", content_style),
+                ("<b>\"Random Forests\" - Leo Breiman, Adele Cutler</b><br/><br/>", content_style),
+                (
+                "<b>\"An Introduction to Statistical Learning\" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani</b><br/><br/>",
+                content_style),
+                ("Scikit-Learn Documentation:<br/><br/>", content_style),
+                ("Strona internetowa: scikit-learn.org/stable<br/><br/>", content_style),
+                ("Python - dokumentacja dla Pandas, Matplotlib, i innych użytych bibliotek:<br/><br/>", content_style),
+                ("Python Official Documentation: python.org/doc<br/><br/>", content_style),
+                ("Pandas Documentation: pandas.pydata.org/pandas-docs/stable<br/><br/>", content_style),
+                ("Matplotlib Documentation: matplotlib.org/stable/users/index.html<br/><br/>", content_style)
+            ]
+
+            for text, style in text_content:
+                content = Paragraph(text, style)
+                content_height = content.wrapOn(pdf_canvas, 450, page_height - y_position)  # wrap and calculate height
+                if y_position - content_height[1] < 50:  # Check if there's enough space for the paragraph
+                    self.start_new_page(pdf_canvas)  # Start a new page if not enough space
+                    y_position = page_height - 75  # Reset y_position for the new page
+
+                content.drawOn(pdf_canvas, x_position, y_position - 50 - content_height[1])
+                y_position -= content_height[1]
 
             # Update the end page for the section
             self.section_pages['Referencje']['end'] = self.getCurrentPage()
