@@ -446,7 +446,7 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
                     self.runModel()
                     districktKeys = DataStorageModel.get_all_keys()
-                    districktKeys.pop(0)
+                    startYear = int(self.comboBox_Date_From.currentText()) - 1
                     targetGroupIndex = self.comboBox_Target_Group.currentIndex()
                 else:
                     return False
@@ -454,12 +454,16 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                 if filePath and filePath.endswith(".pdf"):
 
                     for key in districktKeys:
-                        if key == districktKeys[len(districktKeys) - 1]:
-                            success = self.generatePdf(filePath, key, resultInOneFile=True, save=True,
-                                                       targetGroupIndex=targetGroupIndex)
+                        year = key.rsplit(', rok ', 1)[1]
+                        year = int(year)
 
-                        success = self.generatePdf(filePath, key, resultInOneFile=True, save=False,
-                                                   targetGroupIndex=targetGroupIndex)
+                        if int(year) != int(startYear):
+                            if key == districktKeys[len(districktKeys) - 1]:
+                                success = self.generatePdf(filePath, key, resultInOneFile=True, save=True,
+                                                           targetGroupIndex=targetGroupIndex)
+
+                            success = self.generatePdf(filePath, key, resultInOneFile=True, save=False,
+                                                       targetGroupIndex=targetGroupIndex)
 
                     self.window_loading.close()
                     self.statusConfirmation(filePath, success=success, isDir=False)
@@ -468,9 +472,13 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
                     return success
                 elif directoryPath:
                     for key in districktKeys:
-                        filePath = f"{directoryPath}/{key}{extensionPDF}"
-                        success = self.generatePdf(filePath, key, resultInOneFile=False, save=True,
-                                                   targetGroupIndex=targetGroupIndex)
+                        year = key.rsplit(', rok ', 1)[1]
+                        year = int(year)
+
+                        if int(year) != int(startYear):
+                            filePath = f"{directoryPath}/{key}{extensionPDF}"
+                            success = self.generatePdf(filePath, key, resultInOneFile=False, save=True,
+                                                       targetGroupIndex=targetGroupIndex)
 
                     self.window_loading.close()
                     self.statusConfirmation(filePath, success=success, isDir=True)
@@ -1255,7 +1263,9 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
             start_of_recommendation = "Ze względu na fakt, że współczynnik atrakcyjności biznesowej dla {} średnio wynosi {} można stwierdzić, że ".format(
                 districtKey, end_factor)
             # recommendation = start_of_recommendation + recommendation_text
-            content6 = Paragraph(start_of_recommendation + recommendation_text + " Należy jednak zwrócić uwagę na trend i zmianę współczynnika atrakcyjności biznesowej w czasie.", content_style)
+            content6 = Paragraph(
+                start_of_recommendation + recommendation_text + " Należy jednak zwrócić uwagę na trend i zmianę współczynnika atrakcyjności biznesowej w czasie.",
+                content_style)
 
             subsection6.wrapOn(pdf_canvas, 450, 100)  # Width and height for wrapping
             subsection6.drawOn(pdf_canvas, x_position, y_position - 400)
@@ -1317,14 +1327,14 @@ class MainController(QMainWindow, Ui_MainWindow_Main):
 
             text_content = [
                 (
-                "<b>Aby zapewnić rzetelność i wiarygodność badania, odwołano się do następujących źródeł:</b><br/><br/>",
-                content_style),
+                    "<b>Aby zapewnić rzetelność i wiarygodność badania, odwołano się do następujących źródeł:</b><br/><br/>",
+                    content_style),
                 ("Główny Urząd Statystyczny (Central Statistical Office) - Poland:<br/><br/>", content_style),
                 ("Strona internetowa: stat.gov.pl<br/><br/>", content_style),
                 ("<b>\"Random Forests\" - Leo Breiman, Adele Cutler</b><br/><br/>", content_style),
                 (
-                "<b>\"An Introduction to Statistical Learning\" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani</b><br/><br/>",
-                content_style),
+                    "<b>\"An Introduction to Statistical Learning\" - Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani</b><br/><br/>",
+                    content_style),
                 ("Scikit-Learn Documentation:<br/><br/>", content_style),
                 ("Strona internetowa: scikit-learn.org/stable<br/><br/>", content_style),
                 ("Python - dokumentacja dla Pandas, Matplotlib, i innych użytych bibliotek:<br/><br/>", content_style),
